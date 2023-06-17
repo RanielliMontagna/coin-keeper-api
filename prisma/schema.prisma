@@ -1,0 +1,95 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+enum UserType {
+    ADMIN
+    GUEST
+}
+
+model Organization {
+    id         String   @id @default(uuid())
+    name       String
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+
+    users User[]
+
+    @@map("organizations")
+}
+
+model User {
+    id              String       @id @default(uuid())
+    name            String
+    email           String       @unique
+    photo           String?
+    type            UserType
+    created_at      DateTime     @default(now())
+    updated_at      DateTime     @updatedAt
+    organization    Organization @relation(fields: [organization_id], references: [id])
+    organization_id String
+
+    Account     Account[]
+    Category    Category[]
+    Transaction Transaction[]
+
+    @@map("users")
+}
+
+model Account {
+    id         String   @id @default(uuid())
+    name       String
+    balance    Float
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+    user_id    String
+
+    user        User          @relation(fields: [user_id], references: [id])
+    Transaction Transaction[]
+
+    @@map("accounts")
+}
+
+model Category {
+    id          String   @id @default(uuid())
+    name        String
+    description String
+    color       String
+    created_at  DateTime @default(now())
+    updated_at  DateTime @updatedAt
+    user_id     String
+
+    user        User          @relation(fields: [user_id], references: [id])
+    Transaction Transaction[]
+
+    @@map("categories")
+}
+
+enum TransactionType {
+    INCOME
+    EXPENSE
+}
+
+model Transaction {
+    id          String          @id @default(uuid())
+    description String
+    type        TransactionType
+    value       Float
+    date        DateTime
+    created_at  DateTime        @default(now())
+    updated_at  DateTime        @updatedAt
+    account_id  String
+    category_id String
+    user_id     String
+
+    account  Account  @relation(fields: [account_id], references: [id])
+    category Category @relation(fields: [category_id], references: [id])
+    user     User     @relation(fields: [user_id], references: [id])
+
+    @@map("transactions")
+}
