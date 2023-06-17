@@ -1,6 +1,5 @@
-import { Organization } from '@prisma/client'
-
-import { OrganizationRepository } from '@/repositories/organization-repository'
+import type { Organization } from '@prisma/client'
+import type { OrganizationRepository } from '@/repositories/organization-repository'
 
 interface RegisterOrganizationCaseRequest {
   name: string
