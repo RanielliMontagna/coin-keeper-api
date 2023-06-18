@@ -5,17 +5,17 @@ import type { UserRepository } from '@/repositories/user-repository'
 
 import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
 
-interface RegisterAccountCaseRequest {
+export interface RegisterAccountUseCaseRequest {
   name: string
   balance: number
   userId: string
 }
 
-interface RegisterAccountCaseResponse {
+export interface RegisterAccountUseCaseResponse {
   account: Account
 }
 
-export class RegisterAccountCase {
+export class RegisterAccountUseCase {
   constructor(
     private accountRepository: AccountRepository,
     private userRepository: UserRepository,
@@ -25,7 +25,7 @@ export class RegisterAccountCase {
     balance,
     name,
     userId,
-  }: RegisterAccountCaseRequest): Promise<RegisterAccountCaseResponse> {
+  }: RegisterAccountUseCaseRequest): Promise<RegisterAccountUseCaseResponse> {
     const user = await this.userRepository.findById(userId)
 
     if (!user) {

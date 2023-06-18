@@ -2,21 +2,22 @@ import { InMemoryAccountRepository } from '@/repositories/in-memory/in-memory-ac
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
 
 import { UserTypeEnum } from '@/use-cases/users/register-user'
-import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
 
-import { RegisterAccountUseCase } from './register-account'
+import { UpdateAccountUseCase } from './update-account'
+import { DeleteAccountUseCase } from './delete-account'
+import { AccountNotFoundError } from '../errors/account-not-found-error'
 
 let accountRepository: InMemoryAccountRepository
 let userRepository: InMemoryUserRepository
-let sut: RegisterAccountUseCase
+let sut: DeleteAccountUseCase
 
-describe('Register Account Use Case', () => {
+describe('Update Account Use Case', () => {
   const userId = 'user-id'
 
   beforeEach(async () => {
     accountRepository = new InMemoryAccountRepository()
     userRepository = new InMemoryUserRepository()
-    sut = new RegisterAccountUseCase(accountRepository, userRepository)
+    sut = new DeleteAccountUseCase(accountRepository)
 
     await userRepository.create({
       id: userId,
@@ -27,16 +28,20 @@ describe('Register Account Use Case', () => {
     })
   })
 
-  it('should be able to register a new account', async () => {
-    const response = await sut.execute({
+  it('should be able to delete an account', async () => {
+    const account = await accountRepository.create({
       name: 'Account Name',
       balance: 100,
-      userId: userId,
+      user_id: userId,
+    })
+
+    const response = await sut.execute({
+      accountId: account.id,
     })
 
     expect(response.account).toEqual(
       expect.objectContaining({
-        id: expect.any(String),
+        id: account.id,
         name: 'Account Name',
         balance: 100,
         user_id: userId,
@@ -46,13 +51,11 @@ describe('Register Account Use Case', () => {
     )
   })
 
-  it('should not be able to register a new account with a non-existing user', async () => {
+  it('should not be able to delete a non-existing account', async () => {
     await expect(
       sut.execute({
-        name: 'Account Name',
-        balance: 100,
-        userId: 'non-existing-user-id',
+        accountId: 'non-existing-account-id',
       }),
-    ).rejects.toBeInstanceOf(UserNotFoundError)
+    ).rejects.toBeInstanceOf(AccountNotFoundError)
   })
 })

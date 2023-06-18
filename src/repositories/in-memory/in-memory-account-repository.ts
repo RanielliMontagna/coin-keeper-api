@@ -32,24 +32,26 @@ export class InMemoryAccountRepository implements AccountRepository {
     return newAccount
   }
 
-  async update(account: Account) {
-    const accountIndex = this.accounts.findIndex((a) => a.id === account.id)
+  async update(account: Prisma.AccountUncheckedUpdateInput) {
+    const _account = this.accounts.find((a) => a.id === account.id) as Account
 
-    if (accountIndex === -1) {
-      return null
+    const updatedAccount: Account = {
+      id: _account.id,
+      name: typeof account.name === 'string' ? account.name : _account.name,
+      balance:
+        typeof account.balance === 'number'
+          ? account.balance
+          : _account.balance,
+      created_at: _account.created_at,
+      updated_at: new Date(),
+      user_id: _account.user_id,
     }
 
-    this.accounts[accountIndex] = account
-
-    return account
+    return updatedAccount
   }
 
   async delete(id: string) {
     const accountIndex = this.accounts.findIndex((a) => a.id === id)
-
-    if (accountIndex === -1) {
-      return null
-    }
 
     const account = this.accounts[accountIndex]
 

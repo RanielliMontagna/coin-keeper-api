@@ -3,11 +3,11 @@ import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-
 
 import { OrganizationNotFoundError } from '@/use-cases/errors/organization-not-found-error'
 
-import { RegisterUserCase, UserTypeEnum } from './register-user'
+import { RegisterUserUseCase, UserTypeEnum } from './register-user'
 
 let usersRepository: InMemoryUserRepository
 let organizationRepository: InMemoryOrganizationRepository
-let sut: RegisterUserCase
+let sut: RegisterUserUseCase
 
 describe('Register User Use Case', () => {
   const organizationId = 'organization-id'
@@ -15,7 +15,7 @@ describe('Register User Use Case', () => {
   beforeEach(async () => {
     usersRepository = new InMemoryUserRepository()
     organizationRepository = new InMemoryOrganizationRepository()
-    sut = new RegisterUserCase(usersRepository, organizationRepository)
+    sut = new RegisterUserUseCase(usersRepository, organizationRepository)
 
     await organizationRepository.create({
       id: organizationId,

@@ -8,7 +8,7 @@ export enum UserTypeEnum {
   GUEST = 'GUEST',
 }
 
-interface RegisterUserCaseRequest {
+interface RegisterUserUseCaseRequest {
   name: string
   email: string
   photo?: string
@@ -16,11 +16,11 @@ interface RegisterUserCaseRequest {
   organizationId: string
 }
 
-interface RegisterUserCaseResponse {
+interface RegisterUserUseCaseResponse {
   user: User
 }
 
-export class RegisterUserCase {
+export class RegisterUserUseCase {
   constructor(
     private userRepository: UserRepository,
     private organizationRepository: OrganizationRepository,
@@ -32,7 +32,7 @@ export class RegisterUserCase {
     type,
     photo,
     organizationId,
-  }: RegisterUserCaseRequest): Promise<RegisterUserCaseResponse> {
+  }: RegisterUserUseCaseRequest): Promise<RegisterUserUseCaseResponse> {
     const organization = await this.organizationRepository.findById(
       organizationId,
     )

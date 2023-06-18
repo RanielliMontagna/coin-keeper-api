@@ -1,14 +1,14 @@
 import { InMemoryOrganizationRepository } from '@/repositories/in-memory/in-memory-organization-repository'
 
-import { RegisterOrganizationCase } from './register-organization'
+import { RegisterOrganizationUseCase } from './register-organization'
 
 let organizationRepository: InMemoryOrganizationRepository
-let sut: RegisterOrganizationCase
+let sut: RegisterOrganizationUseCase
 
 describe('Register Organization Use Case', () => {
   beforeEach(() => {
     organizationRepository = new InMemoryOrganizationRepository()
-    sut = new RegisterOrganizationCase(organizationRepository)
+    sut = new RegisterOrganizationUseCase(organizationRepository)
   })
 
   it('should be able to register a new organization', async () => {
