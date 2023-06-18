@@ -2,6 +2,7 @@ import { Category } from '@prisma/client'
 
 import { CategoryRepository } from '@/repositories/category-repository'
 import { UserRepository } from '@/repositories/user-repository'
+
 import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
 
 interface FetchCategoriesUseCaseRequest {
