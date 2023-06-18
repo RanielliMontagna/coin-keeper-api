@@ -1,22 +1,22 @@
 import { InMemoryAccountRepository } from '@/repositories/in-memory/in-memory-account-repository'
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
 
-import { UserTypeEnum } from '@/use-cases/users/register-user'
 import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
 
-import { RegisterAccountUseCase } from './register-account'
+import { CreateAccountUseCase } from './create-account'
+import { UserTypeEnum } from '../users/register-user'
 
 let accountRepository: InMemoryAccountRepository
 let userRepository: InMemoryUserRepository
-let sut: RegisterAccountUseCase
+let sut: CreateAccountUseCase
 
-describe('Register Account Use Case', () => {
+describe('Create Account Use Case', () => {
   const userId = 'user-id'
 
   beforeEach(async () => {
     accountRepository = new InMemoryAccountRepository()
     userRepository = new InMemoryUserRepository()
-    sut = new RegisterAccountUseCase(accountRepository, userRepository)
+    sut = new CreateAccountUseCase(accountRepository, userRepository)
 
     await userRepository.create({
       id: userId,
@@ -27,7 +27,7 @@ describe('Register Account Use Case', () => {
     })
   })
 
-  it('should be able to register a new account', async () => {
+  it('should be able to create a new account', async () => {
     const response = await sut.execute({
       name: 'Account Name',
       balance: 100,
@@ -46,7 +46,7 @@ describe('Register Account Use Case', () => {
     )
   })
 
-  it('should not be able to register a new account with a non-existing user', async () => {
+  it('should not be able to create a new account with a non-existing user', async () => {
     await expect(
       sut.execute({
         name: 'Account Name',

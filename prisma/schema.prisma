@@ -58,8 +58,8 @@ model Account {
 model Category {
     id          String   @id @default(uuid())
     name        String
-    description String
-    color       String
+    description String?
+    color       Int
     created_at  DateTime @default(now())
     updated_at  DateTime @updatedAt
     user_id     String

@@ -1,18 +1,18 @@
 import type { AccountRepository } from '@/repositories/account-repository'
 
 import type {
-  RegisterAccountUseCaseRequest,
-  RegisterAccountUseCaseResponse,
-} from './register-account'
+  CreateAccountUseCaseRequest,
+  CreateAccountUseCaseResponse,
+} from './create-account'
 
 import { AccountNotFoundError } from '@/use-cases/errors/account-not-found-error'
 
 interface UpdateAccountCaseRequest
-  extends Partial<RegisterAccountUseCaseRequest> {
+  extends Partial<CreateAccountUseCaseRequest> {
   accountId: string
 }
 
-interface UpdateAccountCaseResponse extends RegisterAccountUseCaseResponse {}
+interface UpdateAccountCaseResponse extends CreateAccountUseCaseResponse {}
 
 export class UpdateAccountUseCase {
   constructor(private accountRepository: AccountRepository) {}
