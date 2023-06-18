@@ -16,6 +16,12 @@ export class InMemoryAccountRepository implements AccountRepository {
     return account
   }
 
+  async findManyByUserId(userId: string) {
+    const accounts = this.accounts.filter((a) => a.user_id === userId)
+
+    return accounts
+  }
+
   async create(account: Prisma.AccountUncheckedCreateInput) {
     const newAccount: Account = {
       id: account.id || randomUUID(),
