@@ -1,3 +1,3 @@
 {
-  "conventionalCommits.scopes": ["use-cases"]
+  "conventionalCommits.scopes": ["use-cases", "repositories"]
 }
