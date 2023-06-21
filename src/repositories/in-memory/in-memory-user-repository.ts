@@ -6,8 +6,18 @@ import type { UserRepository } from '../user-repository'
 export class InMemoryUserRepository implements UserRepository {
   public users: User[] = []
 
-  async findById(id: string): Promise<User | null> {
+  async findById(id: string) {
     const user = this.users.find((user) => user.id === id)
+
+    if (!user) {
+      return null
+    }
+
+    return user
+  }
+
+  async findByEmail(email: string) {
+    const user = this.users.find((user) => user.email === email)
 
     if (!user) {
       return null
@@ -21,6 +31,7 @@ export class InMemoryUserRepository implements UserRepository {
       id: user.id || randomUUID(),
       name: user.name,
       email: user.email,
+      google_id: user.google_id,
       created_at: new Date(),
       organization_id: user.organization_id,
       photo: user.photo || null,

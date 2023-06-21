@@ -25,6 +25,7 @@ describe('Create Category Use Case', () => {
       email: 'user@name.com',
       type: UserTypeEnum.ADMIN,
       organization_id: 'organization-id',
+      google_id: 'google-id',
     })
   })
 
@@ -82,8 +83,6 @@ describe('Create Category Use Case', () => {
       color: 0,
       userId,
     })
-
-    console.log(response.category)
 
     expect(response.category).toEqual(
       expect.objectContaining({

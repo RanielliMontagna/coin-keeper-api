@@ -2,6 +2,7 @@ import type { User } from '@prisma/client'
 import type { UserRepository } from '@/repositories/user-repository'
 import { OrganizationRepository } from '@/repositories/organization-repository'
 import { OrganizationNotFoundError } from '../errors/organization-not-found-error'
+import { UserAlreadyExistsError } from '../errors/user-already-exists-error'
 
 export enum UserTypeEnum {
   ADMIN = 'ADMIN',
@@ -12,8 +13,8 @@ interface RegisterUserUseCaseRequest {
   name: string
   email: string
   photo?: string
-  type: UserTypeEnum
-  organizationId: string
+  organizationId?: string
+  googleId: string
 }
 
 interface RegisterUserUseCaseResponse {
@@ -29,26 +30,50 @@ export class RegisterUserUseCase {
   async execute({
     name,
     email,
-    type,
     photo,
     organizationId,
+    googleId,
   }: RegisterUserUseCaseRequest): Promise<RegisterUserUseCaseResponse> {
-    const organization = await this.organizationRepository.findById(
-      organizationId,
-    )
+    const userAlreadyExists = await this.userRepository.findByEmail(email)
 
-    if (!organization) {
-      throw new OrganizationNotFoundError()
+    if (userAlreadyExists) {
+      throw new UserAlreadyExistsError()
     }
 
-    const user = await this.userRepository.create({
-      name,
-      email,
-      type,
-      photo,
-      organization_id: organizationId,
-    })
+    if (organizationId) {
+      const organization = await this.organizationRepository.findById(
+        organizationId,
+      )
 
-    return { user }
+      if (!organization) {
+        throw new OrganizationNotFoundError()
+      }
+
+      const user = await this.userRepository.create({
+        name,
+        email,
+        photo,
+        type: UserTypeEnum.GUEST,
+        organization_id: organizationId,
+        google_id: googleId,
+      })
+
+      return { user }
+    } else {
+      const organization = await this.organizationRepository.create({
+        name: `${name}'s organization`,
+      })
+
+      const user = await this.userRepository.create({
+        name,
+        email,
+        photo,
+        type: UserTypeEnum.ADMIN,
+        organization_id: organization.id,
+        google_id: googleId,
+      })
+
+      return { user }
+    }
   }
 }
