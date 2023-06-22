@@ -1,0 +1,42 @@
+import { hash } from 'bcryptjs'
+import { expect, describe, it, beforeEach } from 'vitest'
+
+import { ResourceNotFoundError } from '@/use-cases/errors/resource-not-found-error'
+import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
+
+import { GetUserProfileUseCase } from './get-user-profile'
+import { UserTypeEnum } from './register-user'
+
+let usersRepository: InMemoryUserRepository
+let sut: GetUserProfileUseCase
+
+describe('Get User Profile Use Case', () => {
+  beforeEach(() => {
+    usersRepository = new InMemoryUserRepository()
+    sut = new GetUserProfileUseCase(usersRepository)
+  })
+
+  it('should be able to get user profile', async () => {
+    const createdUser = await usersRepository.create({
+      name: 'User Name',
+      email: 'user@name.com',
+      password_hash: await hash('teste123', 8),
+      organization_id: 'organization-id',
+      type: UserTypeEnum.ADMIN,
+    })
+
+    const { user } = await sut.execute({
+      userId: createdUser.id,
+    })
+
+    expect(user.name).toEqual('User Name')
+  })
+
+  it('should not be able to get user profile with wrong id', async () => {
+    await expect(() =>
+      sut.execute({
+        userId: 'non-existing-id',
+      }),
+    ).rejects.toBeInstanceOf(ResourceNotFoundError)
+  })
+})
