@@ -1,8 +1,10 @@
+import { hash } from 'bcryptjs'
 import type { User } from '@prisma/client'
+
 import type { UserRepository } from '@/repositories/user-repository'
 import { OrganizationRepository } from '@/repositories/organization-repository'
-import { OrganizationNotFoundError } from '../errors/organization-not-found-error'
-import { UserAlreadyExistsError } from '../errors/user-already-exists-error'
+import { OrganizationNotFoundError } from '@/use-cases/errors/organization-not-found-error'
+import { UserAlreadyExistsError } from '@/use-cases/errors/user-already-exists-error'
 
 export enum UserTypeEnum {
   ADMIN = 'ADMIN',
@@ -12,9 +14,8 @@ export enum UserTypeEnum {
 interface RegisterUserUseCaseRequest {
   name: string
   email: string
-  photo?: string
+  password: string
   organizationId?: string
-  googleId: string
 }
 
 interface RegisterUserUseCaseResponse {
@@ -30,9 +31,8 @@ export class RegisterUserUseCase {
   async execute({
     name,
     email,
-    photo,
+    password,
     organizationId,
-    googleId,
   }: RegisterUserUseCaseRequest): Promise<RegisterUserUseCaseResponse> {
     const userAlreadyExists = await this.userRepository.findByEmail(email)
 
@@ -49,13 +49,14 @@ export class RegisterUserUseCase {
         throw new OrganizationNotFoundError()
       }
 
+      const hashedPassword = await hash(password, 8)
+
       const user = await this.userRepository.create({
         name,
         email,
-        photo,
+        password_hash: hashedPassword,
         type: UserTypeEnum.GUEST,
         organization_id: organizationId,
-        google_id: googleId,
       })
 
       return { user }
@@ -64,13 +65,14 @@ export class RegisterUserUseCase {
         name: `${name}'s organization`,
       })
 
+      const hashedPassword = await hash(password, 8)
+
       const user = await this.userRepository.create({
         name,
         email,
-        photo,
+        password_hash: hashedPassword,
         type: UserTypeEnum.ADMIN,
         organization_id: organization.id,
-        google_id: googleId,
       })
 
       return { user }

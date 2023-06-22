@@ -31,10 +31,9 @@ export class InMemoryUserRepository implements UserRepository {
       id: user.id || randomUUID(),
       name: user.name,
       email: user.email,
-      google_id: user.google_id,
+      password_hash: user.password_hash,
       created_at: new Date(),
       organization_id: user.organization_id,
-      photo: user.photo || null,
       type: user.type,
       updated_at: new Date(),
     }

@@ -10,13 +10,17 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
   const registerBodySquema = z.object({
     name: z.string().min(3).max(255),
     email: z.string().email(),
-    photo: z.string().optional(),
-    googleId: z.string(),
+    password: z
+      .string()
+      .min(6)
+      .max(100)
+      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/, {
+        message:
+          'Password must have at least 1 uppercase, 1 lowercase and 1 number',
+      }),
   })
 
-  const { name, email, photo, googleId } = registerBodySquema.parse(
-    request.body,
-  )
+  const { name, email, password } = registerBodySquema.parse(request.body)
 
   try {
     const registerUserUseCase = makeRegisterUserUseCase()
@@ -24,8 +28,7 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
     await registerUserUseCase.execute({
       name,
       email,
-      photo,
-      googleId,
+      password,
     })
   } catch (err) {
     if (

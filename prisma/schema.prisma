@@ -27,9 +27,8 @@ model User {
     id              String       @id @default(uuid())
     name            String
     email           String       @unique
-    photo           String?
+    password_hash   String
     type            UserType
-    google_id       String
     created_at      DateTime     @default(now())
     updated_at      DateTime     @updatedAt
     organization    Organization @relation(fields: [organization_id], references: [id])

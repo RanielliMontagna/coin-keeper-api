@@ -1,3 +1,5 @@
+import { compare } from 'bcryptjs'
+
 import { InMemoryOrganizationRepository } from '@/repositories/in-memory/in-memory-organization-repository'
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
 
@@ -27,9 +29,8 @@ describe('Register User Use Case', () => {
     const { user } = await sut.execute({
       name: 'User Name',
       email: 'user@name.com',
-      photo: 'http://photo.com',
+      password: 'password',
       organizationId,
-      googleId: 'google-id',
     })
 
     expect(user).toEqual(
@@ -37,22 +38,24 @@ describe('Register User Use Case', () => {
         id: expect.any(String),
         name: 'User Name',
         email: 'user@name.com',
-        photo: 'http://photo.com',
+        password_hash: expect.any(String),
         type: UserTypeEnum.GUEST,
         organization_id: organizationId,
-        google_id: 'google-id',
         created_at: expect.any(Date),
         updated_at: expect.any(Date),
       }),
     )
+
+    const passwordMatch = await compare('password', user.password_hash)
+
+    expect(passwordMatch).toBe(true)
   })
 
   it('should be able to register a new user without organization', async () => {
     const { user } = await sut.execute({
       name: 'User Name',
       email: 'user@name.com',
-      photo: 'http://photo.com',
-      googleId: 'google-id',
+      password: 'password',
     })
 
     expect(user).toEqual(
@@ -60,14 +63,17 @@ describe('Register User Use Case', () => {
         id: expect.any(String),
         name: 'User Name',
         email: 'user@name.com',
-        photo: 'http://photo.com',
+        password_hash: expect.any(String),
         type: UserTypeEnum.ADMIN,
         organization_id: expect.any(String),
-        google_id: 'google-id',
         created_at: expect.any(Date),
         updated_at: expect.any(Date),
       }),
     )
+
+    const passwordMatch = await compare('password', user.password_hash)
+
+    expect(passwordMatch).toBe(true)
   })
 
   it('should not be able to register a new user with an inexistent organization', async () => {
@@ -75,9 +81,8 @@ describe('Register User Use Case', () => {
       sut.execute({
         name: 'User Name',
         email: 'user@name.com',
-        photo: 'http://photo.com',
         organizationId: 'inexistent-organization-id',
-        googleId: 'google-id',
+        password: 'password',
       }),
     ).rejects.toBeInstanceOf(OrganizationNotFoundError)
   })
@@ -86,19 +91,17 @@ describe('Register User Use Case', () => {
     await usersRepository.create({
       name: 'User Name',
       email: 'user@name.com',
-      photo: 'http://photo.com',
       organization_id: organizationId,
-      google_id: 'google-id',
       type: UserTypeEnum.ADMIN,
+      password_hash: 'password-hash',
     })
 
     await expect(
       sut.execute({
         name: 'User Name',
         email: 'user@name.com',
-        photo: 'http://photo.com',
         organizationId,
-        googleId: 'google-id',
+        password: 'password',
       }),
     ).rejects.toBeInstanceOf(UserAlreadyExistsError)
   })
