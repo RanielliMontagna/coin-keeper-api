@@ -10,7 +10,11 @@ interface FetchAccountsUseCaseRequest {
 }
 
 interface FetchAccountsUseCaseResponse {
-  accounts: Account[]
+  accounts: {
+    id: Account['id']
+    name: Account['name']
+    balance: Account['balance']
+  }[]
 }
 
 export class FetchAccountsUseCase {
@@ -31,7 +35,11 @@ export class FetchAccountsUseCase {
     const accounts = await this.accountRepository.findManyByUserId(userId)
 
     return {
-      accounts: accounts,
+      accounts: accounts.map((account) => ({
+        id: account.id,
+        name: account.name,
+        balance: account.balance,
+      })),
     }
   }
 }

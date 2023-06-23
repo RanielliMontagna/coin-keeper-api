@@ -25,6 +25,7 @@ describe('Update Account Use Case', () => {
       email: 'user@name.com',
       type: UserTypeEnum.ADMIN,
       organization_id: 'organization-id',
+      password_hash: 'password-hash',
     })
   })
 

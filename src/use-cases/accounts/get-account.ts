@@ -12,7 +12,11 @@ interface GetAccountUseCaseRequest {
 }
 
 interface GetAccountUseCaseResponse {
-  account: Account
+  account: {
+    id: Account['id']
+    name: Account['name']
+    balance: Account['balance']
+  }
 }
 
 export class GetAccountUseCase {
@@ -37,6 +41,12 @@ export class GetAccountUseCase {
       throw new AccountNotFoundError()
     }
 
-    return { account }
+    return {
+      account: {
+        id: account.id,
+        name: account.name,
+        balance: account.balance,
+      },
+    }
   }
 }
