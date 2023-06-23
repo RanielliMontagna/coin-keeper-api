@@ -1,6 +1,10 @@
 import { FastifyInstance } from 'fastify'
-import { createAccount } from './create-account'
+import { create } from './create'
+
+import { verifyJWT } from '@/http/middlewares/verify-jwt'
 
 export async function accountRoutes(app: FastifyInstance) {
-  app.post('/accounts', createAccount)
+  app.addHook('onRequest', verifyJWT)
+
+  app.post('/accounts', create)
 }
