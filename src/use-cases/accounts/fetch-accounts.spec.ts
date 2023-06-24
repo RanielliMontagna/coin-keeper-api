@@ -45,7 +45,6 @@ describe('Fetch Accounts Use Case', () => {
           id: expect.any(String),
           name: 'Account Name',
           balance: 0,
-          user_id: userId,
         }),
       ]),
     )

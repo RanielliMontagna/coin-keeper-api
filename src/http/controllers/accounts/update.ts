@@ -3,6 +3,7 @@ import { z } from 'zod'
 
 import { makeUpdateAccountUseCase } from '@/use-cases/factories/accounts/make-update-account-use-case'
 import { AccountNotFoundError } from '@/use-cases/errors/account-not-found-error'
+import { returnData } from '@/utils/http/returnData'
 
 export async function updateAccount(
   request: FastifyRequest,
@@ -31,11 +32,13 @@ export async function updateAccount(
       userId: request.user.sub,
     })
 
-    return reply.status(200).send({
-      id: account.id,
-      name: account.name,
-      balance: account.balance,
-    })
+    return reply.status(200).send(
+      returnData({
+        id: account.id,
+        name: account.name,
+        balance: account.balance,
+      }),
+    )
   } catch (err) {
     if (err instanceof AccountNotFoundError) {
       reply.status(400).send({ message: err.message })

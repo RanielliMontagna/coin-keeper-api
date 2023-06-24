@@ -23,14 +23,18 @@ describe('Get Account (e2e)', () => {
       })
 
     const response = await request(app.server)
-      .get(`/accounts/${createAccountResponse.body.id}`)
+      .get(`/accounts/${createAccountResponse.body.data.id}`)
       .set('Authorization', `Bearer ${token}`)
 
     expect(response.status).toEqual(200)
     expect(response.body).toEqual({
-      id: createAccountResponse.body.id,
-      name: 'Account Example',
-      balance: 1000,
+      data: {
+        account: {
+          id: createAccountResponse.body.data.id,
+          name: 'Account Example',
+          balance: 1000,
+        },
+      },
     })
   })
 })

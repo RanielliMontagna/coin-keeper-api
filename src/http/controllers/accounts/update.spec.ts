@@ -23,7 +23,7 @@ describe('Update Account (e2e)', () => {
       })
 
     const response = await request(app.server)
-      .put(`/accounts/${createAccountResponse.body.id}`)
+      .put(`/accounts/${createAccountResponse.body.data.id}`)
       .set('Authorization', `Bearer ${token}`)
       .send({
         name: 'Account Example Updated',
@@ -32,9 +32,11 @@ describe('Update Account (e2e)', () => {
 
     expect(response.status).toEqual(200)
     expect(response.body).toEqual({
-      id: createAccountResponse.body.id,
-      name: 'Account Example Updated',
-      balance: 2000,
+      data: {
+        id: createAccountResponse.body.data.id,
+        name: 'Account Example Updated',
+        balance: 2000,
+      },
     })
   })
 })

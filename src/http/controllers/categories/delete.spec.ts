@@ -2,7 +2,7 @@ import request from 'supertest'
 import { app } from '@/app'
 import { createAndAuthenticateUser } from '@/utils/test/create-and-authenticate-user'
 
-describe('Delete Account (e2e)', () => {
+describe('Delete Category (e2e)', () => {
   beforeAll(async () => {
     await app.ready()
   })
@@ -11,29 +11,30 @@ describe('Delete Account (e2e)', () => {
     await app.close()
   })
 
-  it('should be able to delete an account', async () => {
+  it('should be able to delete an category', async () => {
     const { token } = await createAndAuthenticateUser(app)
 
-    const createAccountResponse = await request(app.server)
-      .post('/accounts')
+    const createCategoryResponse = await request(app.server)
+      .post('/categories')
       .set('Authorization', `Bearer ${token}`)
       .send({
-        name: 'Account Example',
-        balance: 1000,
+        name: 'Category Example',
+        description: 'Category Example Description',
+        color: 1,
       })
 
     const response = await request(app.server)
-      .delete(`/accounts/${createAccountResponse.body.data.id}`)
+      .delete(`/categories/${createCategoryResponse.body.data.id}`)
       .set('Authorization', `Bearer ${token}`)
       .send()
 
     expect(response.status).toEqual(204)
 
-    const getAccountResponse = await request(app.server)
-      .get(`/accounts/${createAccountResponse.body.data.id}`)
+    const getCategoryResponse = await request(app.server)
+      .get(`/categories/${createCategoryResponse.body.data.id}`)
       .set('Authorization', `Bearer ${token}`)
       .send()
 
-    expect(getAccountResponse.status).toEqual(400)
+    expect(getCategoryResponse.status).toEqual(400)
   })
 })

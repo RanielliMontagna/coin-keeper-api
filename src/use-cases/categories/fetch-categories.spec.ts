@@ -24,6 +24,7 @@ describe('Fetch Categories Use Case', () => {
       email: 'user@name.com',
       type: UserTypeEnum.ADMIN,
       organization_id: 'organization-id',
+      password_hash: 'password-hash',
     })
   })
 
@@ -46,7 +47,6 @@ describe('Fetch Categories Use Case', () => {
           name: 'Category Name',
           description: 'Category Description',
           color: 0,
-          user_id: userId,
         }),
       ]),
     )

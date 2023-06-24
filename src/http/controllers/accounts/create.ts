@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 
 import { makeCreateAccountUseCase } from '@/use-cases/factories/accounts/make-create-account-use-case'
+import { returnData } from '@/utils/http/returnData'
 
 export async function createAccount(
   request: FastifyRequest,
@@ -22,7 +23,5 @@ export async function createAccount(
     userId: request.user.sub,
   })
 
-  return reply.status(201).send({
-    id: account.id,
-  })
+  return reply.status(201).send(returnData({ id: account.id }))
 }

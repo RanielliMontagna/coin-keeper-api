@@ -10,7 +10,12 @@ interface FetchCategoriesUseCaseRequest {
 }
 
 interface FetchCategoriesUseCaseResponse {
-  categories: Category[]
+  categories: {
+    id: Category['id']
+    name: Category['name']
+    description: Category['description']
+    color: Category['color']
+  }[]
 }
 
 export class FetchCategoriesUseCase {
@@ -30,6 +35,13 @@ export class FetchCategoriesUseCase {
 
     const categories = await this.categoryRepository.findManyByUserId(userId)
 
-    return { categories }
+    return {
+      categories: categories.map((category) => ({
+        id: category.id,
+        name: category.name,
+        description: category.description,
+        color: category.color,
+      })),
+    }
   }
 }

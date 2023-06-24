@@ -25,7 +25,7 @@ describe('Create Category Use Case', () => {
       email: 'user@name.com',
       type: UserTypeEnum.ADMIN,
       organization_id: 'organization-id',
-      google_id: 'google-id',
+      password_hash: 'password-hash',
     })
   })
 

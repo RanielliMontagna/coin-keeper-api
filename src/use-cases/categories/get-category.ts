@@ -12,7 +12,12 @@ interface GetCategoryUseCaseRequest {
 }
 
 interface GetCategoryUseCaseResponse {
-  category: Category
+  category: {
+    id: Category['id']
+    name: Category['name']
+    description: Category['description']
+    color: Category['color']
+  }
 }
 
 export class GetCategoryUseCase {
@@ -37,6 +42,13 @@ export class GetCategoryUseCase {
       throw new CategoryNotFoundError()
     }
 
-    return { category }
+    return {
+      category: {
+        id: category.id,
+        name: category.name,
+        description: category.description,
+        color: category.color,
+      },
+    }
   }
 }

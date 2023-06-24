@@ -3,8 +3,9 @@ import { z } from 'zod'
 
 import { makeGetAccountUseCase } from '@/use-cases/factories/accounts/make-get-account-use-case'
 import { AccountNotFoundError } from '@/use-cases/errors/account-not-found-error'
+import { returnData } from '@/utils/http/returnData'
 
-export async function get(request: FastifyRequest, reply: FastifyReply) {
+export async function getAccount(request: FastifyRequest, reply: FastifyReply) {
   const getAccountQuerySchema = z.object({
     id: z.string(),
   })
@@ -19,7 +20,7 @@ export async function get(request: FastifyRequest, reply: FastifyReply) {
       userId: request.user.sub,
     })
 
-    return reply.status(200).send(account)
+    return reply.status(200).send(returnData({ account }))
   } catch (err) {
     if (err instanceof AccountNotFoundError) {
       reply.status(400).send({ message: err.message })

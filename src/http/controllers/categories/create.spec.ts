@@ -2,7 +2,7 @@ import request from 'supertest'
 import { app } from '@/app'
 import { createAndAuthenticateUser } from '@/utils/test/create-and-authenticate-user'
 
-describe('Create Account (e2e)', () => {
+describe('Create Category (e2e)', () => {
   beforeAll(async () => {
     await app.ready()
   })
@@ -11,15 +11,16 @@ describe('Create Account (e2e)', () => {
     await app.close()
   })
 
-  it('should be able to create an account', async () => {
+  it('should be able to create an category', async () => {
     const { token } = await createAndAuthenticateUser(app)
 
     const response = await request(app.server)
-      .post('/accounts')
+      .post('/categories')
       .set('Authorization', `Bearer ${token}`)
       .send({
-        name: 'Account Example',
-        balance: 1000,
+        name: 'Category Example',
+        description: 'Category Example Description',
+        color: 1,
       })
 
     expect(response.status).toEqual(201)
