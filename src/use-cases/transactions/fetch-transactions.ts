@@ -10,7 +10,14 @@ interface FetchTransactionsUseCaseRequest {
 }
 
 interface FetchTransactionsUseCaseResponse {
-  transactions: Transaction[]
+  transactions: {
+    id: Transaction['id']
+    title: Transaction['title']
+    description: Transaction['description']
+    amount: Transaction['amount']
+    type: Transaction['type']
+    date: Transaction['date']
+  }[]
 }
 
 export class FetchTransactionsUseCase {

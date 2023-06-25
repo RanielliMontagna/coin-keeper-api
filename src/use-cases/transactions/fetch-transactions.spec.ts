@@ -48,8 +48,6 @@ describe('Fetch Transactions Use Case', () => {
           amount: 100,
           type: TransactionType.EXPENSE,
           date: expect.any(Date),
-          account_id: accountId,
-          category_id: 'category-id',
         }),
       ]),
     )
