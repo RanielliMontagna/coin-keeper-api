@@ -33,6 +33,8 @@ export async function authenticate(
     const token = await reply.jwtSign(
       {
         type: user.type,
+        email: user.email,
+        name: user.name,
       },
       {
         sign: {
@@ -44,6 +46,8 @@ export async function authenticate(
     const refreshToken = await reply.jwtSign(
       {
         type: user.type,
+        email: user.email,
+        name: user.name,
       },
       {
         sign: {
