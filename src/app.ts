@@ -13,10 +13,11 @@ import { accountRoutes } from './http/controllers/accounts/routes'
 import { categoryRoutes } from './http/controllers/categories/routes'
 import { transactionRoutes } from './http/controllers/transactions/routes'
 
-export const app = fastify()
+export const app = fastify({})
 
 app.register(cors, {
-  origin: '*',
+  origin: ['http://localhost:5173'],
+  credentials: true,
 })
 
 app.register(fastifyJwt, {
