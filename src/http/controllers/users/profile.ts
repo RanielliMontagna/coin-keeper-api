@@ -11,8 +11,10 @@ export async function profile(request: FastifyRequest, reply: FastifyReply) {
 
   return reply.status(200).send({
     user: {
-      ...user,
-      password_hash: undefined,
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      organizationId: user.organization_id,
     },
   })
 }

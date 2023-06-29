@@ -33,6 +33,8 @@ export async function authenticate(
     const token = await reply.jwtSign(
       {
         type: user.type,
+        email: user.email,
+        name: user.name,
       },
       {
         sign: {
@@ -44,6 +46,8 @@ export async function authenticate(
     const refreshToken = await reply.jwtSign(
       {
         type: user.type,
+        email: user.email,
+        name: user.name,
       },
       {
         sign: {
@@ -64,7 +68,10 @@ export async function authenticate(
       .send({ token })
   } catch (err) {
     if (err instanceof InvalidCredentialsError) {
-      return reply.status(400).send({ message: err.message })
+      return reply.status(400).send({
+        title: err.message,
+        message: 'Please, check your email and password and try again.',
+      })
     }
 
     throw err
