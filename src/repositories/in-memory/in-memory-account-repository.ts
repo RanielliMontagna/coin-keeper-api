@@ -1,7 +1,10 @@
 import { randomUUID } from 'node:crypto'
 
 import type { Account, Prisma } from '@prisma/client'
-import type { AccountRepository } from '../account-repository'
+import type {
+  AccountRepository,
+  FindManyByUserIdOptions,
+} from '../account-repository'
 
 export class InMemoryAccountRepository implements AccountRepository {
   public accounts: Account[] = []
@@ -16,8 +19,16 @@ export class InMemoryAccountRepository implements AccountRepository {
     return account
   }
 
-  async findManyByUserId(userId: string) {
+  async findManyByUserId(userId: string, options: FindManyByUserIdOptions) {
     const accounts = this.accounts.filter((a) => a.user_id === userId)
+
+    if (options?.search) {
+      return accounts.filter((a) =>
+        a.name
+          .toLowerCase()
+          .includes(options.search?.toLocaleLowerCase() as string),
+      )
+    }
 
     return accounts
   }
