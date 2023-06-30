@@ -57,4 +57,35 @@ describe('Fetch Accounts Use Case', () => {
       }),
     ).rejects.toBeInstanceOf(UserNotFoundError)
   })
+
+  it('should be able to fetch accounts with search option', async () => {
+    await accountRepository.create({
+      name: 'Account Name',
+      balance: 0,
+      user_id: userId,
+    })
+
+    await accountRepository.create({
+      name: 'Another Account Name',
+      balance: 0,
+      user_id: userId,
+    })
+
+    const response = await sut.execute({
+      userId,
+      options: {
+        search: 'anoth',
+      },
+    })
+
+    expect(response.accounts).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: expect.any(String),
+          name: 'Another Account Name',
+          balance: 0,
+        }),
+      ]),
+    )
+  })
 })

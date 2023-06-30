@@ -1,7 +1,10 @@
 import { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 
-import { AccountRepository } from '../account-repository'
+import {
+  AccountRepository,
+  FindManyByUserIdOptions,
+} from '../account-repository'
 
 export class PrismaAccountRepository implements AccountRepository {
   async findById(id: string) {
@@ -12,9 +15,14 @@ export class PrismaAccountRepository implements AccountRepository {
     return account
   }
 
-  async findManyByUserId(userId: string) {
+  async findManyByUserId(userId: string, options: FindManyByUserIdOptions) {
     const accounts = await prisma.account.findMany({
-      where: { user_id: userId },
+      where: {
+        user_id: userId,
+        name: {
+          contains: options?.search,
+        },
+      },
     })
 
     return accounts
