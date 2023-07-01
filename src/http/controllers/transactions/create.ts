@@ -35,13 +35,10 @@ export async function createTransaction(
       date: new Date(date),
       accountId,
       categoryId,
+      userId: request.user.sub,
     })
 
-    return reply.status(201).send(
-      returnData({
-        id: transaction.id,
-      }),
-    )
+    return reply.status(201).send(returnData({ id: transaction.id }))
   } catch (err) {
     if (err instanceof AccountNotFoundError) {
       reply.status(400).send({ message: err.message })

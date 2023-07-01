@@ -3,7 +3,7 @@ import { app } from '@/app'
 import { createAndAuthenticateUser } from '@/utils/test/create-and-authenticate-user'
 import { TransactionType } from '@/use-cases/transactions/create-transaction'
 
-describe('Fetch Transactions (e2e)', () => {
+describe('Fetch Transactions By Accounts (e2e)', () => {
   beforeAll(async () => {
     await app.ready()
   })
