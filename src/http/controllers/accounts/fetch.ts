@@ -1,8 +1,8 @@
+import { z } from 'zod'
 import { FastifyReply, FastifyRequest } from 'fastify'
 
 import { makeFetchAccountsUseCase } from '@/use-cases/factories/accounts/make-fetch-accounts-use-case'
 import { returnData } from '@/utils/http/returnData'
-import { z } from 'zod'
 
 export async function fetchAccounts(
   request: FastifyRequest,

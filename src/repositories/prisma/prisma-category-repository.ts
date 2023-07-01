@@ -1,7 +1,10 @@
 import { Category, Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 
-import { CategoryRepository } from '../category-repository'
+import {
+  CategoryRepository,
+  FindManyByUserIdOptions,
+} from '../category-repository'
 
 export class PrismaCategoryRepository implements CategoryRepository {
   async findById(id: string) {
@@ -20,12 +23,30 @@ export class PrismaCategoryRepository implements CategoryRepository {
     return category
   }
 
-  async findManyByUserId(userId: string) {
-    const categorys = await prisma.category.findMany({
-      where: { user_id: userId },
+  async findManyByUserId(userId: string, options: FindManyByUserIdOptions) {
+    const orArray: Prisma.CategoryWhereInput[] = [
+      {
+        name: {
+          contains: options?.search,
+          mode: 'insensitive',
+        },
+      },
+      {
+        description: {
+          contains: options?.search,
+          mode: 'insensitive',
+        },
+      },
+    ]
+
+    const categories = await prisma.category.findMany({
+      where: {
+        user_id: userId,
+        OR: options?.search ? orArray : undefined,
+      },
     })
 
-    return categorys
+    return categories
   }
 
   async create(category: Prisma.CategoryUncheckedCreateInput) {

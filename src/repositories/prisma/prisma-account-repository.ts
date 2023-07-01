@@ -21,6 +21,7 @@ export class PrismaAccountRepository implements AccountRepository {
         user_id: userId,
         name: {
           contains: options?.search,
+          mode: 'insensitive',
         },
       },
     })

@@ -59,4 +59,31 @@ describe('Fetch Categories Use Case', () => {
       }),
     ).rejects.toBeInstanceOf(UserNotFoundError)
   })
+
+  it('should be able to fetch categories with search option', async () => {
+    await categoryRepository.create({
+      name: 'Category Name',
+      description: 'Category Description',
+      color: 0,
+      user_id: userId,
+    })
+
+    const response = await sut.execute({
+      userId,
+      options: {
+        search: 'Category',
+      },
+    })
+
+    expect(response.categories).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: expect.any(String),
+          name: 'Category Name',
+          description: 'Category Description',
+          color: 0,
+        }),
+      ]),
+    )
+  })
 })

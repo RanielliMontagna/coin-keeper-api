@@ -1,7 +1,10 @@
 import { randomUUID } from 'node:crypto'
 
 import { Category, Prisma } from '@prisma/client'
-import { CategoryRepository } from '../category-repository'
+import {
+  CategoryRepository,
+  FindManyByUserIdOptions,
+} from '../category-repository'
 
 export class InMemoryCategoryRepository implements CategoryRepository {
   public categories: Category[] = []
@@ -28,8 +31,16 @@ export class InMemoryCategoryRepository implements CategoryRepository {
     return category
   }
 
-  async findManyByUserId(userId: string) {
+  async findManyByUserId(userId: string, options: FindManyByUserIdOptions) {
     const categories = this.categories.filter((c) => c.user_id === userId)
+
+    if (options?.search) {
+      return categories.filter((a) =>
+        a.name
+          .toLowerCase()
+          .includes(options.search?.toLocaleLowerCase() as string),
+      )
+    }
 
     return categories
   }
