@@ -16,6 +16,10 @@ export class InMemoryTransactionRepository implements TransactionRepository {
     return transaction
   }
 
+  async findManyByUserId(accountId: string) {
+    return this.transactions.filter((t) => t.user_id === accountId)
+  }
+
   async findManyByAccountId(accountId: string) {
     return this.transactions.filter((t) => t.account_id === accountId)
   }
@@ -30,6 +34,7 @@ export class InMemoryTransactionRepository implements TransactionRepository {
       date: new Date(transaction.date),
       account_id: transaction.account_id,
       category_id: transaction.category_id,
+      user_id: transaction.user_id,
       created_at: new Date(),
       updated_at: new Date(),
     }

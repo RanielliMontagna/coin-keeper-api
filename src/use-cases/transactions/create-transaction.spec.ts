@@ -34,6 +34,7 @@ describe('Create Transaction Use Case', () => {
       date: new Date(),
       accountId: 'account-id',
       categoryId: 'category-id',
+      userId,
     })
 
     expect(response.transaction).toEqual(
@@ -60,6 +61,7 @@ describe('Create Transaction Use Case', () => {
         date: new Date(),
         accountId: 'inexistent-account-id',
         categoryId: 'category-id',
+        userId,
       }),
     ).rejects.toBeInstanceOf(AccountNotFoundError)
   })

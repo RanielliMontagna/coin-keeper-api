@@ -17,6 +17,7 @@ interface CreateTransactionUseCaseRequest {
   date: Date
   accountId: string
   categoryId: string
+  userId: string
 }
 
 interface CreateTransactionUseCaseResponse {
@@ -37,6 +38,7 @@ export class CreateTransactionUseCase {
     date,
     accountId,
     categoryId,
+    userId,
   }: CreateTransactionUseCaseRequest): Promise<CreateTransactionUseCaseResponse> {
     const account = await this.accountRepository.findById(accountId)
 
@@ -52,6 +54,7 @@ export class CreateTransactionUseCase {
       date,
       account_id: accountId,
       category_id: categoryId,
+      user_id: userId,
     })
 
     return {

@@ -1,4 +1,4 @@
-import { FetchTransactionsUseCase } from '@/use-cases/transactions/fetch-transactions'
+import { FetchTransactionsUseCase } from '@/use-cases/transactions/fetch-transactions-by-account'
 
 import { PrismaTransactionRepository } from '@/repositories/prisma/prisma-transaction-repository'
 import { PrismaAccountRepository } from '@/repositories/prisma/prisma-account-repository'

@@ -3,20 +3,23 @@ import { InMemoryAccountRepository } from '@/repositories/in-memory/in-memory-ac
 
 import { AccountNotFoundError } from '@/use-cases/errors/account-not-found-error'
 
-import { FetchTransactionsUseCase } from './fetch-transactions'
+import { FetchTransactionsByAccountUseCase } from './fetch-transactions-by-account'
 import { TransactionType } from './create-transaction'
 
 let transactionRepository: InMemoryTransactionRepository
 let accountRepository: InMemoryAccountRepository
-let sut: FetchTransactionsUseCase
+let sut: FetchTransactionsByAccountUseCase
 
-describe('Fetch Transactions Use Case', () => {
+describe('Fetch Transactions Use Case By Account', () => {
   const accountId = 'account-id'
 
   beforeEach(async () => {
     transactionRepository = new InMemoryTransactionRepository()
     accountRepository = new InMemoryAccountRepository()
-    sut = new FetchTransactionsUseCase(transactionRepository, accountRepository)
+    sut = new FetchTransactionsByAccountUseCase(
+      transactionRepository,
+      accountRepository,
+    )
 
     await accountRepository.create({
       id: accountId,
@@ -26,7 +29,7 @@ describe('Fetch Transactions Use Case', () => {
     })
   })
 
-  it('should be able to fetch transactions', async () => {
+  it('should be able to fetch transactions by account', async () => {
     await transactionRepository.create({
       title: 'Transaction Name',
       amount: 100,
@@ -34,6 +37,7 @@ describe('Fetch Transactions Use Case', () => {
       date: new Date(),
       account_id: accountId,
       category_id: 'category-id',
+      user_id: 'user-id',
     })
 
     const response = await sut.execute({

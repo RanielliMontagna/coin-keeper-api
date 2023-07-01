@@ -12,6 +12,14 @@ export class PrismaTransactionRepository implements TransactionRepository {
     return transaction
   }
 
+  async findManyByUserId(userId: string) {
+    const transactions = await prisma.transaction.findMany({
+      where: { user_id: userId },
+    })
+
+    return transactions
+  }
+
   async findManyByAccountId(accountId: string) {
     const transactions = await prisma.transaction.findMany({
       where: { account_id: accountId },
