@@ -15,6 +15,27 @@ export class PrismaTransactionRepository implements TransactionRepository {
   async findManyByUserId(userId: string) {
     const transactions = await prisma.transaction.findMany({
       where: { user_id: userId },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        amount: true,
+        type: true,
+        date: true,
+        account: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            color: true,
+          },
+        },
+      },
     })
 
     return transactions

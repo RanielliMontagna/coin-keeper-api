@@ -17,7 +17,22 @@ export class InMemoryTransactionRepository implements TransactionRepository {
   }
 
   async findManyByUserId(accountId: string) {
-    return this.transactions.filter((t) => t.user_id === accountId)
+    const transactions = this.transactions.filter(
+      (t) => t.user_id === accountId,
+    )
+
+    return transactions.map((t) => ({
+      ...t,
+      account: {
+        id: t.account_id,
+        name: 'Account Name',
+      },
+      category: {
+        id: t.category_id,
+        name: 'Category Name',
+        color: 1,
+      },
+    }))
   }
 
   async findManyByAccountId(accountId: string) {

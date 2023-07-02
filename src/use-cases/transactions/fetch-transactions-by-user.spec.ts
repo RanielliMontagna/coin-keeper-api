@@ -9,7 +9,7 @@ import { FetchTransactionsByUserUseCase } from './fetch-transactions-by-user'
 import { TransactionType } from './create-transaction'
 
 let transactionRepository: InMemoryTransactionRepository
-let useRepository: InMemoryUserRepository
+let userRepository: InMemoryUserRepository
 let sut: FetchTransactionsByUserUseCase
 
 describe('Fetch Transactions By User Use Case', () => {
@@ -17,13 +17,13 @@ describe('Fetch Transactions By User Use Case', () => {
 
   beforeEach(async () => {
     transactionRepository = new InMemoryTransactionRepository()
-    useRepository = new InMemoryUserRepository()
+    userRepository = new InMemoryUserRepository()
     sut = new FetchTransactionsByUserUseCase(
       transactionRepository,
-      useRepository,
+      userRepository,
     )
 
-    await useRepository.create({
+    await userRepository.create({
       id: userId,
       name: 'User Name',
       email: 'user@name',
@@ -56,6 +56,8 @@ describe('Fetch Transactions By User Use Case', () => {
           amount: 100,
           type: TransactionType.EXPENSE,
           date: expect.any(Date),
+          account: expect.objectContaining({ id: 'account-id' }),
+          category: expect.objectContaining({ id: 'category-id' }),
         }),
       ]),
     )
