@@ -21,6 +21,7 @@ export interface TransactionRepository {
   findById(id: string): Promise<Transaction | null>
   findManyByAccountId(accountId: string): Promise<Transaction[]>
   findManyByUserId(userId: string): Promise<TransactionWithAccount[]>
+  findFiveLatestByUserId(userId: string): Promise<TransactionWithAccount[]>
   create(
     transaction: Prisma.TransactionUncheckedCreateInput,
   ): Promise<Transaction>

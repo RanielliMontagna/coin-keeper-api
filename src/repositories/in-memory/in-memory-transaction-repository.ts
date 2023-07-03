@@ -16,6 +16,10 @@ export class InMemoryTransactionRepository implements TransactionRepository {
     return transaction
   }
 
+  async findManyByAccountId(accountId: string) {
+    return this.transactions.filter((t) => t.account_id === accountId)
+  }
+
   async findManyByUserId(accountId: string) {
     const transactions = this.transactions.filter(
       (t) => t.user_id === accountId,
@@ -35,8 +39,23 @@ export class InMemoryTransactionRepository implements TransactionRepository {
     }))
   }
 
-  async findManyByAccountId(accountId: string) {
-    return this.transactions.filter((t) => t.account_id === accountId)
+  async findFiveLatestByUserId(userId: string) {
+    const transactions = this.transactions
+      .filter((t) => t.user_id === userId)
+      .slice(0, 5)
+
+    return transactions.map((t) => ({
+      ...t,
+      account: {
+        id: t.account_id,
+        name: 'Account Name',
+      },
+      category: {
+        id: t.category_id,
+        name: 'Category Name',
+        color: 1,
+      },
+    }))
   }
 
   async create(transaction: Prisma.TransactionUncheckedCreateInput) {

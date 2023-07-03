@@ -12,6 +12,14 @@ export class PrismaTransactionRepository implements TransactionRepository {
     return transaction
   }
 
+  async findManyByAccountId(accountId: string) {
+    const transactions = await prisma.transaction.findMany({
+      where: { account_id: accountId },
+    })
+
+    return transactions
+  }
+
   async findManyByUserId(userId: string) {
     const transactions = await prisma.transaction.findMany({
       where: { user_id: userId },
@@ -41,9 +49,31 @@ export class PrismaTransactionRepository implements TransactionRepository {
     return transactions
   }
 
-  async findManyByAccountId(accountId: string) {
+  async findFiveLatestByUserId(userId: string) {
     const transactions = await prisma.transaction.findMany({
-      where: { account_id: accountId },
+      where: { user_id: userId },
+      take: 5,
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        amount: true,
+        type: true,
+        date: true,
+        account: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            color: true,
+          },
+        },
+      },
     })
 
     return transactions
