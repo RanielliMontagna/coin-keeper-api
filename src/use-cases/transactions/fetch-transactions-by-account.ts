@@ -5,11 +5,11 @@ import { AccountRepository } from '@/repositories/account-repository'
 
 import { AccountNotFoundError } from '@/use-cases/errors/account-not-found-error'
 
-interface FetchTransactionsUseCaseRequest {
+interface FetchTransactionsByAccountUseCaseRequest {
   accountId: string
 }
 
-interface FetchTransactionsUseCaseResponse {
+interface FetchTransactionsByAccountCaseResponse {
   transactions: {
     id: Transaction['id']
     title: Transaction['title']
@@ -20,7 +20,7 @@ interface FetchTransactionsUseCaseResponse {
   }[]
 }
 
-export class FetchTransactionsUseCase {
+export class FetchTransactionsByAccountUseCase {
   constructor(
     private transactionRepository: TransactionRepository,
     private accountRepository: AccountRepository,
@@ -28,7 +28,7 @@ export class FetchTransactionsUseCase {
 
   async execute({
     accountId,
-  }: FetchTransactionsUseCaseRequest): Promise<FetchTransactionsUseCaseResponse> {
+  }: FetchTransactionsByAccountUseCaseRequest): Promise<FetchTransactionsByAccountCaseResponse> {
     const account = await this.accountRepository.findById(accountId)
 
     if (!account) {

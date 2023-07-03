@@ -8,18 +8,14 @@ export async function deleteTransaction(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
-  const deleteTransactionQuerySchema = z.object({
-    id: z.string(),
-  })
+  const deleteTransactionQuerySchema = z.object({ id: z.string() })
 
   const { id } = deleteTransactionQuerySchema.parse(request.params)
 
   try {
     const deleteTransactionUseCase = makeDeleteTransactionUseCase()
 
-    await deleteTransactionUseCase.execute({
-      transactionId: id,
-    })
+    await deleteTransactionUseCase.execute({ transactionId: id })
   } catch (err) {
     if (err instanceof TransactionNotFoundError) {
       reply.status(400).send({ message: err.message })

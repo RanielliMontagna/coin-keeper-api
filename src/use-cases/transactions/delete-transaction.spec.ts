@@ -25,10 +25,11 @@ describe('Update Transaction Use Case', () => {
       email: 'user@name.com',
       type: UserTypeEnum.ADMIN,
       organization_id: 'organization-id',
+      password_hash: 'password-hash',
     })
   })
 
-  it('should be able to delete a transaction', async () => {
+  it('should be able to delete a expense', async () => {
     const transaction = await transactionRepository.create({
       title: 'Transaction Name',
       description: 'Transaction Description',
@@ -37,6 +38,7 @@ describe('Update Transaction Use Case', () => {
       date: new Date(),
       account_id: 'account-id',
       category_id: 'category-id',
+      user_id: userId,
     })
 
     const response = await sut.execute({
@@ -50,6 +52,36 @@ describe('Update Transaction Use Case', () => {
         description: 'Transaction Description',
         amount: 100,
         type: TransactionType.EXPENSE,
+        date: expect.any(Date),
+        account_id: 'account-id',
+        category_id: 'category-id',
+      }),
+    )
+  })
+
+  it('should be able to delete a income', async () => {
+    const transaction = await transactionRepository.create({
+      title: 'Transaction Name',
+      description: 'Transaction Description',
+      amount: 100,
+      type: TransactionType.INCOME,
+      date: new Date(),
+      account_id: 'account-id',
+      category_id: 'category-id',
+      user_id: userId,
+    })
+
+    const response = await sut.execute({
+      transactionId: transaction.id,
+    })
+
+    expect(response.transaction).toEqual(
+      expect.objectContaining({
+        id: expect.any(String),
+        title: 'Transaction Name',
+        description: 'Transaction Description',
+        amount: 100,
+        type: TransactionType.INCOME,
         date: expect.any(Date),
         account_id: 'account-id',
         category_id: 'category-id',

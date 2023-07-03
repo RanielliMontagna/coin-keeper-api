@@ -34,8 +34,9 @@ model User {
     organization    Organization @relation(fields: [organization_id], references: [id])
     organization_id String
 
-    Account  Account[]
-    Category Category[]
+    Account     Account[]
+    Category    Category[]
+    Transaction Transaction[]
 
     @@map("users")
 }
@@ -44,6 +45,8 @@ model Account {
     id         String   @id @default(uuid())
     name       String
     balance    Float
+    expense    Float    @default(0)
+    income     Float    @default(0)
     created_at DateTime @default(now())
     updated_at DateTime @updatedAt
     user_id    String
@@ -85,9 +88,11 @@ model Transaction {
     updated_at  DateTime        @updatedAt
     account_id  String
     category_id String
+    user_id     String
 
     account  Account  @relation(fields: [account_id], references: [id])
     category Category @relation(fields: [category_id], references: [id])
+    user     User     @relation(fields: [user_id], references: [id])
 
     @@map("transactions")
 }

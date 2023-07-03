@@ -1,21 +1,19 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 
-import { makeFetchTransactionsUseCase } from '@/use-cases/factories/transactions/make-fetch-transactions-use-case'
+import { makeFetchTransactionsByAccountUseCase } from '@/use-cases/factories/transactions/make-fetch-transactions-use-by-account-case'
 import { returnData } from '@/utils/http/returnData'
 import { AccountNotFoundError } from '@/use-cases/errors/account-not-found-error'
 
-export async function fetchTransactions(
+export async function fetchByAccountsTransactions(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
-  const fetchTransactionsParamsSchema = z.object({
-    accountId: z.string(),
-  })
+  const fetchTransactionsParamsSchema = z.object({ accountId: z.string() })
   const { accountId } = fetchTransactionsParamsSchema.parse(request.params)
 
   try {
-    const fetchTransactionsUseCase = makeFetchTransactionsUseCase()
+    const fetchTransactionsUseCase = makeFetchTransactionsByAccountUseCase()
 
     const { transactions } = await fetchTransactionsUseCase.execute({
       accountId,

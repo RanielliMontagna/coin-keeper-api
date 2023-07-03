@@ -4,9 +4,11 @@ import { CategoryRepository } from '@/repositories/category-repository'
 import { UserRepository } from '@/repositories/user-repository'
 
 import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
+import { Options } from '../options/options'
 
 interface FetchCategoriesUseCaseRequest {
   userId: string
+  options?: Options
 }
 
 interface FetchCategoriesUseCaseResponse {
@@ -26,6 +28,7 @@ export class FetchCategoriesUseCase {
 
   async execute({
     userId,
+    options,
   }: FetchCategoriesUseCaseRequest): Promise<FetchCategoriesUseCaseResponse> {
     const user = await this.userRepository.findById(userId)
 
@@ -33,7 +36,10 @@ export class FetchCategoriesUseCase {
       throw new UserNotFoundError()
     }
 
-    const categories = await this.categoryRepository.findManyByUserId(userId)
+    const categories = await this.categoryRepository.findManyByUserId(
+      userId,
+      options,
+    )
 
     return {
       categories: categories.map((category) => ({
