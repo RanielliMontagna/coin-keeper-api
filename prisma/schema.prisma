@@ -45,6 +45,8 @@ model Account {
     id         String   @id @default(uuid())
     name       String
     balance    Float
+    expense    Float    @default(0)
+    income     Float    @default(0)
     created_at DateTime @default(now())
     updated_at DateTime @updatedAt
     user_id    String

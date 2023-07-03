@@ -3,7 +3,7 @@ import { app } from '@/app'
 import { createAndAuthenticateUser } from '@/utils/test/create-and-authenticate-user'
 import { TransactionType } from '@/use-cases/transactions/create-transaction'
 
-describe('Get Latest Transactions (e2e)', () => {
+describe('Get Transactions Balance (e2e)', () => {
   beforeAll(async () => {
     await app.ready()
   })
@@ -12,7 +12,7 @@ describe('Get Latest Transactions (e2e)', () => {
     await app.close()
   })
 
-  it('should be able to fetch latest transactions', async () => {
+  it('should be able to fetch transactions balance', async () => {
     const { token } = await createAndAuthenticateUser(app)
 
     const responseAccount = await request(app.server)
@@ -20,7 +20,7 @@ describe('Get Latest Transactions (e2e)', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         name: 'Account Example',
-        balance: 1000,
+        balance: 0,
       })
 
     const responseCategory = await request(app.server)
@@ -48,18 +48,16 @@ describe('Get Latest Transactions (e2e)', () => {
     }
 
     const response = await request(app.server)
-      .get(`/transactions/latest`)
+      .get(`/transactions/balance`)
       .set('Authorization', `Bearer ${token}`)
       .send()
 
     expect(response.status).toEqual(200)
     expect(response.body).toEqual({
       data: {
-        transactions: expect.arrayContaining([
-          expect.objectContaining({
-            title: 'Transaction Example 9',
-          }),
-        ]),
+        balance: 10000,
+        expenses: 0,
+        incomes: 10000,
       },
     })
   })

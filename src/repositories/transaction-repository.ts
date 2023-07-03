@@ -17,11 +17,18 @@ interface TransactionWithAccount {
     color: Category['color']
   }
 }
+
+export interface Balance {
+  balance: number
+  incomes: number
+  expenses: number
+}
 export interface TransactionRepository {
   findById(id: string): Promise<Transaction | null>
   findManyByAccountId(accountId: string): Promise<Transaction[]>
   findManyByUserId(userId: string): Promise<TransactionWithAccount[]>
   findFiveLatestByUserId(userId: string): Promise<TransactionWithAccount[]>
+  findBalanceByUserId(userId: string): Promise<Balance>
   create(
     transaction: Prisma.TransactionUncheckedCreateInput,
   ): Promise<Transaction>

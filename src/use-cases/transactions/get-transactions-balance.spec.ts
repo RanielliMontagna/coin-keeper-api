@@ -5,20 +5,20 @@ import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-
 
 import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
 
-import { GetLatestTransactionsByUserUseCase } from './get-latest-transactions'
+import { GetTransactionsBalanceUseCase } from './get-transactions-balance'
 import { TransactionType } from './create-transaction'
 
 let transactionRepository: InMemoryTransactionRepository
 let userRepository: InMemoryUserRepository
-let sut: GetLatestTransactionsByUserUseCase
+let sut: GetTransactionsBalanceUseCase
 
-describe('Fetch Transactions By User Use Case', () => {
+describe('Get Transaction Balance Use Case', () => {
   const userId = 'user-id'
 
   beforeEach(async () => {
     transactionRepository = new InMemoryTransactionRepository()
     userRepository = new InMemoryUserRepository()
-    sut = new GetLatestTransactionsByUserUseCase(
+    sut = new GetTransactionsBalanceUseCase(
       transactionRepository,
       userRepository,
     )
@@ -33,12 +33,12 @@ describe('Fetch Transactions By User Use Case', () => {
     })
   })
 
-  it('should be able to fetch transactions by user', async () => {
-    for (let i = 0; i < 10; i++) {
+  it('should be able to get transaction balance', async () => {
+    for (let i = 1; i <= 2; i++) {
       await transactionRepository.create({
         title: `Transaction Name ${i + 1}`,
-        amount: 100,
-        type: TransactionType.EXPENSE,
+        amount: i * 100,
+        type: i % 2 === 0 ? TransactionType.EXPENSE : TransactionType.INCOME,
         date: new Date(),
         account_id: 'account-id',
         category_id: 'category-id',
@@ -48,24 +48,16 @@ describe('Fetch Transactions By User Use Case', () => {
 
     const response = await sut.execute({ userId })
 
-    expect(response.transactions).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          id: expect.any(String),
-          title: 'Transaction Name 9',
-          amount: 100,
-          type: TransactionType.EXPENSE,
-          date: expect.any(Date),
-          account: expect.objectContaining({ id: 'account-id' }),
-          category: expect.objectContaining({ id: 'category-id' }),
-        }),
-      ]),
-    )
+    expect(response.balance).toEqual(-100)
+    expect(response.incomes).toEqual(100)
+    expect(response.expenses).toEqual(200)
   })
 
-  it('should not be able to fetch transactions by user if user does not exist', async () => {
-    await expect(sut.execute({ userId: 'invalid-user-id' })).rejects.toThrow(
-      new UserNotFoundError(),
-    )
+  it('should not be able to get transaction balance with invalid user', async () => {
+    await expect(
+      sut.execute({
+        userId: 'invalid-user-id',
+      }),
+    ).rejects.toEqual(new UserNotFoundError())
   })
 })

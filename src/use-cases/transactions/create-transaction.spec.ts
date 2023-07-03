@@ -25,7 +25,7 @@ describe('Create Transaction Use Case', () => {
     })
   })
 
-  it('should be able to create a new transaction', async () => {
+  it('should be able to create a new expense', async () => {
     const response = await sut.execute({
       title: 'Transaction Title',
       description: 'Transaction Description',
@@ -44,6 +44,32 @@ describe('Create Transaction Use Case', () => {
         description: 'Transaction Description',
         amount: 100,
         type: TransactionType.EXPENSE,
+        date: expect.any(Date),
+        account_id: 'account-id',
+        category_id: 'category-id',
+      }),
+    )
+  })
+
+  it('should be able to create a new income', async () => {
+    const response = await sut.execute({
+      title: 'Transaction Title',
+      description: 'Transaction Description',
+      amount: 100,
+      type: TransactionType.INCOME,
+      date: new Date(),
+      accountId: 'account-id',
+      categoryId: 'category-id',
+      userId,
+    })
+
+    expect(response.transaction).toEqual(
+      expect.objectContaining({
+        id: expect.any(String),
+        title: 'Transaction Title',
+        description: 'Transaction Description',
+        amount: 100,
+        type: TransactionType.INCOME,
         date: expect.any(Date),
         account_id: 'account-id',
         category_id: 'category-id',
