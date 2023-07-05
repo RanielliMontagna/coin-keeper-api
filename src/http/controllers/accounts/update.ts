@@ -5,6 +5,8 @@ import { makeUpdateAccountUseCase } from '@/use-cases/factories/accounts/make-up
 import { AccountNotFoundError } from '@/use-cases/errors/account-not-found-error'
 import { returnData } from '@/utils/http/returnData'
 
+import { InstitutionTypeEnum } from './create'
+
 export async function updateAccount(
   request: FastifyRequest,
   reply: FastifyReply,
@@ -17,16 +19,20 @@ export async function updateAccount(
 
   const updateAccountBodySchema = z.object({
     name: z.string(),
+    institution: z.nativeEnum(InstitutionTypeEnum).optional(),
     balance: z.number(),
   })
 
-  const { name, balance } = updateAccountBodySchema.parse(request.body)
+  const { name, institution, balance } = updateAccountBodySchema.parse(
+    request.body,
+  )
 
   const updateAccountUseCase = makeUpdateAccountUseCase()
 
   try {
     const { account } = await updateAccountUseCase.execute({
       name,
+      institution,
       balance,
       accountId: id,
       userId: request.user.sub,
@@ -35,6 +41,7 @@ export async function updateAccount(
     return reply.status(200).send(
       returnData({
         id: account.id,
+        institution: account.institution,
         name: account.name,
         balance: account.balance,
       }),

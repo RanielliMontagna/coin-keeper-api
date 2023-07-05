@@ -1,6 +1,7 @@
 import request from 'supertest'
 import { app } from '@/app'
 import { createAndAuthenticateUser } from '@/utils/test/create-and-authenticate-user'
+import { Institution } from '@prisma/client'
 
 describe('Update Account (e2e)', () => {
   beforeAll(async () => {
@@ -19,6 +20,7 @@ describe('Update Account (e2e)', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         name: 'Account Example',
+        institution: Institution.NUBANK,
         balance: 1000,
       })
 
@@ -27,6 +29,7 @@ describe('Update Account (e2e)', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         name: 'Account Example Updated',
+        institution: Institution.INTER,
         balance: 2000,
       })
 
@@ -34,6 +37,7 @@ describe('Update Account (e2e)', () => {
     expect(response.body).toEqual({
       data: {
         id: createAccountResponse.body.data.id,
+        institution: Institution.INTER,
         name: 'Account Example Updated',
         balance: 2000,
       },

@@ -1,6 +1,7 @@
 import request from 'supertest'
 import { app } from '@/app'
 import { createAndAuthenticateUser } from '@/utils/test/create-and-authenticate-user'
+import { Institution } from '@prisma/client'
 
 describe('Fetch Accounts (e2e)', () => {
   beforeAll(async () => {
@@ -19,6 +20,7 @@ describe('Fetch Accounts (e2e)', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         name: 'Account Example',
+        institution: Institution.NUBANK,
         balance: 1000,
       })
 
@@ -32,6 +34,7 @@ describe('Fetch Accounts (e2e)', () => {
         accounts: expect.arrayContaining([
           expect.objectContaining({
             id: createAccountResponse.body.data.id,
+            institution: Institution.NUBANK,
             name: 'Account Example',
             balance: 1000,
           }),
