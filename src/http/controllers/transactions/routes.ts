@@ -8,6 +8,9 @@ import { createTransaction } from './create'
 import { deleteTransaction } from './delete'
 import { getLatestTransactions } from './get-latest-transactions'
 import { getTransactionsBalance } from './get-transactions-balance'
+import { getTransactionsGraphicsWeek } from './get-transactions-graphics-week'
+import { getTransactionsGraphicsMonth } from './get-transactions-graphics-month'
+import { getTransactionsGraphicsYear } from './get-transactions-graphics-year'
 
 export async function transactionRoutes(app: FastifyInstance) {
   app.addHook('onRequest', verifyJWT)
@@ -16,6 +19,10 @@ export async function transactionRoutes(app: FastifyInstance) {
   app.get('/transactions', fetchByUserTransactions)
   app.get('/transactions/latest', getLatestTransactions)
   app.get('/transactions/balance', getTransactionsBalance)
+
+  app.get('/transactions/graphics/week', getTransactionsGraphicsWeek)
+  app.get('/transactions/graphics/month', getTransactionsGraphicsMonth)
+  app.get('/transactions/graphics/year', getTransactionsGraphicsYear)
 
   app.post('/transactions', createTransaction)
   app.delete('/transactions/:id', deleteTransaction)

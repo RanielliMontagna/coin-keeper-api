@@ -38,6 +38,9 @@ export class InMemoryAccountRepository implements AccountRepository {
       id: account.id || randomUUID(),
       name: account.name,
       balance: account.balance,
+      expense: account.expense || 0,
+      income: account.income || 0,
+
       created_at: new Date(),
       updated_at: new Date(),
 
@@ -59,6 +62,8 @@ export class InMemoryAccountRepository implements AccountRepository {
         typeof account.balance === 'number'
           ? account.balance
           : _account.balance,
+      expense: typeof account.expense === 'number' ? account.expense : 0,
+      income: typeof account.income === 'number' ? account.income : 0,
       created_at: _account.created_at,
       updated_at: new Date(),
       user_id: _account.user_id,
