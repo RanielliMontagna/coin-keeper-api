@@ -6,6 +6,7 @@ import { returnData } from '@/utils/http/returnData'
 
 export enum InstitutionTypeEnum {
   NUBANK = 'NUBANK',
+  XP = 'XP',
   ITAU = 'ITAU',
   BRADESCO = 'BRADESCO',
   SANTANDER = 'SANTANDER',
