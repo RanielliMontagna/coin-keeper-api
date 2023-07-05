@@ -1,5 +1,6 @@
 import { TransactionRepository } from '@/repositories/transaction-repository'
 import { UserRepository } from '@/repositories/user-repository'
+import { UserNotFoundError } from '../errors/user-not-found-error'
 
 interface GetTransactionsGraphicsYearUseCaseRequest {
   userId: string
@@ -22,14 +23,14 @@ export class GetTransactionsGraphicsYearUseCase {
   async execute({
     userId,
   }: GetTransactionsGraphicsYearUseCaseRequest): Promise<GetTransactionsGraphicsYearUseCaseResponse> {
-    //TODO - Implementar lógica para retornar os dados da semana
+    const user = await this.userRepository.findById(userId)
 
-    return {
-      year: new Array(12).fill(0).map((_, index) => ({
-        balance: 1000 + index * 100,
-        incomes: 500 + index * 100,
-        expenses: 200 + index * 100,
-      })),
+    if (!user) {
+      throw new UserNotFoundError()
     }
+
+    const year = await this.transactionRepository.getGraphicsYear(userId)
+
+    return { year }
   }
 }

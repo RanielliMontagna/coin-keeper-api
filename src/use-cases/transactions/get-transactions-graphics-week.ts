@@ -23,14 +23,14 @@ export class GetTransactionsGraphicsWeekUseCase {
   async execute({
     userId,
   }: GetTransactionsGraphicsWeekUseCaseRequest): Promise<GetTransactionsGraphicsWeekUseCaseResponse> {
-    //TODO - Implementar lógica para retornar os dados da semana
+    const user = await this.userRepository.findById(userId)
 
-    return {
-      week: new Array(7).fill(0).map((_, index) => ({
-        balance: 1000 + index * 100,
-        incomes: 500 + index * 100,
-        expenses: 200 + index * 100,
-      })),
+    if (!user) {
+      throw new UserNotFoundError()
     }
+
+    const week = await this.transactionRepository.getGraphicsWeek(userId)
+
+    return { week }
   }
 }

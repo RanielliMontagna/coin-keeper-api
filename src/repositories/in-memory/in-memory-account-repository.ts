@@ -62,8 +62,8 @@ export class InMemoryAccountRepository implements AccountRepository {
         typeof account.balance === 'number'
           ? account.balance
           : _account.balance,
-      expense: typeof account.expense === 'number' ? account.expense : 0,
-      income: typeof account.income === 'number' ? account.income : 0,
+      expense: 0,
+      income: 0,
       created_at: _account.created_at,
       updated_at: new Date(),
       user_id: _account.user_id,

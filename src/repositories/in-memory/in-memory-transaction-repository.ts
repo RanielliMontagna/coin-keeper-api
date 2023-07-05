@@ -6,7 +6,7 @@ import {
   type Transaction,
   Account,
 } from '@prisma/client'
-import type { TransactionRepository } from '../transaction-repository'
+import type { Balance, TransactionRepository } from '../transaction-repository'
 
 export class InMemoryTransactionRepository implements TransactionRepository {
   public transactions: Transaction[] = []
@@ -139,5 +139,139 @@ export class InMemoryTransactionRepository implements TransactionRepository {
     }
 
     return transaction
+  }
+
+  async getGraphicsWeek(userId: string) {
+    const day = new Date().getDay()
+
+    const transactions = this.transactions
+      .filter((t) => t.user_id === userId)
+      .filter((t) => {
+        const today = new Date().getDay()
+        const transactionDay = new Date(t.date).getDay()
+
+        return today - transactionDay <= 7
+      })
+
+    const week = new Array(7).fill({
+      balance: 0,
+      expenses: 0,
+      incomes: 0,
+    }) as Balance[]
+
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(new Date().setDate(new Date().getDate() - day + i))
+
+      const incomes = transactions
+        .filter(
+          (t) =>
+            t.type === TransactionType.INCOME &&
+            t.date.getDate() === date.getDate(),
+        )
+        .reduce((acc, t) => acc + t.amount, 0)
+
+      const expenses = transactions
+        .filter(
+          (t) =>
+            t.type === TransactionType.EXPENSE &&
+            t.date.getDate() === date.getDate(),
+        )
+        .reduce((acc, t) => acc + t.amount, 0)
+
+      week[i] = {
+        balance: incomes - expenses,
+        expenses,
+        incomes,
+      }
+    }
+
+    return week
+  }
+
+  async getGraphicsMonth(userId: string) {
+    const daysInMonth = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth() + 1,
+      0,
+    ).getDate()
+
+    const transactions = this.transactions
+      .filter((t) => t.user_id === userId)
+      .filter((t) => {
+        const month = new Date().getMonth()
+        const transactionMonth = new Date(t.date).getMonth()
+
+        return month - transactionMonth <= 1
+      })
+
+    const balance: Balance[] = new Array(daysInMonth).fill({
+      balance: 0,
+      incomes: 0,
+      expenses: 0,
+    })
+
+    for (let i = 0; i < daysInMonth; i++) {
+      const date = new Date(new Date().setDate(i + 1))
+      const day = date.getDate()
+
+      const incomes = transactions
+        .filter(
+          (t) => t.type === TransactionType.INCOME && t.date.getDate() === day,
+        )
+        .reduce((acc, t) => acc + t.amount, 0)
+
+      const expenses = transactions
+        .filter(
+          (t) => t.type === TransactionType.EXPENSE && t.date.getDate() === day,
+        )
+        .reduce((acc, t) => acc + t.amount, 0)
+
+      balance[i] = { balance: incomes - expenses, incomes, expenses }
+    }
+
+    return balance
+  }
+
+  async getGraphicsYear(userId: string) {
+    const year = new Date().getFullYear()
+
+    const transactions = this.transactions
+      .filter((t) => t.user_id === userId)
+      .filter((t) => {
+        const transactionYear = new Date(t.date).getFullYear()
+
+        return year - transactionYear <= 1
+      })
+
+    const balance = new Array(12).fill({
+      balance: 0,
+      expenses: 0,
+      incomes: 0,
+    }) as Balance[]
+
+    for (let i = 0; i < 12; i++) {
+      const date = new Date(new Date().setMonth(new Date().getMonth() - i))
+      const month = date.getMonth()
+
+      const incomes = transactions.filter(
+        (t) => t.type === TransactionType.INCOME && t.date.getMonth() === month,
+      )
+
+      const expenses = transactions.filter(
+        (t) =>
+          t.type === TransactionType.EXPENSE && t.date.getMonth() === month,
+      )
+
+      const incomesAmount = incomes.reduce((acc, t) => acc + t.amount, 0)
+      const expensesAmount = expenses.reduce((acc, t) => acc + t.amount, 0)
+
+      balance[month] = {
+        balance: incomesAmount - expensesAmount,
+        incomes: incomesAmount,
+        expenses: expensesAmount,
+      }
+    }
+
+    return balance
   }
 }
