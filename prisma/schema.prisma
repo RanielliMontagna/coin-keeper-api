@@ -37,22 +37,38 @@ model User {
     Account     Account[]
     Category    Category[]
     Transaction Transaction[]
+    CreditCard  CreditCard[]
 
     @@map("users")
 }
 
+enum Institution {
+    NUBANK
+    ITAU
+    BRADESCO
+    SANTANDER
+    BANCO_DO_BRASIL
+    CAIXA
+    INTER
+    SICOOB
+    SICREDI
+    OTHER
+}
+
 model Account {
-    id         String   @id @default(uuid())
-    name       String
-    balance    Float
-    expense    Float    @default(0)
-    income     Float    @default(0)
-    created_at DateTime @default(now())
-    updated_at DateTime @updatedAt
-    user_id    String
+    id          String      @id @default(uuid())
+    name        String
+    institution Institution @default(OTHER)
+    balance     Float
+    expense     Float       @default(0)
+    income      Float       @default(0)
+    created_at  DateTime    @default(now())
+    updated_at  DateTime    @updatedAt
+    user_id     String
 
     user        User          @relation(fields: [user_id], references: [id])
     Transaction Transaction[]
+    CreditCard  CreditCard[]
 
     @@map("accounts")
 }
@@ -95,4 +111,33 @@ model Transaction {
     user     User     @relation(fields: [user_id], references: [id])
 
     @@map("transactions")
+}
+
+enum Flag {
+    VISA
+    MASTERCARD
+    ELO
+    AMERICAN_EXPRESS
+    HIPERCARD
+    DINERS_CLUB
+    DISCOVER
+    JCB
+    AURA
+    OTHER
+}
+
+model CreditCard {
+    id         String   @id @default(uuid())
+    name       String
+    limit      Float
+    flag       Flag     @default(OTHER)
+    closingDay Int
+    dueDay     Int
+    userId     String
+    accountId  String
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+
+    User    User    @relation(fields: [userId], references: [id])
+    Account Account @relation(fields: [accountId], references: [id])
 }
