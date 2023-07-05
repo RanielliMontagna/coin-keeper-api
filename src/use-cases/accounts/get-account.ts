@@ -15,6 +15,7 @@ interface GetAccountUseCaseResponse {
   account: {
     id: Account['id']
     name: Account['name']
+    institution: Account['institution']
     balance: Account['balance']
   }
 }
@@ -45,6 +46,7 @@ export class GetAccountUseCase {
       account: {
         id: account.id,
         name: account.name,
+        institution: account.institution,
         balance: account.balance,
       },
     }

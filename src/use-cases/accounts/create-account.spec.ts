@@ -5,6 +5,7 @@ import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
 
 import { CreateAccountUseCase } from './create-account'
 import { UserTypeEnum } from '../users/register-user'
+import { Institution } from '@prisma/client'
 
 let accountRepository: InMemoryAccountRepository
 let userRepository: InMemoryUserRepository
@@ -31,6 +32,7 @@ describe('Create Account Use Case', () => {
   it('should be able to create a new account', async () => {
     const response = await sut.execute({
       name: 'Account Name',
+      institution: Institution.NUBANK,
       balance: 100,
       userId: userId,
     })
@@ -51,6 +53,7 @@ describe('Create Account Use Case', () => {
     await expect(
       sut.execute({
         name: 'Account Name',
+        institution: Institution.NUBANK,
         balance: 100,
         userId: 'non-existing-user-id',
       }),

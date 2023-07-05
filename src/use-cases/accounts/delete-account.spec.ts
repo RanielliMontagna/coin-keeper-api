@@ -3,7 +3,6 @@ import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-
 
 import { UserTypeEnum } from '@/use-cases/users/register-user'
 
-import { UpdateAccountUseCase } from './update-account'
 import { DeleteAccountUseCase } from './delete-account'
 import { AccountNotFoundError } from '../errors/account-not-found-error'
 

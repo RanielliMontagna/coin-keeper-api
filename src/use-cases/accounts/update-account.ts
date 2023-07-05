@@ -20,6 +20,7 @@ export class UpdateAccountUseCase {
   async execute({
     balance,
     name,
+    institution,
     userId,
     accountId,
   }: UpdateAccountCaseRequest): Promise<UpdateAccountCaseResponse> {
@@ -32,12 +33,11 @@ export class UpdateAccountUseCase {
     const updatedAccount = await this.accountRepository.update({
       id: accountId,
       name: name,
+      institution: institution,
       balance: balance,
       user_id: userId,
     })
 
-    return {
-      account: updatedAccount,
-    }
+    return { account: updatedAccount }
   }
 }

@@ -1,4 +1,4 @@
-import type { Account } from '@prisma/client'
+import type { Account, Institution } from '@prisma/client'
 
 import type { AccountRepository } from '@/repositories/account-repository'
 import type { UserRepository } from '@/repositories/user-repository'
@@ -7,6 +7,7 @@ import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
 
 export interface CreateAccountUseCaseRequest {
   name: string
+  institution: Institution
   balance: number
   userId: string
 }
@@ -24,6 +25,7 @@ export class CreateAccountUseCase {
   async execute({
     balance,
     name,
+    institution,
     userId,
   }: CreateAccountUseCaseRequest): Promise<CreateAccountUseCaseResponse> {
     const user = await this.userRepository.findById(userId)
@@ -34,6 +36,7 @@ export class CreateAccountUseCase {
 
     const account = await this.accountRepository.create({
       name: name,
+      institution: institution,
       balance: balance,
       user_id: userId,
     })
