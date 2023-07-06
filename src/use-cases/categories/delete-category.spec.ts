@@ -1,3 +1,5 @@
+import { Color } from '@prisma/client'
+
 import { InMemoryCategoryRepository } from '@/repositories/in-memory/in-memory-category-repository'
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
 
@@ -31,7 +33,7 @@ describe('Update Category Use Case', () => {
     const category = await categoryRepository.create({
       name: 'Category Name',
       description: 'Category Description',
-      color: 0,
+      color: Color.RED,
       user_id: userId,
     })
 
@@ -44,7 +46,7 @@ describe('Update Category Use Case', () => {
         id: expect.any(String),
         name: 'Category Name',
         description: 'Category Description',
-        color: 0,
+        color: Color.RED,
         user_id: userId,
       }),
     )

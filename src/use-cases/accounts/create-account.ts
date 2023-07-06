@@ -41,8 +41,6 @@ export class CreateAccountUseCase {
       user_id: userId,
     })
 
-    return {
-      account,
-    }
+    return { account }
   }
 }

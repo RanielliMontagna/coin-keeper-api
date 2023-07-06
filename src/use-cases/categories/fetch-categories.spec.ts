@@ -1,3 +1,5 @@
+import { Color } from '@prisma/client'
+
 import { InMemoryCategoryRepository } from '@/repositories/in-memory/in-memory-category-repository'
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
 
@@ -32,7 +34,7 @@ describe('Fetch Categories Use Case', () => {
     await categoryRepository.create({
       name: 'Category Name',
       description: 'Category Description',
-      color: 0,
+      color: Color.RED,
       user_id: userId,
     })
 
@@ -46,7 +48,7 @@ describe('Fetch Categories Use Case', () => {
           id: expect.any(String),
           name: 'Category Name',
           description: 'Category Description',
-          color: 0,
+          color: Color.RED,
         }),
       ]),
     )
@@ -64,7 +66,7 @@ describe('Fetch Categories Use Case', () => {
     await categoryRepository.create({
       name: 'Category Name',
       description: 'Category Description',
-      color: 0,
+      color: Color.RED,
       user_id: userId,
     })
 
@@ -81,7 +83,7 @@ describe('Fetch Categories Use Case', () => {
           id: expect.any(String),
           name: 'Category Name',
           description: 'Category Description',
-          color: 0,
+          color: Color.RED,
         }),
       ]),
     )

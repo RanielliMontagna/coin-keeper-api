@@ -1,5 +1,5 @@
 import { hash } from 'bcryptjs'
-import type { User } from '@prisma/client'
+import { Color, Institution, Prisma, type User } from '@prisma/client'
 
 import type { UserRepository } from '@/repositories/user-repository'
 import { OrganizationRepository } from '@/repositories/organization-repository'
@@ -40,6 +40,42 @@ export class RegisterUserUseCase {
       throw new UserAlreadyExistsError()
     }
 
+    const createUser = async (values: Prisma.UserUncheckedCreateInput) => {
+      const hashedPassword = await hash(password, 8)
+
+      const user = await this.userRepository.create({
+        ...values,
+        password_hash: hashedPassword,
+        Account: {
+          create: {
+            name: 'Wallet',
+            balance: 0,
+            institution: Institution.OTHER,
+          },
+        },
+        Category: {
+          createMany: {
+            data: [
+              { name: 'Housing', color: Color.RED },
+              { name: 'Transportation', color: Color.ORANGE },
+              { name: 'Education', color: Color.LIGHT_BLUE },
+              { name: 'Clothing', color: Color.BLUE },
+              { name: 'Eletronics', color: Color.PURPLE },
+              { name: 'Entertainment', color: Color.PINK },
+              { name: 'Services', color: Color.YELLOW },
+              { name: 'Food', color: Color.BROWN },
+              { name: 'Medical & Healthcare', color: Color.LIGHT_GREEN },
+              { name: 'Saving & Investing', color: Color.GREEN },
+              { name: 'Recreation & Entertainment', color: Color.TEAL },
+              { name: 'Others', color: Color.GREY },
+            ],
+          },
+        },
+      })
+
+      return user
+    }
+
     if (organizationId) {
       const organization = await this.organizationRepository.findById(
         organizationId,
@@ -51,7 +87,7 @@ export class RegisterUserUseCase {
 
       const hashedPassword = await hash(password, 8)
 
-      const user = await this.userRepository.create({
+      const user = await createUser({
         name,
         email,
         password_hash: hashedPassword,
@@ -67,7 +103,7 @@ export class RegisterUserUseCase {
 
       const hashedPassword = await hash(password, 8)
 
-      const user = await this.userRepository.create({
+      const user = await createUser({
         name,
         email,
         password_hash: hashedPassword,
