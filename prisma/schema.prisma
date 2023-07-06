@@ -157,11 +157,11 @@ model CreditCard {
     flag       Flag     @default(OTHER)
     closingDay Int
     dueDay     Int
-    userId     String
-    accountId  String
+    user_id    String
+    account_id String
     created_at DateTime @default(now())
     updated_at DateTime @updatedAt
 
-    User    User    @relation(fields: [userId], references: [id])
-    Account Account @relation(fields: [accountId], references: [id])
+    User    User    @relation(fields: [user_id], references: [id])
+    Account Account @relation(fields: [account_id], references: [id])
 }

@@ -1,11 +1,9 @@
-import { Color } from '@prisma/client'
-
 import { InMemoryCategoryRepository } from '@/repositories/in-memory/in-memory-category-repository'
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
 
 import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
 
-import { CreateCategoryUseCase } from './create-category'
+import { ColorEnum, CreateCategoryUseCase } from './create-category'
 import { UserTypeEnum } from '../users/register-user'
 import { CategoryAlreadyExistsError } from '../errors/category-already-exists'
 
@@ -35,7 +33,7 @@ describe('Create Category Use Case', () => {
     const response = await sut.execute({
       name: 'Category Name',
       description: 'Category Description',
-      color: Color.GREEN,
+      color: ColorEnum.GREEN,
       userId,
     })
 
@@ -44,7 +42,7 @@ describe('Create Category Use Case', () => {
         id: expect.any(String),
         name: 'Category Name',
         description: 'Category Description',
-        color: Color.GREEN,
+        color: ColorEnum.GREEN,
         user_id: userId,
       }),
     )
@@ -55,7 +53,7 @@ describe('Create Category Use Case', () => {
       sut.execute({
         name: 'Category Name',
         description: 'Category Description',
-        color: Color.RED,
+        color: ColorEnum.RED,
         userId: 'inexistent-user-id',
       }),
     ).rejects.toBeInstanceOf(UserNotFoundError)
@@ -65,7 +63,7 @@ describe('Create Category Use Case', () => {
     await sut.execute({
       name: 'Category Name',
       description: 'Category Description',
-      color: Color.RED,
+      color: ColorEnum.RED,
       userId,
     })
 
@@ -73,7 +71,7 @@ describe('Create Category Use Case', () => {
       sut.execute({
         name: 'Category Name',
         description: 'Category Description',
-        color: Color.RED,
+        color: ColorEnum.RED,
         userId,
       }),
     ).rejects.toBeInstanceOf(CategoryAlreadyExistsError)
@@ -82,7 +80,7 @@ describe('Create Category Use Case', () => {
   it('should be able to create a new category without a description', async () => {
     const response = await sut.execute({
       name: 'Category Name',
-      color: Color.RED,
+      color: ColorEnum.RED,
       userId,
     })
 
@@ -91,7 +89,7 @@ describe('Create Category Use Case', () => {
         id: expect.any(String),
         name: 'Category Name',
         description: null,
-        color: Color.RED,
+        color: ColorEnum.RED,
         user_id: userId,
       }),
     )

@@ -1,5 +1,3 @@
-import { Color } from '@prisma/client'
-
 import { InMemoryCategoryRepository } from '@/repositories/in-memory/in-memory-category-repository'
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
 
@@ -7,6 +5,7 @@ import { UserTypeEnum } from '@/use-cases/users/register-user'
 import { CategoryNotFoundError } from '@/use-cases/errors/category-not-found-error'
 
 import { UpdateCategoryUseCase } from './update-category'
+import { ColorEnum } from './create-category'
 
 let categoryRepository: InMemoryCategoryRepository
 let userRepository: InMemoryUserRepository
@@ -34,7 +33,7 @@ describe('Update Category Use Case', () => {
     const category = await categoryRepository.create({
       name: 'Category Name',
       description: 'Category Description',
-      color: Color.RED,
+      color: ColorEnum.RED,
       user_id: userId,
     })
 
@@ -42,7 +41,6 @@ describe('Update Category Use Case', () => {
       categoryId: category.id,
       name: 'Category Name',
       description: 'Category Description',
-      color: Color.RED,
       userId,
     })
 
@@ -51,7 +49,7 @@ describe('Update Category Use Case', () => {
         id: expect.any(String),
         name: 'Category Name',
         description: 'Category Description',
-        color: Color.RED,
+        color: ColorEnum.RED,
         user_id: userId,
       }),
     )
@@ -63,7 +61,6 @@ describe('Update Category Use Case', () => {
         categoryId: 'non-existing-category-id',
         name: 'Category Name',
         description: 'Category Description',
-        color: Color.RED,
         userId,
       }),
     ).rejects.toBeInstanceOf(CategoryNotFoundError)
@@ -73,14 +70,14 @@ describe('Update Category Use Case', () => {
     const category = await categoryRepository.create({
       name: 'Category Name',
       description: 'Category Description',
-      color: Color.RED,
+      color: ColorEnum.RED,
       user_id: userId,
     })
 
     const response = await sut.execute({
       categoryId: category.id,
       name: 'Category Name',
-      color: Color.RED,
+      color: ColorEnum.RED,
       userId,
     })
 
@@ -89,7 +86,7 @@ describe('Update Category Use Case', () => {
         id: expect.any(String),
         name: 'Category Name',
         description: 'Category Description',
-        color: Color.RED,
+        color: ColorEnum.RED,
         user_id: userId,
       }),
     )
@@ -99,7 +96,7 @@ describe('Update Category Use Case', () => {
     const category = await categoryRepository.create({
       name: 'Category Name',
       description: 'Category Description',
-      color: Color.RED,
+      color: ColorEnum.RED,
       user_id: userId,
     })
 
@@ -115,7 +112,7 @@ describe('Update Category Use Case', () => {
         id: expect.any(String),
         name: 'Category Name',
         description: 'Category Description',
-        color: Color.RED,
+        color: ColorEnum.RED,
         user_id: userId,
       }),
     )
@@ -125,14 +122,13 @@ describe('Update Category Use Case', () => {
     const category = await categoryRepository.create({
       name: 'Category Name',
       description: 'Category Description',
-      color: Color.RED,
+      color: ColorEnum.RED,
       user_id: userId,
     })
 
     const response = await sut.execute({
       categoryId: category.id,
       description: 'Category Description',
-      color: Color.RED,
       userId,
     })
 
@@ -141,7 +137,7 @@ describe('Update Category Use Case', () => {
         id: expect.any(String),
         name: 'Category Name',
         description: 'Category Description',
-        color: Color.RED,
+        color: ColorEnum.RED,
         user_id: userId,
       }),
     )
