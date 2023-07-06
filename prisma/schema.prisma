@@ -74,11 +74,34 @@ model Account {
     @@map("accounts")
 }
 
+enum Color {
+    RED
+    PINK
+    PURPLE
+    DEEP_PURPLE
+    INDIGO
+    BLUE
+    LIGHT_BLUE
+    CYAN
+    TEAL
+    GREEN
+    LIGHT_GREEN
+    LIME
+    YELLOW
+    AMBER
+    ORANGE
+    DEEP_ORANGE
+    BROWN
+    GREY
+    BLUE_GREY
+    BLACK
+}
+
 model Category {
     id          String   @id @default(uuid())
     name        String
     description String?
-    color       Int
+    color       Color    @default(BLUE_GREY)
     created_at  DateTime @default(now())
     updated_at  DateTime @updatedAt
     user_id     String
