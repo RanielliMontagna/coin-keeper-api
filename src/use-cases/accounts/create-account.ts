@@ -5,9 +5,22 @@ import type { UserRepository } from '@/repositories/user-repository'
 
 import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
 
+export enum InstitutionTypeEnum {
+  NUBANK = 'NUBANK',
+  XP = 'XP',
+  ITAU = 'ITAU',
+  BRADESCO = 'BRADESCO',
+  SANTANDER = 'SANTANDER',
+  BANCO_DO_BRASIL = 'BANCO_DO_BRASIL',
+  CAIXA = 'CAIXA',
+  INTER = 'INTER',
+  SICOOB = 'SICOOB',
+  SICREDI = 'SICREDI',
+  OTHER = 'OTHER',
+}
 export interface CreateAccountUseCaseRequest {
   name: string
-  institution: Institution
+  institution: InstitutionTypeEnum
   balance: number
   userId: string
 }

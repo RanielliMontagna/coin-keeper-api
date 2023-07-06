@@ -1,6 +1,8 @@
 import request from 'supertest'
+
 import { app } from '@/app'
 import { createAndAuthenticateUser } from '@/utils/test/create-and-authenticate-user'
+import { ColorEnum } from '@/use-cases/categories/create-category'
 
 describe('Create Category (e2e)', () => {
   beforeAll(async () => {
@@ -20,7 +22,7 @@ describe('Create Category (e2e)', () => {
       .send({
         name: 'Category Example',
         description: 'Category Example Description',
-        color: 1,
+        color: ColorEnum.INDIGO,
       })
 
     expect(response.status).toEqual(201)

@@ -2,21 +2,8 @@ import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 
 import { makeCreateAccountUseCase } from '@/use-cases/factories/accounts/make-create-account-use-case'
+import { InstitutionTypeEnum } from '@/use-cases/accounts/create-account'
 import { returnData } from '@/utils/http/returnData'
-
-export enum InstitutionTypeEnum {
-  NUBANK = 'NUBANK',
-  XP = 'XP',
-  ITAU = 'ITAU',
-  BRADESCO = 'BRADESCO',
-  SANTANDER = 'SANTANDER',
-  BANCO_DO_BRASIL = 'BANCO_DO_BRASIL',
-  CAIXA = 'CAIXA',
-  INTER = 'INTER',
-  SICOOB = 'SICOOB',
-  SICREDI = 'SICREDI',
-  OTHER = 'OTHER',
-}
 
 export async function createAccount(
   request: FastifyRequest,

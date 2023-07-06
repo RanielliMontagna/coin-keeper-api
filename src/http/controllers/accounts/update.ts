@@ -4,8 +4,7 @@ import { z } from 'zod'
 import { makeUpdateAccountUseCase } from '@/use-cases/factories/accounts/make-update-account-use-case'
 import { AccountNotFoundError } from '@/use-cases/errors/account-not-found-error'
 import { returnData } from '@/utils/http/returnData'
-
-import { InstitutionTypeEnum } from './create'
+import { InstitutionTypeEnum } from '@/use-cases/accounts/create-account'
 
 export async function updateAccount(
   request: FastifyRequest,

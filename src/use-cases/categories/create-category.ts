@@ -6,10 +6,33 @@ import { UserRepository } from '@/repositories/user-repository'
 import { CategoryAlreadyExistsError } from '@/use-cases/errors/category-already-exists'
 import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
 
+export enum ColorEnum {
+  RED = 'RED',
+  PINK = 'PINK',
+  PURPLE = 'PURPLE',
+  DEEP_PURPLE = 'DEEP_PURPLE',
+  INDIGO = 'INDIGO',
+  BLUE = 'BLUE',
+  LIGHT_BLUE = 'LIGHT_BLUE',
+  CYAN = 'CYAN',
+  TEAL = 'TEAL',
+  GREEN = 'GREEN',
+  LIGHT_GREEN = 'LIGHT_GREEN',
+  LIME = 'LIME',
+  YELLOW = 'YELLOW',
+  AMBER = 'AMBER',
+  ORANGE = 'ORANGE',
+  DEEP_ORANGE = 'DEEP_ORANGE',
+  BROWN = 'BROWN',
+  GREY = 'GREY',
+  BLUE_GREY = 'BLUE_GREY',
+  BLACK = 'BLACK',
+}
+
 export interface CreateCategoryUseCaseRequest {
   name: string
   description?: string
-  color: Color
+  color: ColorEnum
   userId: string
 }
 
