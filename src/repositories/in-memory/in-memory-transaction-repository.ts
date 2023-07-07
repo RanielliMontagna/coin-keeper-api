@@ -5,8 +5,14 @@ import {
   type Prisma,
   type Transaction,
   Account,
+  Institution,
 } from '@prisma/client'
-import type { Balance, TransactionRepository } from '../transaction-repository'
+import type {
+  Balance,
+  FindManyByUserIdOptions,
+  TransactionRepository,
+} from '../transaction-repository'
+import { ColorEnum } from '@/use-cases/categories/create-category'
 
 export class InMemoryTransactionRepository implements TransactionRepository {
   public transactions: Transaction[] = []
@@ -23,12 +29,8 @@ export class InMemoryTransactionRepository implements TransactionRepository {
   }
 
   async findManyByAccountId(accountId: string) {
-    return this.transactions.filter((t) => t.account_id === accountId)
-  }
-
-  async findManyByUserId(accountId: string) {
     const transactions = this.transactions.filter(
-      (t) => t.user_id === accountId,
+      (t) => t.account_id === accountId,
     )
 
     return transactions.map((t) => ({
@@ -40,7 +42,31 @@ export class InMemoryTransactionRepository implements TransactionRepository {
       category: {
         id: t.category_id,
         name: 'Category Name',
-        color: 1,
+        color: ColorEnum.BLUE,
+      },
+    }))
+  }
+
+  async findManyByUserId(userId: string, options?: FindManyByUserIdOptions) {
+    const { page = 1 } = options || {}
+
+    const transactions = this.transactions.filter((t) => t.user_id === userId)
+
+    const transactionsPerPage = 15
+
+    const start = (page - 1) * transactionsPerPage
+    const end = start + transactionsPerPage
+
+    return transactions.slice(start, end).map((t) => ({
+      ...t,
+      account: {
+        id: t.account_id,
+        name: 'Account Name',
+      },
+      category: {
+        id: t.category_id,
+        name: 'Category Name',
+        color: ColorEnum.BLUE,
       },
     }))
   }
@@ -58,7 +84,7 @@ export class InMemoryTransactionRepository implements TransactionRepository {
       category: {
         id: t.category_id,
         name: 'Category Name',
-        color: 1,
+        color: ColorEnum.BLUE,
       },
     }))
   }
@@ -81,6 +107,7 @@ export class InMemoryTransactionRepository implements TransactionRepository {
         id: transaction.account_id,
         name: 'Account Name',
         user_id: transaction.user_id,
+        institution: Institution.OTHER,
         balance: 0,
         income: 0,
         expense: 0,

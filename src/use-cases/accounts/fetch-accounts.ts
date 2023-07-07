@@ -8,7 +8,7 @@ import { Options } from '../options/options'
 
 interface FetchAccountsUseCaseRequest {
   userId: string
-  options?: Options
+  options?: Pick<Options, 'search'>
 }
 
 interface FetchAccountsUseCaseResponse {

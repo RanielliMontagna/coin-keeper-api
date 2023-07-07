@@ -1,7 +1,11 @@
 import { Transaction, Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 
-import { Balance, TransactionRepository } from '../transaction-repository'
+import {
+  Balance,
+  FindManyByUserIdOptions,
+  TransactionRepository,
+} from '../transaction-repository'
 import { TransactionType } from '@/use-cases/transactions/create-transaction'
 
 export class PrismaTransactionRepository implements TransactionRepository {
@@ -16,14 +20,28 @@ export class PrismaTransactionRepository implements TransactionRepository {
   async findManyByAccountId(accountId: string) {
     const transactions = await prisma.transaction.findMany({
       where: { account_id: accountId },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        amount: true,
+        type: true,
+        date: true,
+        account: { select: { id: true, name: true } },
+        category: { select: { id: true, name: true, color: true } },
+      },
     })
 
     return transactions
   }
 
-  async findManyByUserId(userId: string) {
+  async findManyByUserId(userId: string, options?: FindManyByUserIdOptions) {
+    const { page = 1 } = options || {}
+
     const transactions = await prisma.transaction.findMany({
       where: { user_id: userId },
+      take: 15,
+      skip: (page - 1) * 15,
       orderBy: { date: 'desc' },
       select: {
         id: true,
@@ -32,19 +50,8 @@ export class PrismaTransactionRepository implements TransactionRepository {
         amount: true,
         type: true,
         date: true,
-        account: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        category: {
-          select: {
-            id: true,
-            name: true,
-            color: true,
-          },
-        },
+        account: { select: { id: true, name: true } },
+        category: { select: { id: true, name: true, color: true } },
       },
     })
 

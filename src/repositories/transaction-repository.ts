@@ -1,5 +1,7 @@
 import type { Account, Category, Prisma, Transaction } from '@prisma/client'
+import { Options } from '@/use-cases/options/options'
 
+export interface FindManyByUserIdOptions extends Pick<Options, 'page'> {}
 interface TransactionWithAccount {
   id: Transaction['id']
   title: Transaction['title']
@@ -23,10 +25,14 @@ export interface Balance {
   incomes: number
   expenses: number
 }
+
 export interface TransactionRepository {
   findById(id: string): Promise<Transaction | null>
-  findManyByAccountId(accountId: string): Promise<Transaction[]>
-  findManyByUserId(userId: string): Promise<TransactionWithAccount[]>
+  findManyByAccountId(accountId: string): Promise<TransactionWithAccount[]>
+  findManyByUserId(
+    userId: string,
+    options?: FindManyByUserIdOptions,
+  ): Promise<TransactionWithAccount[]>
   findFiveLatestByUserId(userId: string): Promise<TransactionWithAccount[]>
   findBalanceByUserId(userId: string): Promise<Balance>
   create(
