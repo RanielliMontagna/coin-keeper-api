@@ -54,6 +54,11 @@ describe('Fetch Credit Cards (e2e)', () => {
             flag: 'VISA',
             closingDay: 28,
             dueDay: 10,
+            account: {
+              id: createAccountResponse.body.data.id,
+              name: 'Account Example',
+              institution: Institution.NUBANK,
+            },
           }),
           expect.objectContaining({
             id: expect.any(String),
@@ -62,6 +67,11 @@ describe('Fetch Credit Cards (e2e)', () => {
             flag: 'VISA',
             closingDay: 28,
             dueDay: 10,
+            account: {
+              id: createAccountResponse.body.data.id,
+              name: 'Account Example',
+              institution: Institution.NUBANK,
+            },
           }),
         ]),
       },

@@ -1,10 +1,12 @@
 import { randomUUID } from 'node:crypto'
 
-import { CreditCard, Flag, Prisma } from '@prisma/client'
+import { Account, CreditCard, Flag, Prisma } from '@prisma/client'
 import { CreditCardRepository } from '../credit-card-repository'
+import { InstitutionTypeEnum } from '@/use-cases/accounts/create-account'
 
 export class InMemoryCreditCardRepository implements CreditCardRepository {
   public creditCards: CreditCard[] = []
+  public accounts: Account[] = []
 
   async findById(id: string) {
     const creditCard = this.creditCards.find((c) => c.id === id)
@@ -13,16 +15,46 @@ export class InMemoryCreditCardRepository implements CreditCardRepository {
       return null
     }
 
-    return creditCard
+    return {
+      ...creditCard,
+      account: {
+        id: creditCard.account_id,
+        name: 'Account Name',
+        institution: InstitutionTypeEnum.OTHER,
+      },
+    }
   }
 
   async findManyByUserId(userId: string) {
     const creditCards = this.creditCards.filter((c) => c.user_id === userId)
 
-    return creditCards
+    return creditCards.map((c) => ({
+      ...c,
+      account: {
+        id: c.account_id,
+        name: 'Account Name',
+        institution: InstitutionTypeEnum.OTHER,
+      },
+    }))
   }
 
   async create(creditCard: Prisma.CreditCardUncheckedCreateInput) {
+    const account = this.accounts.find((a) => a.id === creditCard.account_id)
+
+    if (!account) {
+      this.accounts.push({
+        id: creditCard.account_id,
+        name: 'Account Name',
+        user_id: creditCard.user_id,
+        institution: InstitutionTypeEnum.OTHER,
+        balance: 0,
+        income: 0,
+        expense: 0,
+        created_at: new Date(),
+        updated_at: new Date(),
+      })
+    }
+
     const newCreditCard: CreditCard = {
       id: creditCard.id || randomUUID(),
       name: creditCard.name,

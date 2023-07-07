@@ -60,7 +60,11 @@ describe('Update Credit Card (e2e)', () => {
         flag: FlagEnum.MASTERCARD,
         closingDay: 29,
         dueDay: 11,
-        accountId: createAccountResponse.body.data.id,
+        account: {
+          id: expect.any(String),
+          name: 'Account Example',
+          institution: InstitutionTypeEnum.NUBANK,
+        },
       }),
     })
   })

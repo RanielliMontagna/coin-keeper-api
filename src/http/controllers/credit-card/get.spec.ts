@@ -54,6 +54,11 @@ describe('Get Credit Card (e2e)', () => {
           flag: FlagEnum.VISA,
           closingDay: 28,
           dueDay: 10,
+          account: {
+            id: createAccountResponse.body.data.id,
+            name: 'Account Example',
+            institution: InstitutionTypeEnum.NUBANK,
+          },
         }),
       },
     })

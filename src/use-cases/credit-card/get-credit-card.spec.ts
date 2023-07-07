@@ -54,6 +54,11 @@ describe('Get Credit Card Use Case', () => {
         flag: FlagEnum.MASTERCARD,
         closingDay: 10,
         dueDay: 10,
+        account: {
+          id: expect.any(String),
+          name: 'Account Name',
+          institution: expect.any(String),
+        },
       }),
     )
   })

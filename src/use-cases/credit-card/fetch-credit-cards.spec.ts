@@ -39,9 +39,7 @@ describe('Fetch Categories Use Case', () => {
       account_id: 'account-id',
     })
 
-    const response = await sut.execute({
-      userId,
-    })
+    const response = await sut.execute({ userId })
 
     expect(response.creditCards).toEqual(
       expect.arrayContaining([
@@ -52,6 +50,11 @@ describe('Fetch Categories Use Case', () => {
           flag: FlagEnum.MASTERCARD,
           closingDay: 10,
           dueDay: 10,
+          account: {
+            id: expect.any(String),
+            name: 'Account Name',
+            institution: expect.any(String),
+          },
         }),
       ]),
     )

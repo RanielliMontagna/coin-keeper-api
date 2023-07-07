@@ -51,7 +51,11 @@ export async function updateCreditCard(
         flag: creditCard.flag,
         closingDay: creditCard.closingDay,
         dueDay: creditCard.dueDay,
-        accountId: creditCard.account_id,
+        account: {
+          id: creditCard.account.id,
+          name: creditCard.account.name,
+          institution: creditCard.account.institution,
+        },
       }),
     )
   } catch (err) {

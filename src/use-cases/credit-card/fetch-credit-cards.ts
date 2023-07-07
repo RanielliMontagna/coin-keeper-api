@@ -45,6 +45,11 @@ export class FetchCreditCardsUseCase {
         limit: creditCard.limit,
         closingDay: creditCard.closingDay,
         dueDay: creditCard.dueDay,
+        account: {
+          id: creditCard.account.id,
+          name: creditCard.account.name,
+          institution: creditCard.account.institution,
+        },
       })),
     }
   }

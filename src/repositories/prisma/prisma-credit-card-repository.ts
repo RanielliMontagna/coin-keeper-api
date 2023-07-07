@@ -6,6 +6,21 @@ export class PrismaCreditCardRepository implements CreditCardRepository {
   async findById(id: string) {
     const creditCard = await prisma.creditCard.findUnique({
       where: { id },
+      select: {
+        id: true,
+        name: true,
+        limit: true,
+        flag: true,
+        closingDay: true,
+        dueDay: true,
+        account: {
+          select: {
+            id: true,
+            name: true,
+            institution: true,
+          },
+        },
+      },
     })
 
     return creditCard
@@ -14,6 +29,21 @@ export class PrismaCreditCardRepository implements CreditCardRepository {
   async findManyByUserId(userId: string) {
     const categories = await prisma.creditCard.findMany({
       where: { user_id: userId },
+      select: {
+        id: true,
+        name: true,
+        limit: true,
+        flag: true,
+        closingDay: true,
+        dueDay: true,
+        account: {
+          select: {
+            id: true,
+            name: true,
+            institution: true,
+          },
+        },
+      },
     })
 
     return categories

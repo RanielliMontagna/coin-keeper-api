@@ -1,4 +1,4 @@
-import { CreditCard } from '@prisma/client'
+import { Account, CreditCard } from '@prisma/client'
 
 import { CreditCardRepository } from '@/repositories/credit-card-repository'
 import { AccountRepository } from '@/repositories/account-repository'
@@ -14,7 +14,19 @@ export interface UpdateCreditCardUseCaseRequest
 }
 
 export interface UpdateCreditCardUseCaseResponse {
-  creditCard: CreditCard
+  creditCard: {
+    id: CreditCard['id']
+    name: CreditCard['name']
+    limit: CreditCard['limit']
+    flag: CreditCard['flag']
+    closingDay: CreditCard['closingDay']
+    dueDay: CreditCard['dueDay']
+    account: {
+      id: Account['id']
+      name: Account['name']
+      institution: Account['institution']
+    }
+  }
 }
 
 export class UpdateCreditCardUseCase {
@@ -56,6 +68,15 @@ export class UpdateCreditCardUseCase {
       user_id: userId,
     })
 
-    return { creditCard: updatedCreditCard }
+    return {
+      creditCard: {
+        ...updatedCreditCard,
+        account: {
+          id: account.id,
+          name: account.name,
+          institution: account.institution,
+        },
+      },
+    }
   }
 }

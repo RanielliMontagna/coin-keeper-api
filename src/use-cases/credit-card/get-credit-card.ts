@@ -1,4 +1,4 @@
-import { CreditCard } from '@prisma/client'
+import { Account, CreditCard } from '@prisma/client'
 
 import { UserRepository } from '@/repositories/user-repository'
 import { CreditCardRepository } from '@/repositories/credit-card-repository'
@@ -19,6 +19,11 @@ interface GetCreditCardUseCaseResponse {
     flag: CreditCard['flag']
     closingDay: CreditCard['closingDay']
     dueDay: CreditCard['dueDay']
+    account: {
+      id: Account['id']
+      name: Account['name']
+      institution: Account['institution']
+    }
   }
 }
 
@@ -52,6 +57,11 @@ export class GetCreditCardUseCase {
         flag: creditCard.flag,
         closingDay: creditCard.closingDay,
         dueDay: creditCard.dueDay,
+        account: {
+          id: creditCard.account.id,
+          name: creditCard.account.name,
+          institution: creditCard.account.institution,
+        },
       },
     }
   }
