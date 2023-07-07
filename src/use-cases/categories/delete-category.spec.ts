@@ -4,12 +4,13 @@ import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-
 import { UserTypeEnum } from '@/use-cases/users/register-user'
 
 import { DeleteCategoryUseCase } from './delete-category'
+import { ColorEnum } from './create-category'
 
 let categoryRepository: InMemoryCategoryRepository
 let userRepository: InMemoryUserRepository
 let sut: DeleteCategoryUseCase
 
-describe('Update Category Use Case', () => {
+describe('Delete Category Use Case', () => {
   const userId = 'user-id'
 
   beforeEach(async () => {
@@ -31,7 +32,7 @@ describe('Update Category Use Case', () => {
     const category = await categoryRepository.create({
       name: 'Category Name',
       description: 'Category Description',
-      color: 0,
+      color: ColorEnum.RED,
       user_id: userId,
     })
 
@@ -44,7 +45,7 @@ describe('Update Category Use Case', () => {
         id: expect.any(String),
         name: 'Category Name',
         description: 'Category Description',
-        color: 0,
+        color: ColorEnum.RED,
         user_id: userId,
       }),
     )

@@ -1,5 +1,8 @@
 import request from 'supertest'
+
 import { app } from '@/app'
+import { Color, Institution } from '@prisma/client'
+
 import { createAndAuthenticateUser } from '@/utils/test/create-and-authenticate-user'
 import { TransactionType } from '@/use-cases/transactions/create-transaction'
 
@@ -20,6 +23,7 @@ describe('Get Latest Transactions (e2e)', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         name: 'Account Example',
+        institution: Institution.NUBANK,
         balance: 1000,
       })
 
@@ -29,7 +33,7 @@ describe('Get Latest Transactions (e2e)', () => {
       .send({
         name: 'Category Example',
         description: 'Category Example Description',
-        color: 1,
+        color: Color.BLUE,
       })
 
     for (let i = 0; i < 10; i++) {

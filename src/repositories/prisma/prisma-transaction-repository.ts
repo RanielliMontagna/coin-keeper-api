@@ -1,7 +1,11 @@
 import { Transaction, Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 
-import { TransactionRepository } from '../transaction-repository'
+import {
+  Balance,
+  FindManyByUserIdOptions,
+  TransactionRepository,
+} from '../transaction-repository'
 import { TransactionType } from '@/use-cases/transactions/create-transaction'
 
 export class PrismaTransactionRepository implements TransactionRepository {
@@ -16,14 +20,28 @@ export class PrismaTransactionRepository implements TransactionRepository {
   async findManyByAccountId(accountId: string) {
     const transactions = await prisma.transaction.findMany({
       where: { account_id: accountId },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        amount: true,
+        type: true,
+        date: true,
+        account: { select: { id: true, name: true } },
+        category: { select: { id: true, name: true, color: true } },
+      },
     })
 
     return transactions
   }
 
-  async findManyByUserId(userId: string) {
+  async findManyByUserId(userId: string, options?: FindManyByUserIdOptions) {
+    const { page = 1 } = options || {}
+
     const transactions = await prisma.transaction.findMany({
       where: { user_id: userId },
+      take: 15,
+      skip: (page - 1) * 15,
       orderBy: { date: 'desc' },
       select: {
         id: true,
@@ -32,19 +50,8 @@ export class PrismaTransactionRepository implements TransactionRepository {
         amount: true,
         type: true,
         date: true,
-        account: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        category: {
-          select: {
-            id: true,
-            name: true,
-            color: true,
-          },
-        },
+        account: { select: { id: true, name: true } },
+        category: { select: { id: true, name: true, color: true } },
       },
     })
 
@@ -153,5 +160,153 @@ export class PrismaTransactionRepository implements TransactionRepository {
     })
 
     return deletedTransaction
+  }
+
+  async getGraphicsWeek(userId: string) {
+    const day = new Date().getDay()
+
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        user_id: userId,
+        date: {
+          gte: new Date(new Date().setDate(new Date().getDate() - day)),
+        },
+      },
+      select: {
+        amount: true,
+        type: true,
+        date: true,
+      },
+    })
+
+    const balance: Balance[] = new Array(7).fill({
+      balance: 0,
+      incomes: 0,
+      expenses: 0,
+    })
+
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(new Date().setDate(new Date().getDate() - day + i))
+
+      const incomes = transactions
+        .filter(
+          (t) =>
+            t.type === TransactionType.INCOME &&
+            t.date.getDate() === date.getDate(),
+        )
+        .reduce((acc, t) => acc + t.amount, 0)
+
+      const expenses = transactions
+        .filter(
+          (t) =>
+            t.type === TransactionType.EXPENSE &&
+            t.date.getDate() === date.getDate(),
+        )
+        .reduce((acc, t) => acc + t.amount, 0)
+
+      balance[i] = { balance: incomes - expenses, incomes, expenses }
+    }
+
+    return balance
+  }
+
+  async getGraphicsMonth(userId: string) {
+    const daysInMonth = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth() + 1,
+      0,
+    ).getDate()
+
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        user_id: userId,
+        date: {
+          gte: new Date(new Date().setDate(1)),
+        },
+      },
+      select: {
+        amount: true,
+        type: true,
+        date: true,
+      },
+    })
+
+    const balance: Balance[] = new Array(daysInMonth).fill({
+      balance: 0,
+      incomes: 0,
+      expenses: 0,
+    })
+
+    for (let i = 0; i < daysInMonth; i++) {
+      const date = new Date(new Date().setDate(i + 1))
+      const day = date.getDate()
+
+      const incomes = transactions
+        .filter(
+          (t) => t.type === TransactionType.INCOME && t.date.getDate() === day,
+        )
+        .reduce((acc, t) => acc + t.amount, 0)
+
+      const expenses = transactions
+        .filter(
+          (t) => t.type === TransactionType.EXPENSE && t.date.getDate() === day,
+        )
+        .reduce((acc, t) => acc + t.amount, 0)
+
+      balance[i] = { balance: incomes - expenses, incomes, expenses }
+    }
+
+    return balance
+  }
+
+  async getGraphicsYear(userId: string) {
+    const year = new Date().getFullYear()
+
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        user_id: userId,
+        date: {
+          gte: new Date(
+            new Date().setFullYear(new Date().getFullYear() - year),
+          ),
+        },
+      },
+      select: {
+        amount: true,
+        type: true,
+        date: true,
+      },
+    })
+
+    const balance: Balance[] = new Array(12).fill({
+      balance: 0,
+      incomes: 0,
+      expenses: 0,
+    })
+
+    for (let i = 0; i < 12; i++) {
+      const date = new Date(new Date().setMonth(new Date().getMonth() - i))
+      const month = date.getMonth()
+
+      const incomes = transactions.filter(
+        (t) => t.type === TransactionType.INCOME && t.date.getMonth() === month,
+      )
+
+      const expenses = transactions.filter(
+        (t) =>
+          t.type === TransactionType.EXPENSE && t.date.getMonth() === month,
+      )
+
+      const incomesAmount = incomes.reduce((acc, t) => acc + t.amount, 0)
+      const expensesAmount = expenses.reduce((acc, t) => acc + t.amount, 0)
+
+      balance[month] = {
+        balance: incomesAmount - expensesAmount,
+        incomes: incomesAmount,
+        expenses: expensesAmount,
+      }
+    }
+
+    return balance
   }
 }

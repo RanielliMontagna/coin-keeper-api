@@ -1,6 +1,8 @@
 import request from 'supertest'
+
 import { app } from '@/app'
 import { createAndAuthenticateUser } from '@/utils/test/create-and-authenticate-user'
+import { ColorEnum } from '@/use-cases/categories/create-category'
 
 describe('Fetch Categories (e2e)', () => {
   beforeAll(async () => {
@@ -20,7 +22,7 @@ describe('Fetch Categories (e2e)', () => {
       .send({
         name: 'Category Example',
         description: 'Category Example Description',
-        color: 1,
+        color: ColorEnum.LIME,
       })
 
     const response = await request(app.server)
@@ -35,7 +37,7 @@ describe('Fetch Categories (e2e)', () => {
             id: createCategoryResponse.body.data.id,
             name: 'Category Example',
             description: 'Category Example Description',
-            color: 1,
+            color: ColorEnum.LIME,
           }),
         ]),
       },

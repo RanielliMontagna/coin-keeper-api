@@ -3,9 +3,11 @@ import { Transaction } from '@prisma/client'
 import { TransactionRepository } from '@/repositories/transaction-repository'
 import { UserRepository } from '@/repositories/user-repository'
 import { UserNotFoundError } from '../errors/user-not-found-error'
+import { Options } from '../options/options'
 
 interface FetchTransactionsByUserUseCaseRequest {
   userId: string
+  options?: Pick<Options, 'page'>
 }
 
 interface FetchTransactionsByUserUseCaseResponse {
@@ -27,6 +29,7 @@ export class FetchTransactionsByUserUseCase {
 
   async execute({
     userId,
+    options,
   }: FetchTransactionsByUserUseCaseRequest): Promise<FetchTransactionsByUserUseCaseResponse> {
     const user = await this.userRepository.findById(userId)
 
@@ -36,6 +39,7 @@ export class FetchTransactionsByUserUseCase {
 
     const transactions = await this.transactionRepository.findManyByUserId(
       userId,
+      options,
     )
 
     return { transactions }

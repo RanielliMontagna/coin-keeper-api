@@ -5,6 +5,7 @@ import { UserTypeEnum } from '@/use-cases/users/register-user'
 import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
 
 import { FetchCategoriesUseCase } from './fetch-categories'
+import { ColorEnum } from './create-category'
 
 let categoryRepository: InMemoryCategoryRepository
 let userRepository: InMemoryUserRepository
@@ -32,7 +33,7 @@ describe('Fetch Categories Use Case', () => {
     await categoryRepository.create({
       name: 'Category Name',
       description: 'Category Description',
-      color: 0,
+      color: ColorEnum.RED,
       user_id: userId,
     })
 
@@ -46,7 +47,7 @@ describe('Fetch Categories Use Case', () => {
           id: expect.any(String),
           name: 'Category Name',
           description: 'Category Description',
-          color: 0,
+          color: ColorEnum.RED,
         }),
       ]),
     )
@@ -64,7 +65,7 @@ describe('Fetch Categories Use Case', () => {
     await categoryRepository.create({
       name: 'Category Name',
       description: 'Category Description',
-      color: 0,
+      color: ColorEnum.RED,
       user_id: userId,
     })
 
@@ -81,7 +82,7 @@ describe('Fetch Categories Use Case', () => {
           id: expect.any(String),
           name: 'Category Name',
           description: 'Category Description',
-          color: 0,
+          color: ColorEnum.RED,
         }),
       ]),
     )

@@ -6,6 +6,7 @@ import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
 import { CategoryNotFoundError } from '@/use-cases/errors/category-not-found-error'
 
 import { GetCategoryUseCase } from './get-category'
+import { ColorEnum } from './create-category'
 
 let categoryRepository: InMemoryCategoryRepository
 let userRepository: InMemoryUserRepository
@@ -33,7 +34,7 @@ describe('Get Category Use Case', () => {
     const category = await categoryRepository.create({
       name: 'Category Name',
       description: 'Category Description',
-      color: 0,
+      color: ColorEnum.RED,
       user_id: userId,
     })
 
@@ -47,7 +48,7 @@ describe('Get Category Use Case', () => {
         id: expect.any(String),
         name: 'Category Name',
         description: 'Category Description',
-        color: 0,
+        color: ColorEnum.RED,
       }),
     )
   })

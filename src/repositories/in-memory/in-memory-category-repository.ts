@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto'
 
-import { Category, Prisma } from '@prisma/client'
+import { Category, Color, Prisma } from '@prisma/client'
 import {
   CategoryRepository,
   FindManyByUserIdOptions,
@@ -51,7 +51,7 @@ export class InMemoryCategoryRepository implements CategoryRepository {
     const newCategory: Category = {
       id: category.id || randomUUID(),
       name: category.name,
-      color: category.color,
+      color: category.color as Color,
       description: category.description || null,
       user_id: category.user_id,
       created_at: new Date(),
@@ -74,7 +74,7 @@ export class InMemoryCategoryRepository implements CategoryRepository {
       id: _category.id,
       name: typeof category.name === 'string' ? category.name : _category.name,
       color:
-        typeof category.color === 'number' ? category.color : _category.color,
+        typeof category.color === 'string' ? category.color : _category.color,
       description:
         typeof category.description === 'string'
           ? category.description

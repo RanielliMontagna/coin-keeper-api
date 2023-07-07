@@ -5,6 +5,7 @@ import { UserTypeEnum } from '@/use-cases/users/register-user'
 import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
 
 import { FetchAccountsUseCase } from './fetch-accounts'
+import { Institution } from '@prisma/client'
 
 let accountRepository: InMemoryAccountRepository
 let userRepository: InMemoryUserRepository
@@ -61,12 +62,14 @@ describe('Fetch Accounts Use Case', () => {
   it('should be able to fetch accounts with search option', async () => {
     await accountRepository.create({
       name: 'Account Name',
+      institution: Institution.NUBANK,
       balance: 0,
       user_id: userId,
     })
 
     await accountRepository.create({
       name: 'Another Account Name',
+      institution: Institution.NUBANK,
       balance: 0,
       user_id: userId,
     })
@@ -82,6 +85,7 @@ describe('Fetch Accounts Use Case', () => {
       expect.arrayContaining([
         expect.objectContaining({
           id: expect.any(String),
+          institution: Institution.NUBANK,
           name: 'Another Account Name',
           balance: 0,
         }),

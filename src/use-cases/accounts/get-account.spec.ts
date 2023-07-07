@@ -6,6 +6,7 @@ import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
 import { AccountNotFoundError } from '@/use-cases/errors/account-not-found-error'
 
 import { GetAccountUseCase } from './get-account'
+import { Institution } from '@prisma/client'
 
 let accountRepository: InMemoryAccountRepository
 let userRepository: InMemoryUserRepository
@@ -32,6 +33,7 @@ describe('Get Account Use Case', () => {
   it('should be able to get a account', async () => {
     const account = await accountRepository.create({
       name: 'Account Name',
+      institution: Institution.NUBANK,
       balance: 0,
       user_id: userId,
     })
@@ -44,6 +46,7 @@ describe('Get Account Use Case', () => {
     expect(response.account).toEqual(
       expect.objectContaining({
         id: expect.any(String),
+        institution: Institution.NUBANK,
         name: 'Account Name',
         balance: 0,
       }),

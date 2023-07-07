@@ -8,13 +8,14 @@ import { Options } from '../options/options'
 
 interface FetchAccountsUseCaseRequest {
   userId: string
-  options?: Options
+  options?: Pick<Options, 'search'>
 }
 
 interface FetchAccountsUseCaseResponse {
   accounts: {
     id: Account['id']
     name: Account['name']
+    institution: Account['institution']
     balance: Account['balance']
   }[]
 }
@@ -44,6 +45,7 @@ export class FetchAccountsUseCase {
       accounts: accounts.map((account) => ({
         id: account.id,
         name: account.name,
+        institution: account.institution,
         balance: account.balance,
       })),
     }

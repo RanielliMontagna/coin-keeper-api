@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto'
 
-import type { Account, Prisma } from '@prisma/client'
+import { Institution, type Account, type Prisma } from '@prisma/client'
 import type {
   AccountRepository,
   FindManyByUserIdOptions,
@@ -37,7 +37,11 @@ export class InMemoryAccountRepository implements AccountRepository {
     const newAccount: Account = {
       id: account.id || randomUUID(),
       name: account.name,
+      institution: account.institution || Institution.OTHER,
       balance: account.balance,
+      expense: account.expense || 0,
+      income: account.income || 0,
+
       created_at: new Date(),
       updated_at: new Date(),
 
@@ -55,10 +59,16 @@ export class InMemoryAccountRepository implements AccountRepository {
     const updatedAccount: Account = {
       id: _account.id,
       name: typeof account.name === 'string' ? account.name : _account.name,
+      institution:
+        typeof account.institution === 'string'
+          ? account.institution
+          : _account.institution,
       balance:
         typeof account.balance === 'number'
           ? account.balance
           : _account.balance,
+      expense: 0,
+      income: 0,
       created_at: _account.created_at,
       updated_at: new Date(),
       user_id: _account.user_id,

@@ -2,8 +2,9 @@ import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 
 import { makeCreateCategoryUseCase } from '@/use-cases/factories/categories/make-create-category-use-case'
-import { returnData } from '@/utils/http/returnData'
 import { CategoryAlreadyExistsError } from '@/use-cases/errors/category-already-exists'
+import { ColorEnum } from '@/use-cases/categories/create-category'
+import { returnData } from '@/utils/http/returnData'
 
 export async function createCategory(
   request: FastifyRequest,
@@ -12,7 +13,7 @@ export async function createCategory(
   const createCategoryBodySchema = z.object({
     name: z.string(),
     description: z.string().optional(),
-    color: z.number().min(0).max(9),
+    color: z.nativeEnum(ColorEnum),
   })
 
   const { name, description, color } = createCategoryBodySchema.parse(
