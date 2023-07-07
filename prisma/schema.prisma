@@ -142,11 +142,9 @@ enum Flag {
     MASTERCARD
     ELO
     AMERICAN_EXPRESS
-    HIPERCARD
     DINERS_CLUB
     DISCOVER
     JCB
-    AURA
     OTHER
 }
 
