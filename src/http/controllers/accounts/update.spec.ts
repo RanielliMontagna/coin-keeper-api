@@ -12,7 +12,7 @@ describe('Update Account (e2e)', () => {
     await app.close()
   })
 
-  it('should be able to create an account', async () => {
+  it('should be able to update an account', async () => {
     const { token } = await createAndAuthenticateUser(app)
 
     const createAccountResponse = await request(app.server)

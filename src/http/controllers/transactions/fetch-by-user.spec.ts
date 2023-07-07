@@ -65,9 +65,15 @@ describe('Fetch Transactions By User (e2e)', () => {
             amount: 1000,
             type: TransactionType.INCOME,
             date: expect.any(String),
+            category: {
+              id: responseCategory.body.data.id,
+              name: 'Category Example',
+              color: Color.BLUE,
+            },
           }),
         ]),
       },
+      meta: { page: 1 },
     })
   })
 })
