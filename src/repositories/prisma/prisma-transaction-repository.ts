@@ -27,7 +27,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
         amount: true,
         type: true,
         date: true,
-        account: { select: { id: true, name: true } },
+        account: { select: { id: true, name: true, institution: true } },
         category: { select: { id: true, name: true, color: true } },
       },
     })
@@ -50,7 +50,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
         amount: true,
         type: true,
         date: true,
-        account: { select: { id: true, name: true } },
+        account: { select: { id: true, name: true, institution: true } },
         category: { select: { id: true, name: true, color: true } },
       },
     })
@@ -74,6 +74,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
           select: {
             id: true,
             name: true,
+            institution: true,
           },
         },
         category: {

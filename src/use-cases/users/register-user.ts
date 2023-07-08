@@ -59,18 +59,67 @@ export class RegisterUserUseCase {
         Category: {
           createMany: {
             data: [
-              { name: 'Housing', color: ColorEnum.RED },
-              { name: 'Transportation', color: ColorEnum.ORANGE },
-              { name: 'Education', color: ColorEnum.LIGHT_BLUE },
-              { name: 'Clothing', color: ColorEnum.BLUE },
-              { name: 'Eletronics', color: ColorEnum.PURPLE },
-              { name: 'Entertainment', color: ColorEnum.PINK },
-              { name: 'Services', color: ColorEnum.YELLOW },
-              { name: 'Food', color: ColorEnum.BROWN },
-              { name: 'Medical & Healthcare', color: ColorEnum.LIGHT_GREEN },
-              { name: 'Saving & Investing', color: ColorEnum.GREEN },
-              { name: 'Recreation & Entertainment', color: ColorEnum.TEAL },
-              { name: 'Others', color: ColorEnum.GREY },
+              {
+                name: 'Housing',
+                color: ColorEnum.RED,
+                description: 'Expenses for your living arrangements.',
+              },
+              {
+                name: 'Transportation',
+                color: ColorEnum.ORANGE,
+                description: 'Costs related to getting around.',
+              },
+              {
+                name: 'Education',
+                color: ColorEnum.LIGHT_BLUE,
+                description: 'Expenses for schooling and personal development.',
+              },
+              {
+                name: 'Clothing',
+                color: ColorEnum.BLUE,
+                description: 'Costs for clothing and accessories.',
+              },
+              {
+                name: 'Eletronics',
+                color: ColorEnum.PURPLE,
+                description: 'Expenses for electronic devices and gadgets.',
+              },
+              {
+                name: 'Entertainment',
+                color: ColorEnum.PINK,
+                description: 'Spending on leisure activities and recreation.',
+              },
+              {
+                name: 'Streaming',
+                color: ColorEnum.PINK,
+                description: 'Costs for streaming services.',
+              },
+              {
+                name: 'Food',
+                color: ColorEnum.BROWN,
+                description: 'Expenses for groceries and dining.',
+              },
+              {
+                name: 'Medical & Healthcare',
+                color: ColorEnum.LIGHT_GREEN,
+                description: 'Costs for medical care and health insurance.',
+              },
+              {
+                name: 'Saving & Investing',
+                color: ColorEnum.GREEN,
+                description: 'Contributions towards savings and investments.',
+              },
+              {
+                name: 'Recreation & Entertainment',
+                color: ColorEnum.TEAL,
+                description: 'Expenses for recreational activities.',
+              },
+              {
+                name: 'Others',
+                color: ColorEnum.GREY,
+                description:
+                  'Miscellaneous expenses not fitting in other categories.',
+              },
             ],
           },
         },

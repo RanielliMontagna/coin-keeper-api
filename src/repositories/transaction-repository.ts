@@ -12,6 +12,7 @@ interface TransactionWithAccount {
   account: {
     id: Account['id']
     name: Account['name']
+    institution: Account['institution']
   }
   category: {
     id: Category['id']
