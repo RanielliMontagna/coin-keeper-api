@@ -35,6 +35,7 @@ export class InMemoryTransactionRepository implements TransactionRepository {
       account: {
         id: t.account_id,
         name: 'Account Name',
+        institution: InstitutionEnum.OTHER,
       },
       category: {
         id: t.category_id,
@@ -59,6 +60,7 @@ export class InMemoryTransactionRepository implements TransactionRepository {
       account: {
         id: t.account_id,
         name: 'Account Name',
+        institution: InstitutionEnum.OTHER,
       },
       category: {
         id: t.category_id,
@@ -77,6 +79,7 @@ export class InMemoryTransactionRepository implements TransactionRepository {
       account: {
         id: t.account_id,
         name: 'Account Name',
+        institution: InstitutionEnum.OTHER,
       },
       category: {
         id: t.category_id,
