@@ -1,7 +1,7 @@
 import { InMemoryTransactionRepository } from '@/repositories/in-memory/in-memory-transaction-repository'
 import { InMemoryAccountRepository } from '@/repositories/in-memory/in-memory-account-repository'
 
-import { CreateTransactionUseCase, TransactionType } from './create-transaction'
+import { CreateTransactionUseCase, TransactionEnum } from './create-transaction'
 import { UserTypeEnum } from '../users/register-user'
 import { AccountNotFoundError } from '../errors/account-not-found-error'
 
@@ -30,7 +30,7 @@ describe('Create Transaction Use Case', () => {
       title: 'Transaction Title',
       description: 'Transaction Description',
       amount: 100,
-      type: TransactionType.EXPENSE,
+      type: TransactionEnum.EXPENSE,
       date: new Date(),
       accountId: 'account-id',
       categoryId: 'category-id',
@@ -43,7 +43,7 @@ describe('Create Transaction Use Case', () => {
         title: 'Transaction Title',
         description: 'Transaction Description',
         amount: 100,
-        type: TransactionType.EXPENSE,
+        type: TransactionEnum.EXPENSE,
         date: expect.any(Date),
         account_id: 'account-id',
         category_id: 'category-id',
@@ -56,7 +56,7 @@ describe('Create Transaction Use Case', () => {
       title: 'Transaction Title',
       description: 'Transaction Description',
       amount: 100,
-      type: TransactionType.INCOME,
+      type: TransactionEnum.INCOME,
       date: new Date(),
       accountId: 'account-id',
       categoryId: 'category-id',
@@ -69,7 +69,7 @@ describe('Create Transaction Use Case', () => {
         title: 'Transaction Title',
         description: 'Transaction Description',
         amount: 100,
-        type: TransactionType.INCOME,
+        type: TransactionEnum.INCOME,
         date: expect.any(Date),
         account_id: 'account-id',
         category_id: 'category-id',
@@ -83,7 +83,7 @@ describe('Create Transaction Use Case', () => {
         title: 'Transaction Title',
         description: 'Transaction Description',
         amount: 100,
-        type: TransactionType.EXPENSE,
+        type: TransactionEnum.EXPENSE,
         date: new Date(),
         accountId: 'inexistent-account-id',
         categoryId: 'category-id',

@@ -1,8 +1,11 @@
 import { randomUUID } from 'node:crypto'
 
-import { Account, CreditCard, Flag, Prisma } from '@prisma/client'
+import { Account, CreditCard, Prisma } from '@prisma/client'
+
+import { InstitutionEnum } from '@/use-cases/accounts/create-account'
+import { FlagEnum } from '@/use-cases/credit-card/create-credit-card'
+
 import { CreditCardRepository } from '../credit-card-repository'
-import { InstitutionTypeEnum } from '@/use-cases/accounts/create-account'
 
 export class InMemoryCreditCardRepository implements CreditCardRepository {
   public creditCards: CreditCard[] = []
@@ -20,7 +23,7 @@ export class InMemoryCreditCardRepository implements CreditCardRepository {
       account: {
         id: creditCard.account_id,
         name: 'Account Name',
-        institution: InstitutionTypeEnum.OTHER,
+        institution: InstitutionEnum.OTHER,
       },
     }
   }
@@ -33,7 +36,7 @@ export class InMemoryCreditCardRepository implements CreditCardRepository {
       account: {
         id: c.account_id,
         name: 'Account Name',
-        institution: InstitutionTypeEnum.OTHER,
+        institution: InstitutionEnum.OTHER,
       },
     }))
   }
@@ -46,7 +49,7 @@ export class InMemoryCreditCardRepository implements CreditCardRepository {
         id: creditCard.account_id,
         name: 'Account Name',
         user_id: creditCard.user_id,
-        institution: InstitutionTypeEnum.OTHER,
+        institution: InstitutionEnum.OTHER,
         balance: 0,
         income: 0,
         expense: 0,
@@ -59,7 +62,7 @@ export class InMemoryCreditCardRepository implements CreditCardRepository {
       id: creditCard.id || randomUUID(),
       name: creditCard.name,
       limit: creditCard.limit,
-      flag: creditCard.flag as Flag,
+      flag: creditCard.flag as FlagEnum,
       closingDay: creditCard.closingDay,
       dueDay: creditCard.dueDay,
       account_id: creditCard.account_id,
@@ -89,8 +92,8 @@ export class InMemoryCreditCardRepository implements CreditCardRepository {
           ? creditCard.limit
           : _creditCard.limit,
       flag:
-        typeof creditCard.flag === 'string'
-          ? (creditCard.flag as Flag)
+        typeof creditCard.flag === 'number'
+          ? (creditCard.flag as FlagEnum)
           : _creditCard.flag,
       closingDay:
         typeof creditCard.closingDay === 'number'

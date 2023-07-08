@@ -1,7 +1,9 @@
 import request from 'supertest'
+
 import { app } from '@/app'
+
 import { createAndAuthenticateUser } from '@/utils/test/create-and-authenticate-user'
-import { Institution } from '@prisma/client'
+import { InstitutionEnum } from '@/use-cases/accounts/create-account'
 
 describe('Create Account (e2e)', () => {
   beforeAll(async () => {
@@ -20,7 +22,7 @@ describe('Create Account (e2e)', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         name: 'Account Example',
-        institution: Institution.NUBANK,
+        institution: InstitutionEnum.NUBANK,
         balance: 1000,
       })
 

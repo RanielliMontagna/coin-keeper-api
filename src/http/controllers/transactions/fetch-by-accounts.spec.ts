@@ -1,10 +1,11 @@
 import request from 'supertest'
 
 import { app } from '@/app'
-import { Color, Institution } from '@prisma/client'
 
 import { createAndAuthenticateUser } from '@/utils/test/create-and-authenticate-user'
-import { TransactionType } from '@/use-cases/transactions/create-transaction'
+import { TransactionEnum } from '@/use-cases/transactions/create-transaction'
+import { InstitutionEnum } from '@/use-cases/accounts/create-account'
+import { ColorEnum } from '@/use-cases/categories/create-category'
 
 describe('Fetch Transactions By Accounts (e2e)', () => {
   beforeAll(async () => {
@@ -23,7 +24,7 @@ describe('Fetch Transactions By Accounts (e2e)', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         name: 'Account Example',
-        institution: Institution.NUBANK,
+        institution: InstitutionEnum.NUBANK,
         balance: 1000,
       })
 
@@ -33,7 +34,7 @@ describe('Fetch Transactions By Accounts (e2e)', () => {
       .send({
         name: 'Category Example',
         description: 'Category Example Description',
-        color: Color.BLUE,
+        color: ColorEnum.BLUE,
       })
 
     const createTransactionResponse = await request(app.server)
@@ -43,7 +44,7 @@ describe('Fetch Transactions By Accounts (e2e)', () => {
         title: 'Transaction Example',
         description: 'Transaction Example Description',
         amount: 1000,
-        type: TransactionType.INCOME,
+        type: TransactionEnum.INCOME,
         date: new Date(),
         accountId: responseAccount.body.data.id,
         categoryId: responseCategory.body.data.id,
@@ -63,7 +64,7 @@ describe('Fetch Transactions By Accounts (e2e)', () => {
             title: 'Transaction Example',
             description: 'Transaction Example Description',
             amount: 1000,
-            type: TransactionType.INCOME,
+            type: TransactionEnum.INCOME,
             date: expect.any(String),
           }),
         ]),

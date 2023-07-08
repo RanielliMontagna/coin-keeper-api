@@ -5,7 +5,7 @@ import { UserTypeEnum } from '@/use-cases/users/register-user'
 
 import { UpdateAccountUseCase } from './update-account'
 import { AccountNotFoundError } from '../errors/account-not-found-error'
-import { Institution } from '@prisma/client'
+import { InstitutionEnum } from './create-account'
 
 let accountRepository: InMemoryAccountRepository
 let userRepository: InMemoryUserRepository
@@ -32,14 +32,14 @@ describe('Update Account Use Case', () => {
   it('should be able to update an account', async () => {
     const account = await accountRepository.create({
       name: 'Account Name',
-      institution: Institution.NUBANK,
+      institution: InstitutionEnum.NUBANK,
       balance: 100,
       user_id: userId,
     })
 
     const response = await sut.execute({
       accountId: account.id,
-      institution: Institution.ITAU,
+      institution: InstitutionEnum.ITAU,
       name: 'Updated Account Name',
       balance: 200,
       userId: userId,
@@ -49,7 +49,7 @@ describe('Update Account Use Case', () => {
       expect.objectContaining({
         id: account.id,
         name: 'Updated Account Name',
-        institution: Institution.ITAU,
+        institution: InstitutionEnum.ITAU,
         balance: 200,
         user_id: userId,
         created_at: expect.any(Date),

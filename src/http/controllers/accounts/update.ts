@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { makeUpdateAccountUseCase } from '@/use-cases/factories/accounts/make-update-account-use-case'
 import { AccountNotFoundError } from '@/use-cases/errors/account-not-found-error'
 import { returnData } from '@/utils/http/returnData'
-import { InstitutionTypeEnum } from '@/use-cases/accounts/create-account'
+import { InstitutionEnum } from '@/use-cases/accounts/create-account'
 
 export async function updateAccount(
   request: FastifyRequest,
@@ -18,7 +18,7 @@ export async function updateAccount(
 
   const updateAccountBodySchema = z.object({
     name: z.string(),
-    institution: z.nativeEnum(InstitutionTypeEnum).optional(),
+    institution: z.nativeEnum(InstitutionEnum).optional(),
     balance: z.number(),
   })
 

@@ -4,7 +4,7 @@ import { app } from '@/app'
 import { createAndAuthenticateUser } from '@/utils/test/create-and-authenticate-user'
 
 import { FlagEnum } from '@/use-cases/credit-card/create-credit-card'
-import { InstitutionTypeEnum } from '@/use-cases/accounts/create-account'
+import { InstitutionEnum } from '@/use-cases/accounts/create-account'
 
 describe('Create Credit Card (e2e)', () => {
   beforeAll(async () => {
@@ -23,7 +23,7 @@ describe('Create Credit Card (e2e)', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         name: 'Account Example',
-        institution: InstitutionTypeEnum.NUBANK,
+        institution: InstitutionEnum.NUBANK,
         balance: 1000,
       })
 

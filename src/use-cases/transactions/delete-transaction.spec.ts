@@ -4,7 +4,7 @@ import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-
 import { UserTypeEnum } from '@/use-cases/users/register-user'
 
 import { DeleteTransactionUseCase } from './delete-transaction'
-import { TransactionType } from './create-transaction'
+import { TransactionEnum } from './create-transaction'
 import { TransactionNotFoundError } from '../errors/transaction-not-found-error'
 
 let transactionRepository: InMemoryTransactionRepository
@@ -34,7 +34,7 @@ describe('Update Transaction Use Case', () => {
       title: 'Transaction Name',
       description: 'Transaction Description',
       amount: 100,
-      type: TransactionType.EXPENSE,
+      type: TransactionEnum.EXPENSE,
       date: new Date(),
       account_id: 'account-id',
       category_id: 'category-id',
@@ -51,7 +51,7 @@ describe('Update Transaction Use Case', () => {
         title: 'Transaction Name',
         description: 'Transaction Description',
         amount: 100,
-        type: TransactionType.EXPENSE,
+        type: TransactionEnum.EXPENSE,
         date: expect.any(Date),
         account_id: 'account-id',
         category_id: 'category-id',
@@ -64,7 +64,7 @@ describe('Update Transaction Use Case', () => {
       title: 'Transaction Name',
       description: 'Transaction Description',
       amount: 100,
-      type: TransactionType.INCOME,
+      type: TransactionEnum.INCOME,
       date: new Date(),
       account_id: 'account-id',
       category_id: 'category-id',
@@ -81,7 +81,7 @@ describe('Update Transaction Use Case', () => {
         title: 'Transaction Name',
         description: 'Transaction Description',
         amount: 100,
-        type: TransactionType.INCOME,
+        type: TransactionEnum.INCOME,
         date: expect.any(Date),
         account_id: 'account-id',
         category_id: 'category-id',

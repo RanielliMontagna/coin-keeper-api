@@ -3,7 +3,7 @@ import request from 'supertest'
 import { app } from '@/app'
 
 import { createAndAuthenticateUser } from '@/utils/test/create-and-authenticate-user'
-import { InstitutionTypeEnum } from '@/use-cases/accounts/create-account'
+import { InstitutionEnum } from '@/use-cases/accounts/create-account'
 import { FlagEnum } from '@/use-cases/credit-card/create-credit-card'
 
 describe('Update Credit Card (e2e)', () => {
@@ -23,7 +23,7 @@ describe('Update Credit Card (e2e)', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         name: 'Account Example',
-        institution: InstitutionTypeEnum.NUBANK,
+        institution: InstitutionEnum.NUBANK,
         balance: 1000,
       })
 
@@ -63,7 +63,7 @@ describe('Update Credit Card (e2e)', () => {
         account: {
           id: expect.any(String),
           name: 'Account Example',
-          institution: InstitutionTypeEnum.NUBANK,
+          institution: InstitutionEnum.NUBANK,
         },
       }),
     })

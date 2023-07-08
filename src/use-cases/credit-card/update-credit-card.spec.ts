@@ -3,7 +3,7 @@ import { InMemoryAccountRepository } from '@/repositories/in-memory/in-memory-ac
 
 import { UpdateCreditCardUseCase } from './update-credit-card'
 import { FlagEnum } from './create-credit-card'
-import { InstitutionTypeEnum } from '../accounts/create-account'
+import { InstitutionEnum } from '../accounts/create-account'
 
 let creditCardRepository: InMemoryCreditCardRepository
 let accountRepository: InMemoryAccountRepository
@@ -20,7 +20,7 @@ describe('Update Credit Card Use Case', () => {
     await accountRepository.create({
       id: userId,
       name: 'account-name',
-      institution: InstitutionTypeEnum.BRADESCO,
+      institution: InstitutionEnum.BRADESCO,
       balance: 0,
       user_id: userId,
     })
@@ -91,7 +91,7 @@ describe('Update Credit Card Use Case', () => {
         account: {
           id: expect.any(String),
           name: 'account-name',
-          institution: InstitutionTypeEnum.BRADESCO,
+          institution: InstitutionEnum.BRADESCO,
         },
       }),
     )
