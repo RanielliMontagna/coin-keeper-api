@@ -1,10 +1,13 @@
 import { hash } from 'bcryptjs'
-import { Color, Institution, Prisma, type User } from '@prisma/client'
+import { Prisma, type User } from '@prisma/client'
 
 import type { UserRepository } from '@/repositories/user-repository'
 import { OrganizationRepository } from '@/repositories/organization-repository'
 import { OrganizationNotFoundError } from '@/use-cases/errors/organization-not-found-error'
 import { UserAlreadyExistsError } from '@/use-cases/errors/user-already-exists-error'
+
+import { InstitutionEnum } from '../accounts/create-account'
+import { ColorEnum } from '../categories/create-category'
 
 export enum UserTypeEnum {
   ADMIN = 'ADMIN',
@@ -50,24 +53,24 @@ export class RegisterUserUseCase {
           create: {
             name: 'Wallet',
             balance: 0,
-            institution: Institution.OTHER,
+            institution: InstitutionEnum.OTHER,
           },
         },
         Category: {
           createMany: {
             data: [
-              { name: 'Housing', color: Color.RED },
-              { name: 'Transportation', color: Color.ORANGE },
-              { name: 'Education', color: Color.LIGHT_BLUE },
-              { name: 'Clothing', color: Color.BLUE },
-              { name: 'Eletronics', color: Color.PURPLE },
-              { name: 'Entertainment', color: Color.PINK },
-              { name: 'Services', color: Color.YELLOW },
-              { name: 'Food', color: Color.BROWN },
-              { name: 'Medical & Healthcare', color: Color.LIGHT_GREEN },
-              { name: 'Saving & Investing', color: Color.GREEN },
-              { name: 'Recreation & Entertainment', color: Color.TEAL },
-              { name: 'Others', color: Color.GREY },
+              { name: 'Housing', color: ColorEnum.RED },
+              { name: 'Transportation', color: ColorEnum.ORANGE },
+              { name: 'Education', color: ColorEnum.LIGHT_BLUE },
+              { name: 'Clothing', color: ColorEnum.BLUE },
+              { name: 'Eletronics', color: ColorEnum.PURPLE },
+              { name: 'Entertainment', color: ColorEnum.PINK },
+              { name: 'Services', color: ColorEnum.YELLOW },
+              { name: 'Food', color: ColorEnum.BROWN },
+              { name: 'Medical & Healthcare', color: ColorEnum.LIGHT_GREEN },
+              { name: 'Saving & Investing', color: ColorEnum.GREEN },
+              { name: 'Recreation & Entertainment', color: ColorEnum.TEAL },
+              { name: 'Others', color: ColorEnum.GREY },
             ],
           },
         },

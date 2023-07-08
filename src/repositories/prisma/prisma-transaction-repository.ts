@@ -6,7 +6,7 @@ import {
   FindManyByUserIdOptions,
   TransactionRepository,
 } from '../transaction-repository'
-import { TransactionType } from '@/use-cases/transactions/create-transaction'
+import { TransactionEnum } from '@/use-cases/transactions/create-transaction'
 
 export class PrismaTransactionRepository implements TransactionRepository {
   async findById(id: string) {
@@ -112,11 +112,11 @@ export class PrismaTransactionRepository implements TransactionRepository {
     })
 
     const income =
-      transaction.type === TransactionType.INCOME ? transaction.amount : 0
+      transaction.type === TransactionEnum.INCOME ? transaction.amount : 0
     const expense =
-      transaction.type === TransactionType.EXPENSE ? transaction.amount : 0
+      transaction.type === TransactionEnum.EXPENSE ? transaction.amount : 0
     const balance =
-      transaction.type === TransactionType.INCOME
+      transaction.type === TransactionEnum.INCOME
         ? transaction.amount
         : -transaction.amount
 
@@ -138,15 +138,15 @@ export class PrismaTransactionRepository implements TransactionRepository {
     })
 
     const income =
-      deletedTransaction.type === TransactionType.INCOME
+      deletedTransaction.type === TransactionEnum.INCOME
         ? -deletedTransaction.amount
         : 0
     const expense =
-      deletedTransaction.type === TransactionType.EXPENSE
+      deletedTransaction.type === TransactionEnum.EXPENSE
         ? -deletedTransaction.amount
         : 0
     const balance =
-      deletedTransaction.type === TransactionType.INCOME
+      deletedTransaction.type === TransactionEnum.INCOME
         ? -deletedTransaction.amount
         : deletedTransaction.amount
 
@@ -191,7 +191,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
       const incomes = transactions
         .filter(
           (t) =>
-            t.type === TransactionType.INCOME &&
+            t.type === TransactionEnum.INCOME &&
             t.date.getDate() === date.getDate(),
         )
         .reduce((acc, t) => acc + t.amount, 0)
@@ -199,7 +199,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
       const expenses = transactions
         .filter(
           (t) =>
-            t.type === TransactionType.EXPENSE &&
+            t.type === TransactionEnum.EXPENSE &&
             t.date.getDate() === date.getDate(),
         )
         .reduce((acc, t) => acc + t.amount, 0)
@@ -243,13 +243,13 @@ export class PrismaTransactionRepository implements TransactionRepository {
 
       const incomes = transactions
         .filter(
-          (t) => t.type === TransactionType.INCOME && t.date.getDate() === day,
+          (t) => t.type === TransactionEnum.INCOME && t.date.getDate() === day,
         )
         .reduce((acc, t) => acc + t.amount, 0)
 
       const expenses = transactions
         .filter(
-          (t) => t.type === TransactionType.EXPENSE && t.date.getDate() === day,
+          (t) => t.type === TransactionEnum.EXPENSE && t.date.getDate() === day,
         )
         .reduce((acc, t) => acc + t.amount, 0)
 
@@ -289,12 +289,12 @@ export class PrismaTransactionRepository implements TransactionRepository {
       const month = date.getMonth()
 
       const incomes = transactions.filter(
-        (t) => t.type === TransactionType.INCOME && t.date.getMonth() === month,
+        (t) => t.type === TransactionEnum.INCOME && t.date.getMonth() === month,
       )
 
       const expenses = transactions.filter(
         (t) =>
-          t.type === TransactionType.EXPENSE && t.date.getMonth() === month,
+          t.type === TransactionEnum.EXPENSE && t.date.getMonth() === month,
       )
 
       const incomesAmount = incomes.reduce((acc, t) => acc + t.amount, 0)

@@ -1,14 +1,10 @@
 import { randomUUID } from 'node:crypto'
 
-import {
-  Institution,
-  type Account,
-  type Category,
-  type Prisma,
-  type User,
-  Color,
-} from '@prisma/client'
+import type { Account, Category, Prisma, User } from '@prisma/client'
 import type { UserRepository } from '../user-repository'
+
+import { InstitutionEnum } from '@/use-cases/accounts/create-account'
+import { ColorEnum } from '@/use-cases/categories/create-category'
 
 export class InMemoryUserRepository implements UserRepository {
   public users: User[] = []
@@ -54,8 +50,8 @@ export class InMemoryUserRepository implements UserRepository {
         id: randomUUID(),
         name: account.name,
         user_id: newUser.id,
-        balance: account.balance,
-        institution: account.institution as Institution,
+        balance: account.balance || 0,
+        institution: account.institution as InstitutionEnum,
         expense: 0,
         income: 0,
         created_at: new Date(),
@@ -72,7 +68,7 @@ export class InMemoryUserRepository implements UserRepository {
       const newCategories: Category[] = category.map((c) => ({
         id: randomUUID(),
         name: c.name,
-        color: c.color as Color,
+        color: c.color as ColorEnum,
         description: c.description || null,
         user_id: newUser.id,
         created_at: new Date(),

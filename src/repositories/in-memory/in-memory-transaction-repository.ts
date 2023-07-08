@@ -1,18 +1,15 @@
 import { randomUUID } from 'node:crypto'
 
-import {
-  TransactionType,
-  type Prisma,
-  type Transaction,
-  Account,
-  Institution,
-} from '@prisma/client'
+import { Prisma, Transaction, Account } from '@prisma/client'
+
 import type {
   Balance,
   FindManyByUserIdOptions,
   TransactionRepository,
 } from '../transaction-repository'
 import { ColorEnum } from '@/use-cases/categories/create-category'
+import { InstitutionEnum } from '@/use-cases/accounts/create-account'
+import { TransactionEnum } from '@/use-cases/transactions/create-transaction'
 
 export class InMemoryTransactionRepository implements TransactionRepository {
   public transactions: Transaction[] = []
@@ -107,7 +104,7 @@ export class InMemoryTransactionRepository implements TransactionRepository {
         id: transaction.account_id,
         name: 'Account Name',
         user_id: transaction.user_id,
-        institution: Institution.OTHER,
+        institution: InstitutionEnum.OTHER,
         balance: 0,
         income: 0,
         expense: 0,
@@ -121,7 +118,7 @@ export class InMemoryTransactionRepository implements TransactionRepository {
       title: transaction.title,
       description: transaction.description || null,
       amount: transaction.amount,
-      type: transaction.type,
+      type: transaction.type as TransactionEnum,
       date: new Date(transaction.date),
       account_id: transaction.account_id,
       category_id: transaction.category_id,
@@ -136,7 +133,7 @@ export class InMemoryTransactionRepository implements TransactionRepository {
       (a) => a.id === transaction.account_id,
     )
 
-    if (transaction.type === TransactionType.INCOME) {
+    if (transaction.type === TransactionEnum.INCOME) {
       this.accounts[accountIndex].income += transaction.amount
       this.accounts[accountIndex].balance += transaction.amount
     } else {
@@ -157,7 +154,7 @@ export class InMemoryTransactionRepository implements TransactionRepository {
       (a) => a.id === transaction.account_id,
     )
 
-    if (transaction.type === TransactionType.INCOME) {
+    if (transaction.type === TransactionEnum.INCOME) {
       this.accounts[accountIndex].income -= transaction.amount
       this.accounts[accountIndex].balance -= transaction.amount
     } else {
@@ -192,7 +189,7 @@ export class InMemoryTransactionRepository implements TransactionRepository {
       const incomes = transactions
         .filter(
           (t) =>
-            t.type === TransactionType.INCOME &&
+            t.type === TransactionEnum.INCOME &&
             t.date.getDate() === date.getDate(),
         )
         .reduce((acc, t) => acc + t.amount, 0)
@@ -200,7 +197,7 @@ export class InMemoryTransactionRepository implements TransactionRepository {
       const expenses = transactions
         .filter(
           (t) =>
-            t.type === TransactionType.EXPENSE &&
+            t.type === TransactionEnum.EXPENSE &&
             t.date.getDate() === date.getDate(),
         )
         .reduce((acc, t) => acc + t.amount, 0)
@@ -243,13 +240,13 @@ export class InMemoryTransactionRepository implements TransactionRepository {
 
       const incomes = transactions
         .filter(
-          (t) => t.type === TransactionType.INCOME && t.date.getDate() === day,
+          (t) => t.type === TransactionEnum.INCOME && t.date.getDate() === day,
         )
         .reduce((acc, t) => acc + t.amount, 0)
 
       const expenses = transactions
         .filter(
-          (t) => t.type === TransactionType.EXPENSE && t.date.getDate() === day,
+          (t) => t.type === TransactionEnum.EXPENSE && t.date.getDate() === day,
         )
         .reduce((acc, t) => acc + t.amount, 0)
 
@@ -281,12 +278,12 @@ export class InMemoryTransactionRepository implements TransactionRepository {
       const month = date.getMonth()
 
       const incomes = transactions.filter(
-        (t) => t.type === TransactionType.INCOME && t.date.getMonth() === month,
+        (t) => t.type === TransactionEnum.INCOME && t.date.getMonth() === month,
       )
 
       const expenses = transactions.filter(
         (t) =>
-          t.type === TransactionType.EXPENSE && t.date.getMonth() === month,
+          t.type === TransactionEnum.EXPENSE && t.date.getMonth() === month,
       )
 
       const incomesAmount = incomes.reduce((acc, t) => acc + t.amount, 0)

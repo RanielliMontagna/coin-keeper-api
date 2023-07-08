@@ -42,29 +42,15 @@ model User {
     @@map("users")
 }
 
-enum Institution {
-    NUBANK
-    XP
-    ITAU
-    BRADESCO
-    SANTANDER
-    BANCO_DO_BRASIL
-    CAIXA
-    INTER
-    SICOOB
-    SICREDI
-    OTHER
-}
-
 model Account {
-    id          String      @id @default(uuid())
+    id          String   @id @default(uuid())
     name        String
-    institution Institution @default(OTHER)
-    balance     Float
-    expense     Float       @default(0)
-    income      Float       @default(0)
-    created_at  DateTime    @default(now())
-    updated_at  DateTime    @updatedAt
+    institution Int      @default(0)
+    balance     Float    @default(0)
+    expense     Float    @default(0)
+    income      Float    @default(0)
+    created_at  DateTime @default(now())
+    updated_at  DateTime @updatedAt
     user_id     String
 
     user        User          @relation(fields: [user_id], references: [id])
@@ -74,34 +60,11 @@ model Account {
     @@map("accounts")
 }
 
-enum Color {
-    RED
-    PINK
-    PURPLE
-    DEEP_PURPLE
-    INDIGO
-    BLUE
-    LIGHT_BLUE
-    CYAN
-    TEAL
-    GREEN
-    LIGHT_GREEN
-    LIME
-    YELLOW
-    AMBER
-    ORANGE
-    DEEP_ORANGE
-    BROWN
-    GREY
-    BLUE_GREY
-    BLACK
-}
-
 model Category {
     id          String   @id @default(uuid())
     name        String
     description String?
-    color       Color    @default(BLUE_GREY)
+    color       Int      @default(0)
     created_at  DateTime @default(now())
     updated_at  DateTime @updatedAt
     user_id     String
@@ -112,20 +75,15 @@ model Category {
     @@map("categories")
 }
 
-enum TransactionType {
-    INCOME
-    EXPENSE
-}
-
 model Transaction {
-    id          String          @id @default(uuid())
+    id          String   @id @default(uuid())
     title       String
     description String?
     amount      Float
-    type        TransactionType
+    type        Int      @default(0) // 0 = income, 1 = expense
     date        DateTime
-    created_at  DateTime        @default(now())
-    updated_at  DateTime        @updatedAt
+    created_at  DateTime @default(now())
+    updated_at  DateTime @updatedAt
     account_id  String
     category_id String
     user_id     String
@@ -137,22 +95,11 @@ model Transaction {
     @@map("transactions")
 }
 
-enum Flag {
-    VISA
-    MASTERCARD
-    ELO
-    AMERICAN_EXPRESS
-    DINERS_CLUB
-    DISCOVER
-    JCB
-    OTHER
-}
-
 model CreditCard {
     id         String   @id @default(uuid())
     name       String
     limit      Float
-    flag       Flag     @default(OTHER)
+    flag       Int      @default(0)
     closingDay Int
     dueDay     Int
     user_id    String

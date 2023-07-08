@@ -53,7 +53,7 @@ describe('Fetch Categories Use Case', () => {
           account: {
             id: expect.any(String),
             name: 'Account Name',
-            institution: expect.any(String),
+            institution: expect.any(Number),
           },
         }),
       ]),

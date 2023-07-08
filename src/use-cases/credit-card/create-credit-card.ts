@@ -5,14 +5,14 @@ import { AccountRepository } from '@/repositories/account-repository'
 import { AccountNotFoundError } from '../errors/account-not-found-error'
 
 export enum FlagEnum {
-  VISA = 'VISA',
-  MASTERCARD = 'MASTERCARD',
-  ELO = 'ELO',
-  AMERICAN_EXPRESS = 'AMERICAN_EXPRESS',
-  DINERS_CLUB = 'DINERS_CLUB',
-  DISCOVER = 'DISCOVER',
-  JCB = 'JCB',
-  OTHER = 'OTHER',
+  OTHER = 0,
+  VISA = 1,
+  MASTERCARD = 2,
+  ELO = 3,
+  AMERICAN_EXPRESS = 4,
+  DINERS_CLUB = 5,
+  DISCOVER = 6,
+  JCB = 7,
 }
 
 export interface CreateCreditCardUseCaseRequest {

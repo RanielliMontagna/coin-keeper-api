@@ -6,7 +6,7 @@ import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-
 import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
 
 import { GetTransactionsBalanceUseCase } from './get-transactions-balance'
-import { TransactionType } from './create-transaction'
+import { TransactionEnum } from './create-transaction'
 
 let transactionRepository: InMemoryTransactionRepository
 let userRepository: InMemoryUserRepository
@@ -38,7 +38,7 @@ describe('Get Transaction Balance Use Case', () => {
       await transactionRepository.create({
         title: `Transaction Name ${i + 1}`,
         amount: i * 100,
-        type: i % 2 === 0 ? TransactionType.EXPENSE : TransactionType.INCOME,
+        type: i % 2 === 0 ? TransactionEnum.EXPENSE : TransactionEnum.INCOME,
         date: new Date(),
         account_id: 'account-id',
         category_id: 'category-id',

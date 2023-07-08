@@ -1,9 +1,11 @@
 import request from 'supertest'
 
 import { app } from '@/app'
-import { Color, Institution } from '@prisma/client'
 
 import { createAndAuthenticateUser } from '@/utils/test/create-and-authenticate-user'
+import { InstitutionEnum } from '@/use-cases/accounts/create-account'
+import { ColorEnum } from '@/use-cases/categories/create-category'
+import { TransactionEnum } from '@/use-cases/transactions/create-transaction'
 
 describe('Create Transaction (e2e)', () => {
   beforeAll(async () => {
@@ -22,7 +24,7 @@ describe('Create Transaction (e2e)', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         name: 'Account Example',
-        institution: Institution.NUBANK,
+        institution: InstitutionEnum.NUBANK,
         balance: 1000,
       })
 
@@ -32,7 +34,7 @@ describe('Create Transaction (e2e)', () => {
       .send({
         name: 'Category Example',
         description: 'Category Example Description',
-        color: Color.BLUE,
+        color: ColorEnum.BLUE,
       })
 
     const response = await request(app.server)
@@ -42,7 +44,7 @@ describe('Create Transaction (e2e)', () => {
         title: 'Transaction Example',
         description: 'Transaction Example Description',
         amount: 1000,
-        type: 'INCOME',
+        type: TransactionEnum.INCOME,
         date: '2021-01-01',
         accountId: responseAccount.body.data.id,
         categoryId: responseCategory.body.data.id,

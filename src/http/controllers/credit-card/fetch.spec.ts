@@ -1,7 +1,10 @@
 import request from 'supertest'
+
 import { app } from '@/app'
+
 import { createAndAuthenticateUser } from '@/utils/test/create-and-authenticate-user'
-import { Institution } from '@prisma/client'
+import { InstitutionEnum } from '@/use-cases/accounts/create-account'
+import { FlagEnum } from '@/use-cases/credit-card/create-credit-card'
 
 describe('Fetch Credit Cards (e2e)', () => {
   beforeAll(async () => {
@@ -20,7 +23,7 @@ describe('Fetch Credit Cards (e2e)', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         name: 'Account Example',
-        institution: Institution.NUBANK,
+        institution: InstitutionEnum.NUBANK,
         balance: 1000,
       })
 
@@ -31,7 +34,7 @@ describe('Fetch Credit Cards (e2e)', () => {
         .send({
           name: `Credit Card Example ${i}`,
           limit: 1000,
-          flag: 'VISA',
+          flag: FlagEnum.VISA,
           closingDay: 28,
           dueDay: 10,
           accountId: createAccountResponse.body.data.id,
@@ -51,26 +54,26 @@ describe('Fetch Credit Cards (e2e)', () => {
             id: expect.any(String),
             name: 'Credit Card Example 0',
             limit: 1000,
-            flag: 'VISA',
+            flag: FlagEnum.VISA,
             closingDay: 28,
             dueDay: 10,
             account: {
               id: createAccountResponse.body.data.id,
               name: 'Account Example',
-              institution: Institution.NUBANK,
+              institution: InstitutionEnum.NUBANK,
             },
           }),
           expect.objectContaining({
             id: expect.any(String),
             name: 'Credit Card Example 4',
             limit: 1000,
-            flag: 'VISA',
+            flag: FlagEnum.VISA,
             closingDay: 28,
             dueDay: 10,
             account: {
               id: createAccountResponse.body.data.id,
               name: 'Account Example',
-              institution: Institution.NUBANK,
+              institution: InstitutionEnum.NUBANK,
             },
           }),
         ]),

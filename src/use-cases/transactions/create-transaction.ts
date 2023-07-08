@@ -4,16 +4,16 @@ import { AccountRepository } from '@/repositories/account-repository'
 import { TransactionRepository } from '@/repositories/transaction-repository'
 import { AccountNotFoundError } from '../errors/account-not-found-error'
 
-export enum TransactionType {
-  INCOME = 'INCOME',
-  EXPENSE = 'EXPENSE',
+export enum TransactionEnum {
+  INCOME = 0,
+  EXPENSE = 1,
 }
 
 interface CreateTransactionUseCaseRequest {
   title: string
   description?: string
   amount: number
-  type: TransactionType
+  type: TransactionEnum
   date: Date
   accountId: string
   categoryId: string

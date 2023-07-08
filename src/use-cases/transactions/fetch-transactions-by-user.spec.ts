@@ -6,7 +6,7 @@ import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-
 import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
 
 import { FetchTransactionsByUserUseCase } from './fetch-transactions-by-user'
-import { TransactionType } from './create-transaction'
+import { TransactionEnum } from './create-transaction'
 
 let transactionRepository: InMemoryTransactionRepository
 let userRepository: InMemoryUserRepository
@@ -37,7 +37,7 @@ describe('Fetch Transactions By User Use Case', () => {
     await transactionRepository.create({
       title: 'Transaction Name',
       amount: 100,
-      type: TransactionType.EXPENSE,
+      type: TransactionEnum.EXPENSE,
       date: new Date(),
       account_id: 'account-id',
       category_id: 'category-id',
@@ -54,7 +54,7 @@ describe('Fetch Transactions By User Use Case', () => {
           id: expect.any(String),
           title: 'Transaction Name',
           amount: 100,
-          type: TransactionType.EXPENSE,
+          type: TransactionEnum.EXPENSE,
           date: expect.any(Date),
           account: expect.objectContaining({ id: 'account-id' }),
           category: expect.objectContaining({ id: 'category-id' }),
@@ -68,7 +68,7 @@ describe('Fetch Transactions By User Use Case', () => {
       await transactionRepository.create({
         title: `Transaction Name ${i}`,
         amount: 100,
-        type: TransactionType.EXPENSE,
+        type: TransactionEnum.EXPENSE,
         date: new Date(),
         account_id: 'account-id',
         category_id: 'category-id',
@@ -87,7 +87,7 @@ describe('Fetch Transactions By User Use Case', () => {
           id: expect.any(String),
           title: 'Transaction Name 20',
           amount: 100,
-          type: TransactionType.EXPENSE,
+          type: TransactionEnum.EXPENSE,
           date: expect.any(Date),
           account: expect.objectContaining({ id: 'account-id' }),
           category: expect.objectContaining({ id: 'category-id' }),
@@ -96,7 +96,7 @@ describe('Fetch Transactions By User Use Case', () => {
           id: expect.any(String),
           title: 'Transaction Name 0',
           amount: 100,
-          type: TransactionType.EXPENSE,
+          type: TransactionEnum.EXPENSE,
           date: expect.any(Date),
           account: expect.objectContaining({ id: 'account-id' }),
           category: expect.objectContaining({ id: 'category-id' }),

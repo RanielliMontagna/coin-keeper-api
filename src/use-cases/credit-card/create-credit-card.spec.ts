@@ -1,5 +1,3 @@
-import { Color } from '@prisma/client'
-
 import { InMemoryCreditCardRepository } from '@/repositories/in-memory/in-memory-credit-card-repository'
 import { InMemoryAccountRepository } from '@/repositories/in-memory/in-memory-account-repository'
 
