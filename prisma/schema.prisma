@@ -46,9 +46,9 @@ model Account {
     id          String   @id @default(uuid())
     name        String
     institution Int      @default(0)
-    balance     Float    @default(0)
-    expense     Float    @default(0)
-    income      Float    @default(0)
+    balance     Int      @default(0) // save in cents
+    expense     Int      @default(0) // save in cents
+    income      Int      @default(0) // save in cents
     created_at  DateTime @default(now())
     updated_at  DateTime @updatedAt
     user_id     String
@@ -79,7 +79,7 @@ model Transaction {
     id          String   @id @default(uuid())
     title       String
     description String?
-    amount      Float
+    amount      Int // save in cents
     type        Int      @default(0) // 0 = income, 1 = expense
     date        DateTime
     created_at  DateTime @default(now())
@@ -98,7 +98,7 @@ model Transaction {
 model CreditCard {
     id         String   @id @default(uuid())
     name       String
-    limit      Float
+    limit      Int      @default(0) // save in cents
     flag       Int      @default(0)
     closingDay Int
     dueDay     Int
