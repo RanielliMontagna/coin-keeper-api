@@ -18,19 +18,14 @@ import { creditCardRoutes } from './http/controllers/credit-card/routes'
 export const app = fastify({})
 
 app.register(cors, {
-  origin: ['http://localhost:5173'],
+  origin: ['http://localhost:5173', /\.ngrok-free\.app$/],
   credentials: true,
 })
 
 app.register(fastifyJwt, {
   secret: env.JWT_SECRET,
-  cookie: {
-    cookieName: 'refreshToken',
-    signed: false,
-  },
-  sign: {
-    expiresIn: '10m',
-  },
+  cookie: { cookieName: 'refreshToken', signed: false },
+  sign: { expiresIn: '10m' },
 })
 
 app.register(fastifyCookie)

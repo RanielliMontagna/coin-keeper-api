@@ -69,7 +69,7 @@ export class InMemoryUserRepository implements UserRepository {
         id: randomUUID(),
         name: c.name,
         color: c.color as ColorEnum,
-        description: c.description || null,
+        description: c.description as string,
         user_id: newUser.id,
         created_at: new Date(),
         updated_at: new Date(),
