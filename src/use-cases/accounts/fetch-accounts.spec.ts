@@ -92,4 +92,20 @@ describe('Fetch Accounts Use Case', () => {
       ]),
     )
   })
+
+  it('should be not able to fetch accounts previously deleted', async () => {
+    const account = await accountRepository.create({
+      name: 'Account Name',
+      balance: 0,
+      user_id: userId,
+    })
+
+    await sut.execute({ userId })
+
+    await accountRepository.delete(account.id)
+
+    const response = await sut.execute({ userId })
+
+    expect(response.accounts).toEqual([])
+  })
 })

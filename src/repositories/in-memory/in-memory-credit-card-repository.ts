@@ -18,6 +18,10 @@ export class InMemoryCreditCardRepository implements CreditCardRepository {
       return null
     }
 
+    if (creditCard.deleted_at) {
+      return null
+    }
+
     return {
       ...creditCard,
       account: {
@@ -29,7 +33,10 @@ export class InMemoryCreditCardRepository implements CreditCardRepository {
   }
 
   async findManyByUserId(userId: string) {
-    const creditCards = this.creditCards.filter((c) => c.user_id === userId)
+    const creditCards = this.creditCards.filter((c) => {
+      if (c.deleted_at) return false
+      if (c.user_id === userId) return true
+    })
 
     return creditCards.map((c) => ({
       ...c,
@@ -55,13 +62,14 @@ export class InMemoryCreditCardRepository implements CreditCardRepository {
         expense: 0,
         created_at: new Date(),
         updated_at: new Date(),
+        deleted_at: null,
       })
     }
 
     const newCreditCard: CreditCard = {
       id: creditCard.id || randomUUID(),
       name: creditCard.name,
-      limit: creditCard.limit,
+      limit: creditCard.limit as number,
       flag: creditCard.flag as FlagEnum,
       closingDay: creditCard.closingDay,
       dueDay: creditCard.dueDay,
@@ -69,6 +77,7 @@ export class InMemoryCreditCardRepository implements CreditCardRepository {
       user_id: creditCard.user_id,
       created_at: new Date(),
       updated_at: new Date(),
+      deleted_at: null,
     }
 
     this.creditCards.push(newCreditCard)
@@ -107,18 +116,22 @@ export class InMemoryCreditCardRepository implements CreditCardRepository {
       user_id: _creditCard.user_id,
       created_at: _creditCard.created_at,
       updated_at: new Date(),
+      deleted_at: null,
     }
 
     return updatedCreditCard
   }
 
   async delete(id: string) {
-    const accountIndex = this.creditCards.findIndex((a) => a.id === id)
+    const creditCardIndex = this.creditCards.findIndex((a) => a.id === id)
 
-    const account = this.creditCards[accountIndex]
+    const creditCard = this.creditCards[creditCardIndex]
 
-    this.creditCards.splice(accountIndex, 1)
+    this.creditCards.splice(creditCardIndex, 1)
 
-    return account
+    this.creditCards[creditCardIndex] = {
+      ...creditCard,
+      deleted_at: new Date(),
+    }
   }
 }

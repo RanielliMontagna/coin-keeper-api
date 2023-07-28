@@ -22,13 +22,18 @@ export class InMemoryTransactionRepository implements TransactionRepository {
       return null
     }
 
+    if (transaction.deleted_at) {
+      return null
+    }
+
     return transaction
   }
 
   async findManyByAccountId(accountId: string) {
-    const transactions = this.transactions.filter(
-      (t) => t.account_id === accountId,
-    )
+    const transactions = this.transactions.filter((t) => {
+      if (t.deleted_at) return false
+      if (t.account_id === accountId) return true
+    })
 
     return transactions.map((t) => ({
       ...t,
@@ -48,7 +53,10 @@ export class InMemoryTransactionRepository implements TransactionRepository {
   async findManyByUserId(userId: string, options?: FindManyByUserIdOptions) {
     const { page = 1 } = options || {}
 
-    const transactions = this.transactions.filter((t) => t.user_id === userId)
+    const transactions = this.transactions.filter((t) => {
+      if (t.deleted_at) return false
+      if (t.user_id === userId) return true
+    })
 
     const transactionsPerPage = 15
 
@@ -71,7 +79,10 @@ export class InMemoryTransactionRepository implements TransactionRepository {
   }
 
   async findFiveLatestByUserId(userId: string) {
-    const transactions = this.transactions.filter((t) => t.user_id === userId)
+    const transactions = this.transactions.filter((t) => {
+      if (t.deleted_at) return false
+      if (t.user_id === userId) return true
+    })
     const latestTransactions = transactions.slice(-5)
 
     return latestTransactions.map((t) => ({
@@ -90,7 +101,9 @@ export class InMemoryTransactionRepository implements TransactionRepository {
   }
 
   async findBalanceByUserId(userId: string) {
-    const accounts = this.accounts.filter((a) => a.user_id === userId)
+    const accounts = this.accounts.filter((a) => {
+      if (a.user_id === userId) return true
+    })
 
     const balance = accounts.reduce((acc, account) => acc + account.balance, 0)
     const expenses = accounts.reduce((acc, account) => acc + account.expense, 0)
@@ -113,6 +126,7 @@ export class InMemoryTransactionRepository implements TransactionRepository {
         expense: 0,
         created_at: new Date(),
         updated_at: new Date(),
+        deleted_at: null,
       })
     }
 
@@ -128,6 +142,7 @@ export class InMemoryTransactionRepository implements TransactionRepository {
       user_id: transaction.user_id,
       created_at: new Date(),
       updated_at: new Date(),
+      deleted_at: null,
     }
 
     this.transactions.push(newTransaction)
@@ -151,28 +166,32 @@ export class InMemoryTransactionRepository implements TransactionRepository {
     const transactionIndex = this.transactions.findIndex((t) => t.id === id)
     const transaction = this.transactions[transactionIndex]
 
-    this.transactions.splice(transactionIndex, 1)
+    this.transactions[transactionIndex] = {
+      ...transaction,
+      deleted_at: new Date(),
+    }
 
     const accountIndex = this.accounts.findIndex(
       (a) => a.id === transaction.account_id,
     )
 
-    if (transaction.type === TransactionEnum.INCOME) {
+    if (transaction?.type === TransactionEnum.INCOME) {
       this.accounts[accountIndex].income -= transaction.amount
       this.accounts[accountIndex].balance -= transaction.amount
     } else {
       this.accounts[accountIndex].expense -= transaction.amount
       this.accounts[accountIndex].balance += transaction.amount
     }
-
-    return transaction
   }
 
   async getGraphicsWeek(userId: string) {
     const day = new Date().getDay()
 
     const transactions = this.transactions
-      .filter((t) => t.user_id === userId)
+      .filter((t) => {
+        if (t.deleted_at) return false
+        if (t.user_id === userId) return true
+      })
       .filter((t) => {
         const today = new Date().getDay()
         const transactionDay = new Date(t.date).getDay()
@@ -223,7 +242,10 @@ export class InMemoryTransactionRepository implements TransactionRepository {
     ).getDate()
 
     const transactions = this.transactions
-      .filter((t) => t.user_id === userId)
+      .filter((t) => {
+        if (t.deleted_at) return false
+        if (t.user_id === userId) return true
+      })
       .filter((t) => {
         const month = new Date().getMonth()
         const transactionMonth = new Date(t.date).getMonth()
@@ -263,7 +285,10 @@ export class InMemoryTransactionRepository implements TransactionRepository {
     const year = new Date().getFullYear()
 
     const transactions = this.transactions
-      .filter((t) => t.user_id === userId)
+      .filter((t) => {
+        if (t.deleted_at) return false
+        if (t.user_id === userId) return true
+      })
       .filter((t) => {
         const transactionYear = new Date(t.date).getFullYear()
 

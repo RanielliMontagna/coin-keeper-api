@@ -87,4 +87,19 @@ describe('Fetch Categories Use Case', () => {
       ]),
     )
   })
+
+  it('should be not able to fetch categories previously deleted', async () => {
+    const category = await categoryRepository.create({
+      name: 'Category Name',
+      description: 'Category Description',
+      color: ColorEnum.RED,
+      user_id: userId,
+    })
+
+    await categoryRepository.delete(category.id)
+
+    const response = await sut.execute({ userId })
+
+    expect(response.categories).toEqual([])
+  })
 })

@@ -14,12 +14,15 @@ export class PrismaTransactionRepository implements TransactionRepository {
       where: { id },
     })
 
+    if (!transaction) return null
+    if (transaction.deleted_at) return null
+
     return transaction
   }
 
   async findManyByAccountId(accountId: string) {
     const transactions = await prisma.transaction.findMany({
-      where: { account_id: accountId },
+      where: { account_id: accountId, deleted_at: null },
       select: {
         id: true,
         title: true,
@@ -39,7 +42,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
     const { page = 1 } = options || {}
 
     const transactions = await prisma.transaction.findMany({
-      where: { user_id: userId },
+      where: { user_id: userId, deleted_at: null },
       take: 15,
       skip: (page - 1) * 15,
       orderBy: { date: 'desc' },
@@ -60,7 +63,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
 
   async findFiveLatestByUserId(userId: string) {
     const transactions = await prisma.transaction.findMany({
-      where: { user_id: userId },
+      where: { user_id: userId, deleted_at: null },
       take: 5,
       orderBy: { date: 'desc' },
       select: {
@@ -92,7 +95,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
 
   async findBalanceByUserId(userId: string) {
     const accounts = await prisma.account.findMany({
-      where: { user_id: userId },
+      where: { user_id: userId, deleted_at: null },
       select: {
         balance: true,
         income: true,
@@ -134,8 +137,9 @@ export class PrismaTransactionRepository implements TransactionRepository {
   }
 
   async delete(id: string) {
-    const deletedTransaction = await prisma.transaction.delete({
+    const deletedTransaction = await prisma.transaction.update({
       where: { id },
+      data: { deleted_at: new Date() },
     })
 
     const income =
@@ -159,8 +163,6 @@ export class PrismaTransactionRepository implements TransactionRepository {
         balance: { increment: balance },
       },
     })
-
-    return deletedTransaction
   }
 
   async getGraphicsWeek(userId: string) {
@@ -169,6 +171,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
     const transactions = await prisma.transaction.findMany({
       where: {
         user_id: userId,
+        deleted_at: null,
         date: {
           gte: new Date(new Date().setDate(new Date().getDate() - day)),
         },
@@ -221,6 +224,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
     const transactions = await prisma.transaction.findMany({
       where: {
         user_id: userId,
+        deleted_at: null,
         date: {
           gte: new Date(new Date().setDate(1)),
         },
@@ -266,6 +270,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
     const transactions = await prisma.transaction.findMany({
       where: {
         user_id: userId,
+        deleted_at: null,
         date: {
           gte: new Date(
             new Date().setFullYear(new Date().getFullYear() - year),

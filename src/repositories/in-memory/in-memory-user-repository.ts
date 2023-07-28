@@ -56,6 +56,7 @@ export class InMemoryUserRepository implements UserRepository {
         income: 0,
         created_at: new Date(),
         updated_at: new Date(),
+        deleted_at: null,
       }
 
       this.accounts.push(newAccount)
@@ -73,6 +74,7 @@ export class InMemoryUserRepository implements UserRepository {
         user_id: newUser.id,
         created_at: new Date(),
         updated_at: new Date(),
+        deleted_at: null,
       }))
       this.categories.push(...newCategories)
     }

@@ -35,19 +35,9 @@ describe('Update Account Use Case', () => {
       user_id: userId,
     })
 
-    const response = await sut.execute({
-      accountId: account.id,
-    })
-
-    expect(response.account).toEqual(
-      expect.objectContaining({
-        id: account.id,
-        name: 'Account Name',
-        balance: 100,
-        user_id: userId,
-        created_at: expect.any(Date),
-        updated_at: expect.any(Date),
-      }),
+    await sut.execute({ accountId: account.id })
+    await expect(sut.execute({ accountId: account.id })).rejects.toBeInstanceOf(
+      AccountNotFoundError,
     )
   })
 

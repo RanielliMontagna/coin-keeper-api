@@ -39,7 +39,7 @@ export interface TransactionRepository {
   create(
     transaction: Prisma.TransactionUncheckedCreateInput,
   ): Promise<Transaction>
-  delete(id: string): Promise<Transaction>
+  delete(id: string): Promise<void>
   getGraphicsWeek(userId: string): Promise<Balance[]>
   getGraphicsMonth(userId: string): Promise<Balance[]>
   getGraphicsYear(userId: string): Promise<Balance[]>

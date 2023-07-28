@@ -112,4 +112,26 @@ describe('Fetch Transactions By User Use Case', () => {
       }),
     ).rejects.toBeInstanceOf(UserNotFoundError)
   })
+
+  it('should be able to fetch transactions previously deleted', async () => {
+    const transaction = await transactionRepository.create({
+      title: 'Transaction Name',
+      amount: 100,
+      type: TransactionEnum.EXPENSE,
+      date: new Date(),
+      account_id: 'account-id',
+      category_id: 'category-id',
+      user_id: userId,
+    })
+
+    await transactionRepository.delete(transaction.id)
+
+    const response = await sut.execute({ userId })
+
+    expect(response.transactions).not.toContainEqual(
+      expect.objectContaining({
+        id: transaction.id,
+      }),
+    )
+  })
 })

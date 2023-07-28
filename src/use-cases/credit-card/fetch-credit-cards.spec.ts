@@ -67,4 +67,22 @@ describe('Fetch Categories Use Case', () => {
       }),
     ).rejects.toThrow(new Error('User not found'))
   })
+
+  it('should not be able to fetch creditCards previously deleted', async () => {
+    const creditCardCreated = await creditCard.create({
+      name: 'Credit Card Name',
+      limit: 1000,
+      flag: FlagEnum.MASTERCARD,
+      closingDay: 10,
+      dueDay: 10,
+      user_id: userId,
+      account_id: 'account-id',
+    })
+
+    await creditCard.delete(creditCardCreated.id)
+
+    const response = await sut.execute({ userId })
+
+    expect(response.creditCards).toEqual([])
+  })
 })
