@@ -43,14 +43,15 @@ model User {
 }
 
 model Account {
-    id          String   @id @default(uuid())
+    id          String    @id @default(uuid())
     name        String
-    institution Int      @default(0)
-    balance     Int      @default(0) // save in cents
-    expense     Int      @default(0) // save in cents
-    income      Int      @default(0) // save in cents
-    created_at  DateTime @default(now())
-    updated_at  DateTime @updatedAt
+    institution Int       @default(0)
+    balance     Int       @default(0) // save in cents
+    expense     Int       @default(0) // save in cents
+    income      Int       @default(0) // save in cents
+    created_at  DateTime  @default(now())
+    updated_at  DateTime  @updatedAt
+    deleted_at  DateTime?
     user_id     String
 
     user        User          @relation(fields: [user_id], references: [id])
@@ -61,12 +62,13 @@ model Account {
 }
 
 model Category {
-    id          String   @id @default(uuid())
+    id          String    @id @default(uuid())
     name        String
     description String?
-    color       Int      @default(0)
-    created_at  DateTime @default(now())
-    updated_at  DateTime @updatedAt
+    color       Int       @default(0)
+    created_at  DateTime  @default(now())
+    updated_at  DateTime  @updatedAt
+    deleted_at  DateTime?
     user_id     String
 
     user        User          @relation(fields: [user_id], references: [id])
@@ -76,14 +78,15 @@ model Category {
 }
 
 model Transaction {
-    id          String   @id @default(uuid())
+    id          String    @id @default(uuid())
     title       String
     description String?
     amount      Int // save in cents
-    type        Int      @default(0) // 0 = income, 1 = expense
+    type        Int       @default(0) // 0 = income, 1 = expense
     date        DateTime
-    created_at  DateTime @default(now())
-    updated_at  DateTime @updatedAt
+    created_at  DateTime  @default(now())
+    updated_at  DateTime  @updatedAt
+    deleted_at  DateTime?
     account_id  String
     category_id String
     user_id     String
@@ -96,16 +99,17 @@ model Transaction {
 }
 
 model CreditCard {
-    id         String   @id @default(uuid())
+    id         String    @id @default(uuid())
     name       String
-    limit      Int      @default(0) // save in cents
-    flag       Int      @default(0)
+    limit      Int       @default(0) // save in cents
+    flag       Int       @default(0)
     closingDay Int
     dueDay     Int
     user_id    String
     account_id String
-    created_at DateTime @default(now())
-    updated_at DateTime @updatedAt
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
+    deleted_at DateTime?
 
     user    User    @relation(fields: [user_id], references: [id])
     account Account @relation(fields: [account_id], references: [id])
