@@ -5,6 +5,7 @@ import { UserTypeEnum } from '@/use-cases/users/register-user'
 
 import { DeleteCategoryUseCase } from './delete-category'
 import { ColorEnum } from './create-category'
+import { CategoryNotFoundError } from '../errors/category-not-found-error'
 
 let categoryRepository: InMemoryCategoryRepository
 let userRepository: InMemoryUserRepository
@@ -36,19 +37,10 @@ describe('Delete Category Use Case', () => {
       user_id: userId,
     })
 
-    const response = await sut.execute({
-      categoryId: category.id,
-    })
-
-    expect(response.category).toEqual(
-      expect.objectContaining({
-        id: expect.any(String),
-        name: 'Category Name',
-        description: 'Category Description',
-        color: ColorEnum.RED,
-        user_id: userId,
-      }),
-    )
+    await sut.execute({ categoryId: category.id })
+    await expect(
+      sut.execute({ categoryId: category.id }),
+    ).rejects.toBeInstanceOf(CategoryNotFoundError)
   })
 
   it('should not be able to delete a non-existing category', async () => {
@@ -56,6 +48,6 @@ describe('Delete Category Use Case', () => {
       sut.execute({
         categoryId: 'non-existing-category-id',
       }),
-    ).rejects.toThrow()
+    ).rejects.toBeInstanceOf(CategoryNotFoundError)
   })
 })

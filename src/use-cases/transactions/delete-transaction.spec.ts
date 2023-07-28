@@ -41,22 +41,10 @@ describe('Update Transaction Use Case', () => {
       user_id: userId,
     })
 
-    const response = await sut.execute({
-      transactionId: transaction.id,
-    })
-
-    expect(response.transaction).toEqual(
-      expect.objectContaining({
-        id: expect.any(String),
-        title: 'Transaction Name',
-        description: 'Transaction Description',
-        amount: 100,
-        type: TransactionEnum.EXPENSE,
-        date: expect.any(Date),
-        account_id: 'account-id',
-        category_id: 'category-id',
-      }),
-    )
+    await sut.execute({ transactionId: transaction.id })
+    await expect(
+      sut.execute({ transactionId: transaction.id }),
+    ).rejects.toBeInstanceOf(TransactionNotFoundError)
   })
 
   it('should be able to delete a income', async () => {
@@ -71,22 +59,10 @@ describe('Update Transaction Use Case', () => {
       user_id: userId,
     })
 
-    const response = await sut.execute({
-      transactionId: transaction.id,
-    })
-
-    expect(response.transaction).toEqual(
-      expect.objectContaining({
-        id: expect.any(String),
-        title: 'Transaction Name',
-        description: 'Transaction Description',
-        amount: 100,
-        type: TransactionEnum.INCOME,
-        date: expect.any(Date),
-        account_id: 'account-id',
-        category_id: 'category-id',
-      }),
-    )
+    await sut.execute({ transactionId: transaction.id })
+    await expect(
+      sut.execute({ transactionId: transaction.id }),
+    ).rejects.toBeInstanceOf(TransactionNotFoundError)
   })
 
   it('should not be able to delete a non-existing transaction', async () => {

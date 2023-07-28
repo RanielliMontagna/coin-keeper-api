@@ -12,6 +12,9 @@ export class PrismaAccountRepository implements AccountRepository {
       where: { id },
     })
 
+    if (!account) return null
+    if (account.deleted_at) return null
+
     return account
   }
 
@@ -19,6 +22,7 @@ export class PrismaAccountRepository implements AccountRepository {
     const accounts = await prisma.account.findMany({
       where: {
         user_id: userId,
+        deleted_at: null,
         name: {
           contains: options?.search,
           mode: 'insensitive',
@@ -46,10 +50,9 @@ export class PrismaAccountRepository implements AccountRepository {
     return updatedAccount
   }
   async delete(id: string) {
-    const deletedAccount = await prisma.account.delete({
+    await prisma.account.update({
       where: { id },
+      data: { deleted_at: new Date() },
     })
-
-    return deletedAccount
   }
 }

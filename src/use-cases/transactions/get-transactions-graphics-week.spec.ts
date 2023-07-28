@@ -64,4 +64,35 @@ describe('Get Transaction Graphics Week Use Case', () => {
       sut.execute({ userId: 'user-id-not-found' }),
     ).rejects.toBeInstanceOf(UserNotFoundError)
   })
+
+  it('should not be able to get transaction graphics week of deleted transactions', async () => {
+    const transaction = await transactionRepository.create({
+      title: 'Transaction Name',
+      amount: 100,
+      type: TransactionEnum.EXPENSE,
+      date: new Date(),
+      account_id: 'account-id',
+      category_id: 'category-id',
+      user_id: userId,
+      deleted_at: new Date(),
+    })
+    await transactionRepository.delete(transaction.id)
+
+    const response = await sut.execute({ userId })
+
+    expect.objectContaining({
+      balance: -100,
+      expenses: 100,
+      incomes: 0,
+    }),
+      expect(response.week).not.toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            balance: -100,
+            expenses: 100,
+            incomes: 0,
+          }),
+        ]),
+      )
+  })
 })

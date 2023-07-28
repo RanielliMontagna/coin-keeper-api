@@ -17,11 +17,18 @@ export class InMemoryAccountRepository implements AccountRepository {
       return null
     }
 
+    if (account.deleted_at) {
+      return null
+    }
+
     return account
   }
 
   async findManyByUserId(userId: string, options: FindManyByUserIdOptions) {
-    const accounts = this.accounts.filter((a) => a.user_id === userId)
+    const accounts = this.accounts.filter((a) => {
+      if (a.deleted_at) return false
+      if (a.user_id === userId) return true
+    })
 
     if (options?.search) {
       return accounts.filter((a) =>
@@ -45,6 +52,7 @@ export class InMemoryAccountRepository implements AccountRepository {
 
       created_at: new Date(),
       updated_at: new Date(),
+      deleted_at: null,
 
       user_id: account.user_id,
     }
@@ -72,6 +80,7 @@ export class InMemoryAccountRepository implements AccountRepository {
       income: 0,
       created_at: _account.created_at,
       updated_at: new Date(),
+      deleted_at: null,
       user_id: _account.user_id,
     }
 
@@ -83,8 +92,9 @@ export class InMemoryAccountRepository implements AccountRepository {
 
     const account = this.accounts[accountIndex]
 
-    this.accounts.splice(accountIndex, 1)
-
-    return account
+    this.accounts[accountIndex] = {
+      ...account,
+      deleted_at: new Date(),
+    }
   }
 }

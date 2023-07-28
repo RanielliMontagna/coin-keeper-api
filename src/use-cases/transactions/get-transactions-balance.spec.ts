@@ -60,4 +60,25 @@ describe('Get Transaction Balance Use Case', () => {
       }),
     ).rejects.toEqual(new UserNotFoundError())
   })
+
+  it('should not be able to get transaction balance of deleted transactions', async () => {
+    const response = await transactionRepository.create({
+      title: 'Transaction Name',
+      amount: 100,
+      type: TransactionEnum.EXPENSE,
+      date: new Date(),
+      account_id: 'account-id',
+      category_id: 'category-id',
+      user_id: userId,
+      deleted_at: new Date(),
+    })
+
+    await transactionRepository.delete(response.id)
+
+    const { balance, expenses, incomes } = await sut.execute({ userId })
+
+    expect(balance).toEqual(0)
+    expect(incomes).toEqual(0)
+    expect(expenses).toEqual(0)
+  })
 })

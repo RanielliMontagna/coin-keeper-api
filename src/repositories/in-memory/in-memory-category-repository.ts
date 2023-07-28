@@ -17,6 +17,10 @@ export class InMemoryCategoryRepository implements CategoryRepository {
       return null
     }
 
+    if (category.deleted_at) {
+      return null
+    }
+
     return category
   }
 
@@ -29,11 +33,18 @@ export class InMemoryCategoryRepository implements CategoryRepository {
       return null
     }
 
+    if (category.deleted_at) {
+      return null
+    }
+
     return category
   }
 
   async findManyByUserId(userId: string, options: FindManyByUserIdOptions) {
-    const categories = this.categories.filter((c) => c.user_id === userId)
+    const categories = this.categories.filter((c) => {
+      if (c.deleted_at) return false
+      if (c.user_id === userId) return true
+    })
 
     if (options?.search) {
       return categories.filter((a) =>
@@ -57,6 +68,7 @@ export class InMemoryCategoryRepository implements CategoryRepository {
       user_id: category.user_id,
       created_at: new Date(),
       updated_at: new Date(),
+      deleted_at: null,
     }
 
     this.categories.push(newCategory)
@@ -83,18 +95,22 @@ export class InMemoryCategoryRepository implements CategoryRepository {
       user_id: _category.user_id,
       created_at: _category.created_at,
       updated_at: new Date(),
+      deleted_at: null,
     }
 
     return updatedCategory
   }
 
-  async delete(id: string): Promise<Category> {
+  async delete(id: string) {
     const categoryIndex = this.categories.findIndex((c) => c.id === id)
 
     const category = this.categories[categoryIndex]
 
     this.categories.splice(categoryIndex, 1)
 
-    return category
+    this.categories[categoryIndex] = {
+      ...category,
+      deleted_at: new Date(),
+    }
   }
 }

@@ -7,16 +7,10 @@ interface DeleteCategoryUseCaseRequest {
   categoryId: string
 }
 
-interface DeleteCategoryUseCaseResponse {
-  category: Category
-}
-
 export class DeleteCategoryUseCase {
   constructor(private categoryRepository: CategoryRepository) {}
 
-  async execute({
-    categoryId,
-  }: DeleteCategoryUseCaseRequest): Promise<DeleteCategoryUseCaseResponse> {
+  async execute({ categoryId }: DeleteCategoryUseCaseRequest): Promise<void> {
     const category = await this.categoryRepository.findById(categoryId)
 
     if (!category) {
@@ -24,9 +18,5 @@ export class DeleteCategoryUseCase {
     }
 
     await this.categoryRepository.delete(categoryId)
-
-    return {
-      category,
-    }
   }
 }

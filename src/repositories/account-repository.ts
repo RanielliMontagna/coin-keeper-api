@@ -10,5 +10,5 @@ export interface AccountRepository {
   ): Promise<Account[]>
   create(account: Prisma.AccountUncheckedCreateInput): Promise<Account>
   update(account: Prisma.AccountUncheckedUpdateInput): Promise<Account>
-  delete(id: string): Promise<Account>
+  delete(id: string): Promise<void>
 }

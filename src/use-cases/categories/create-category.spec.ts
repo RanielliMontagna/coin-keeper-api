@@ -94,4 +94,41 @@ describe('Create Category Use Case', () => {
       }),
     )
   })
+
+  it('should be able to create a category with the same name of another category previously deleted', async () => {
+    await sut.execute({
+      name: 'Category Name',
+      description: 'Category Description',
+      color: ColorEnum.RED,
+      userId,
+    })
+
+    const category = await categoryRepository.findByName(
+      'Category Name',
+      userId,
+    )
+
+    if (!category) {
+      throw new Error('Category not found')
+    }
+
+    await categoryRepository.delete(category.id)
+
+    const response = await sut.execute({
+      name: 'Category Name',
+      description: 'Category Description',
+      color: ColorEnum.RED,
+      userId,
+    })
+
+    expect(response.category).toEqual(
+      expect.objectContaining({
+        id: expect.any(String),
+        name: 'Category Name',
+        description: 'Category Description',
+        color: ColorEnum.RED,
+        user_id: userId,
+      }),
+    )
+  })
 })

@@ -64,4 +64,22 @@ describe('Fetch Transactions Use Case By Account', () => {
       }),
     ).rejects.toBeInstanceOf(AccountNotFoundError)
   })
+
+  it('should not be able to fetch transactions previously deleted', async () => {
+    const transaction = await transactionRepository.create({
+      title: 'Transaction Name',
+      amount: 100,
+      type: TransactionEnum.EXPENSE,
+      date: new Date(),
+      account_id: accountId,
+      category_id: 'category-id',
+      user_id: 'user-id',
+    })
+
+    await transactionRepository.delete(transaction.id)
+
+    const response = await sut.execute({ accountId })
+
+    expect(response.transactions).toEqual([])
+  })
 })

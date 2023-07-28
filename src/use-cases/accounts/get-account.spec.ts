@@ -70,4 +70,37 @@ describe('Get Account Use Case', () => {
       }),
     ).rejects.toBeInstanceOf(AccountNotFoundError)
   })
+
+  it('should not be able to get a account previously deleted', async () => {
+    const account = await accountRepository.create({
+      name: 'Account Name',
+      institution: InstitutionEnum.NUBANK,
+      balance: 0,
+      user_id: userId,
+    })
+
+    await accountRepository.delete(account.id)
+
+    await expect(
+      sut.execute({
+        accountId: account.id,
+        userId,
+      }),
+    ).rejects.toBeInstanceOf(AccountNotFoundError)
+  })
+
+  it('should not be able to get a account by name previously deleted', async () => {
+    const account = await accountRepository.create({
+      name: 'Account Name',
+      institution: InstitutionEnum.NUBANK,
+      balance: 0,
+      user_id: userId,
+    })
+
+    await accountRepository.delete(account.id)
+
+    await expect(
+      sut.execute({ accountId: account.name, userId }),
+    ).rejects.toBeInstanceOf(AccountNotFoundError)
+  })
 })

@@ -7,16 +7,10 @@ interface DeleteTransactionUseCaseRequest {
   transactionId: string
 }
 
-interface DeleteTransactionUseCaseResponse {
-  transaction: Transaction
-}
-
 export class DeleteTransactionUseCase {
   constructor(private transactionRepository: TransactionRepository) {}
 
-  async execute({
-    transactionId,
-  }: DeleteTransactionUseCaseRequest): Promise<DeleteTransactionUseCaseResponse> {
+  async execute({ transactionId }: DeleteTransactionUseCaseRequest) {
     const transaction = await this.transactionRepository.findById(transactionId)
 
     if (!transaction) {
@@ -24,9 +18,5 @@ export class DeleteTransactionUseCase {
     }
 
     await this.transactionRepository.delete(transactionId)
-
-    return {
-      transaction,
-    }
   }
 }

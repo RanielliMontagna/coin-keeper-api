@@ -7,23 +7,12 @@ interface DeleteCreditCardUseCaseRequest {
   creditCardId: string
 }
 
-interface DeleteCreditCardUseCaseResponse {
-  creditCard: {
-    id: CreditCard['id']
-    name: CreditCard['name']
-    limit: CreditCard['limit']
-    flag: CreditCard['flag']
-    closingDay: CreditCard['closingDay']
-    dueDay: CreditCard['dueDay']
-  }
-}
-
 export class DeleteCreditCardUseCase {
   constructor(private creditCardRepository: CreditCardRepository) {}
 
   async execute({
     creditCardId,
-  }: DeleteCreditCardUseCaseRequest): Promise<DeleteCreditCardUseCaseResponse> {
+  }: DeleteCreditCardUseCaseRequest): Promise<void> {
     const creditCard = await this.creditCardRepository.findById(creditCardId)
 
     if (!creditCard) {
@@ -31,16 +20,5 @@ export class DeleteCreditCardUseCase {
     }
 
     await this.creditCardRepository.delete(creditCardId)
-
-    return {
-      creditCard: {
-        id: creditCard.id,
-        name: creditCard.name,
-        limit: creditCard.limit,
-        flag: creditCard.flag,
-        closingDay: creditCard.closingDay,
-        dueDay: creditCard.dueDay,
-      },
-    }
   }
 }
