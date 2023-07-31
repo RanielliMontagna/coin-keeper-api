@@ -1,26 +1,26 @@
-import type { Account, Institution } from '@prisma/client'
+import type { Account } from '@prisma/client'
 
 import type { AccountRepository } from '@/repositories/account-repository'
 import type { UserRepository } from '@/repositories/user-repository'
 
 import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
 
-export enum InstitutionTypeEnum {
-  NUBANK = 'NUBANK',
-  XP = 'XP',
-  ITAU = 'ITAU',
-  BRADESCO = 'BRADESCO',
-  SANTANDER = 'SANTANDER',
-  BANCO_DO_BRASIL = 'BANCO_DO_BRASIL',
-  CAIXA = 'CAIXA',
-  INTER = 'INTER',
-  SICOOB = 'SICOOB',
-  SICREDI = 'SICREDI',
-  OTHER = 'OTHER',
+export enum InstitutionEnum {
+  OTHER = 0,
+  NUBANK = 1,
+  XP = 2,
+  ITAU = 3,
+  BRADESCO = 4,
+  SANTANDER = 5,
+  BANCO_DO_BRASIL = 6,
+  CAIXA = 7,
+  INTER = 8,
+  SICOOB = 9,
+  SICREDI = 10,
 }
 export interface CreateAccountUseCaseRequest {
   name: string
-  institution: InstitutionTypeEnum
+  institution: InstitutionEnum
   balance: number
   userId: string
 }

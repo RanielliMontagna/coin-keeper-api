@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 
 import { makeCreateTransactionUseCase } from '@/use-cases/factories/transactions/make-create-transaction-use-case'
-import { TransactionType } from '@/use-cases/transactions/create-transaction'
+import { TransactionEnum } from '@/use-cases/transactions/create-transaction'
 
 import { returnData } from '@/utils/http/returnData'
 import { AccountNotFoundError } from '@/use-cases/errors/account-not-found-error'
@@ -15,7 +15,7 @@ export async function createTransaction(
     title: z.string(),
     description: z.string().optional(),
     amount: z.number(),
-    type: z.nativeEnum(TransactionType),
+    type: z.nativeEnum(TransactionEnum),
     date: z.string(),
     accountId: z.string(),
     categoryId: z.string(),

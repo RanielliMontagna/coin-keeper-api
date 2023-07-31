@@ -13,5 +13,5 @@ export interface CategoryRepository {
   ): Promise<Category[]>
   create(category: Prisma.CategoryUncheckedCreateInput): Promise<Category>
   update(category: Prisma.CategoryUncheckedUpdateInput): Promise<Category>
-  delete(id: string): Promise<Category>
+  delete(id: string): Promise<void>
 }

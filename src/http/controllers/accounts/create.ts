@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 
 import { makeCreateAccountUseCase } from '@/use-cases/factories/accounts/make-create-account-use-case'
-import { InstitutionTypeEnum } from '@/use-cases/accounts/create-account'
+import { InstitutionEnum } from '@/use-cases/accounts/create-account'
 import { returnData } from '@/utils/http/returnData'
 
 export async function createAccount(
@@ -11,7 +11,7 @@ export async function createAccount(
 ) {
   const createAccountBodySchema = z.object({
     name: z.string(),
-    institution: z.nativeEnum(InstitutionTypeEnum).optional(),
+    institution: z.nativeEnum(InstitutionEnum).optional(),
     balance: z.number(),
   })
 
@@ -24,7 +24,7 @@ export async function createAccount(
   const { account } = await createAccountUseCase.execute({
     name,
     balance,
-    institution: institution || InstitutionTypeEnum.OTHER,
+    institution: institution || InstitutionEnum.OTHER,
     userId: request.user.sub,
   })
 

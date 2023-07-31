@@ -53,7 +53,7 @@ describe('Fetch Categories Use Case', () => {
           account: {
             id: expect.any(String),
             name: 'Account Name',
-            institution: expect.any(String),
+            institution: expect.any(Number),
           },
         }),
       ]),
@@ -66,5 +66,23 @@ describe('Fetch Categories Use Case', () => {
         userId: 'invalid-user-id',
       }),
     ).rejects.toThrow(new Error('User not found'))
+  })
+
+  it('should not be able to fetch creditCards previously deleted', async () => {
+    const creditCardCreated = await creditCard.create({
+      name: 'Credit Card Name',
+      limit: 1000,
+      flag: FlagEnum.MASTERCARD,
+      closingDay: 10,
+      dueDay: 10,
+      user_id: userId,
+      account_id: 'account-id',
+    })
+
+    await creditCard.delete(creditCardCreated.id)
+
+    const response = await sut.execute({ userId })
+
+    expect(response.creditCards).toEqual([])
   })
 })

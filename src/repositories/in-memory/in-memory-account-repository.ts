@@ -1,10 +1,11 @@
 import { randomUUID } from 'node:crypto'
 
-import { Institution, type Account, type Prisma } from '@prisma/client'
+import type { Account, Prisma } from '@prisma/client'
 import type {
   AccountRepository,
   FindManyByUserIdOptions,
 } from '../account-repository'
+import { InstitutionEnum } from '@/use-cases/accounts/create-account'
 
 export class InMemoryAccountRepository implements AccountRepository {
   public accounts: Account[] = []
@@ -16,11 +17,18 @@ export class InMemoryAccountRepository implements AccountRepository {
       return null
     }
 
+    if (account.deleted_at) {
+      return null
+    }
+
     return account
   }
 
   async findManyByUserId(userId: string, options: FindManyByUserIdOptions) {
-    const accounts = this.accounts.filter((a) => a.user_id === userId)
+    const accounts = this.accounts.filter((a) => {
+      if (a.deleted_at) return false
+      if (a.user_id === userId) return true
+    })
 
     if (options?.search) {
       return accounts.filter((a) =>
@@ -37,13 +45,14 @@ export class InMemoryAccountRepository implements AccountRepository {
     const newAccount: Account = {
       id: account.id || randomUUID(),
       name: account.name,
-      institution: account.institution || Institution.OTHER,
-      balance: account.balance,
+      institution: account.institution || InstitutionEnum.OTHER,
+      balance: account.balance || 0,
       expense: account.expense || 0,
       income: account.income || 0,
 
       created_at: new Date(),
       updated_at: new Date(),
+      deleted_at: null,
 
       user_id: account.user_id,
     }
@@ -60,7 +69,7 @@ export class InMemoryAccountRepository implements AccountRepository {
       id: _account.id,
       name: typeof account.name === 'string' ? account.name : _account.name,
       institution:
-        typeof account.institution === 'string'
+        typeof account.institution === 'number'
           ? account.institution
           : _account.institution,
       balance:
@@ -71,6 +80,7 @@ export class InMemoryAccountRepository implements AccountRepository {
       income: 0,
       created_at: _account.created_at,
       updated_at: new Date(),
+      deleted_at: null,
       user_id: _account.user_id,
     }
 
@@ -82,8 +92,9 @@ export class InMemoryAccountRepository implements AccountRepository {
 
     const account = this.accounts[accountIndex]
 
-    this.accounts.splice(accountIndex, 1)
-
-    return account
+    this.accounts[accountIndex] = {
+      ...account,
+      deleted_at: new Date(),
+    }
   }
 }

@@ -19,5 +19,5 @@ export interface CreditCardRepository {
   findManyByUserId(userId: string): Promise<CreditCardWithAccount[]>
   create(creditCard: Prisma.CreditCardUncheckedCreateInput): Promise<CreditCard>
   update(creditCard: Prisma.CreditCardUncheckedUpdateInput): Promise<CreditCard>
-  delete(id: string): Promise<CreditCard>
+  delete(id: string): Promise<void>
 }

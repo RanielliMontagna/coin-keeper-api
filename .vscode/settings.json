@@ -3,6 +3,7 @@
     "use-cases",
     "repositories",
     "http",
-    "migration"
+    "migration",
+    "pkg"
   ]
 }

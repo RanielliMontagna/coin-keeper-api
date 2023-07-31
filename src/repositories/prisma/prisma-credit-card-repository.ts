@@ -20,15 +20,19 @@ export class PrismaCreditCardRepository implements CreditCardRepository {
             institution: true,
           },
         },
+        deleted_at: true,
       },
     })
+
+    if (!creditCard) return null
+    if (creditCard.deleted_at) return null
 
     return creditCard
   }
 
   async findManyByUserId(userId: string) {
     const categories = await prisma.creditCard.findMany({
-      where: { user_id: userId },
+      where: { user_id: userId, deleted_at: null },
       select: {
         id: true,
         name: true,
@@ -67,10 +71,9 @@ export class PrismaCreditCardRepository implements CreditCardRepository {
   }
 
   async delete(id: string) {
-    const deletedCreditCard = await prisma.creditCard.delete({
+    await prisma.creditCard.update({
       where: { id },
+      data: { deleted_at: new Date() },
     })
-
-    return deletedCreditCard
   }
 }

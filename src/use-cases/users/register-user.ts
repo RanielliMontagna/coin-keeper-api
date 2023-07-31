@@ -1,10 +1,13 @@
 import { hash } from 'bcryptjs'
-import { Color, Institution, Prisma, type User } from '@prisma/client'
+import { Prisma, type User } from '@prisma/client'
 
 import type { UserRepository } from '@/repositories/user-repository'
 import { OrganizationRepository } from '@/repositories/organization-repository'
 import { OrganizationNotFoundError } from '@/use-cases/errors/organization-not-found-error'
 import { UserAlreadyExistsError } from '@/use-cases/errors/user-already-exists-error'
+
+import { InstitutionEnum } from '../accounts/create-account'
+import { ColorEnum } from '../categories/create-category'
 
 export enum UserTypeEnum {
   ADMIN = 'ADMIN',
@@ -50,24 +53,73 @@ export class RegisterUserUseCase {
           create: {
             name: 'Wallet',
             balance: 0,
-            institution: Institution.OTHER,
+            institution: InstitutionEnum.OTHER,
           },
         },
         Category: {
           createMany: {
             data: [
-              { name: 'Housing', color: Color.RED },
-              { name: 'Transportation', color: Color.ORANGE },
-              { name: 'Education', color: Color.LIGHT_BLUE },
-              { name: 'Clothing', color: Color.BLUE },
-              { name: 'Eletronics', color: Color.PURPLE },
-              { name: 'Entertainment', color: Color.PINK },
-              { name: 'Services', color: Color.YELLOW },
-              { name: 'Food', color: Color.BROWN },
-              { name: 'Medical & Healthcare', color: Color.LIGHT_GREEN },
-              { name: 'Saving & Investing', color: Color.GREEN },
-              { name: 'Recreation & Entertainment', color: Color.TEAL },
-              { name: 'Others', color: Color.GREY },
+              {
+                name: 'Housing',
+                color: ColorEnum.RED,
+                description: 'Expenses for your living arrangements.',
+              },
+              {
+                name: 'Transportation',
+                color: ColorEnum.ORANGE,
+                description: 'Costs related to getting around.',
+              },
+              {
+                name: 'Education',
+                color: ColorEnum.LIGHT_BLUE,
+                description: 'Expenses for schooling and personal development.',
+              },
+              {
+                name: 'Clothing',
+                color: ColorEnum.BLUE,
+                description: 'Costs for clothing and accessories.',
+              },
+              {
+                name: 'Eletronics',
+                color: ColorEnum.PURPLE,
+                description: 'Expenses for electronic devices and gadgets.',
+              },
+              {
+                name: 'Entertainment',
+                color: ColorEnum.PINK,
+                description: 'Spending on leisure activities and recreation.',
+              },
+              {
+                name: 'Streaming',
+                color: ColorEnum.PINK,
+                description: 'Costs for streaming services.',
+              },
+              {
+                name: 'Food',
+                color: ColorEnum.BROWN,
+                description: 'Expenses for groceries and dining.',
+              },
+              {
+                name: 'Medical & Healthcare',
+                color: ColorEnum.LIGHT_GREEN,
+                description: 'Costs for medical care and health insurance.',
+              },
+              {
+                name: 'Saving & Investing',
+                color: ColorEnum.GREEN,
+                description: 'Contributions towards savings and investments.',
+              },
+              {
+                name: 'Recreation & Entertainment',
+                color: ColorEnum.TEAL,
+                description: 'Expenses for recreational activities.',
+              },
+              {
+                name: 'Others',
+                color: ColorEnum.GREY,
+                description:
+                  'Miscellaneous expenses not fitting in other categories.',
+              },
             ],
           },
         },

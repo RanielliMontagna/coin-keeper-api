@@ -12,12 +12,15 @@ export class PrismaCategoryRepository implements CategoryRepository {
       where: { id },
     })
 
+    if (!category) return null
+    if (category.deleted_at) return null
+
     return category
   }
 
   async findByName(name: string, userId: string) {
     const category = await prisma.category.findFirst({
-      where: { name, user_id: userId },
+      where: { name, user_id: userId, deleted_at: null },
     })
 
     return category
@@ -42,6 +45,7 @@ export class PrismaCategoryRepository implements CategoryRepository {
     const categories = await prisma.category.findMany({
       where: {
         user_id: userId,
+        deleted_at: null,
         OR: options?.search ? orArray : undefined,
       },
     })
@@ -66,10 +70,9 @@ export class PrismaCategoryRepository implements CategoryRepository {
     return updatedCategory
   }
   async delete(id: string) {
-    const deletedCategory = await prisma.category.delete({
+    await prisma.category.update({
       where: { id },
+      data: { deleted_at: new Date() },
     })
-
-    return deletedCategory
   }
 }
