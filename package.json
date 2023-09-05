@@ -35,7 +35,7 @@
     "fastify": "4.21.0",
     "node-cache": "^5.1.2",
     "vitest-environment-prisma": "file:prisma/vitest-environment-prisma",
-    "zod": "3.21.4"
+    "zod": "3.22.1"
   },
   "devDependencies": {
     "@types/bcryptjs": "2.4.2",
