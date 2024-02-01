@@ -9,3 +9,8 @@ services:
       - POSTGRESQL_USERNAME=docker
       - POSTGRESQL_PASSWORD=docker
       - POSTGRESQL_DATABASE=apicoinkeeper
+    volumes:
+      - coinkeeper-db:/bitnami/postgresql
+volumes:
+  coinkeeper-db:
+    driver: local
