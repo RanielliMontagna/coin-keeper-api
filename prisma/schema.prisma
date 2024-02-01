@@ -113,4 +113,6 @@ model CreditCard {
 
     user    User    @relation(fields: [user_id], references: [id])
     account Account @relation(fields: [account_id], references: [id])
+
+    @@map("credit_cards")
 }

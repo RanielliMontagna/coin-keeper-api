@@ -4,6 +4,8 @@
     "repositories",
     "http",
     "migration",
-    "pkg"
+    "pkg",
+    "db",
+    "docker"
   ]
 }
