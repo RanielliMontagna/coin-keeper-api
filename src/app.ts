@@ -18,7 +18,7 @@ import { creditCardRoutes } from './http/controllers/credit-card/routes'
 export const app = fastify({})
 
 app.register(cors, {
-  origin: ['http://localhost:5173', /\.ngrok-free\.app$/],
+  origin: [/\.ngrok-free\.app$/, /\localhost/],
   credentials: true,
 })
 
