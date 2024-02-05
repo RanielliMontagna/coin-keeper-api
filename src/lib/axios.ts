@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const brapiInstance = axios.create({
-  baseURL: 'https://brapi.dev/api',
+const awesomeApi = axios.create({
+  baseURL: 'https://economia.awesomeapi.com.br/json',
 })
 
-export { brapiInstance }
+export { awesomeApi }

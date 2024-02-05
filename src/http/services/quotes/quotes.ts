@@ -1,8 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
 import NodeCache from 'node-cache'
 
-import { brapiInstance } from '@/lib/axios'
 import { returnData } from '@/utils/http/returnData'
+import { awesomeApi } from '@/lib/axios'
 
 const cache = new NodeCache({ stdTTL: 60 * 10 }) // 10 minutes
 
@@ -14,48 +14,28 @@ export async function getQuotes(_: FastifyRequest, reply: FastifyReply) {
       return reply.status(200).send(returnData(cachedData))
     }
 
-    const promiseDollar = brapiInstance.get('/v2/currency?currency=USD-BRL')
-    const promiseEuro = brapiInstance.get('/v2/currency?currency=EUR-BRL')
-    const promiseBitcoin = brapiInstance.get('/v2/crypto?coin=BTC')
-    const promiseIbovespa = brapiInstance.get('/quote/^BVSP')
-
+    const promiseDollar = awesomeApi.get('/last/USD-BRL,EUR-BRL,BTC-BRL')
     const [
       {
-        data: { currency: dollarCurrency },
+        data: { USDBRL, EURBRL, BTCBRL },
       },
-      {
-        data: { currency: euroCurrency },
-      },
-      {
-        data: { coins: bitcoinCurrency },
-      },
-      {
-        data: { results: ibovespaCurrency },
-      },
-    ] = await Promise.all([
-      promiseDollar,
-      promiseEuro,
-      promiseBitcoin,
-      promiseIbovespa,
-    ])
+    ] = await Promise.all([promiseDollar])
 
     const data = {
       dollar: {
-        price: dollarCurrency?.[0]?.bidPrice,
-        variation: dollarCurrency?.[0]?.bidVariation,
+        price: USDBRL?.bid,
+        variation: USDBRL?.pctChange,
       },
       euro: {
-        price: euroCurrency?.[0]?.bidPrice,
-        variation: euroCurrency?.[0]?.bidVariation,
+        price: EURBRL?.bid,
+        variation: EURBRL?.pctChange,
       },
       bitcoin: {
-        price: bitcoinCurrency?.[0]?.regularMarketPrice,
-        variation: bitcoinCurrency?.[0]?.regularMarketChangePercent,
+        price: BTCBRL?.bid,
+        variation: BTCBRL?.pctChange,
       },
-      ibovespa: {
-        price: ibovespaCurrency?.[0]?.regularMarketPrice,
-        variation: ibovespaCurrency?.[0]?.regularMarketChangePercent,
-      },
+      //TODO: Add IBOVESPA
+      ibovespa: { price: 0, variation: 0 },
     }
 
     cache.set('quotes', data)
