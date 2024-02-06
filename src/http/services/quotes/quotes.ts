@@ -1,65 +1,64 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
 import NodeCache from 'node-cache'
 
-import { brapiInstance } from '@/lib/axios'
 import { returnData } from '@/utils/http/returnData'
+import { awesomeApi, yahooApi } from '@/lib/axios'
 
-const cache = new NodeCache({ stdTTL: 60 * 10 }) // 10 minutes
+const awesomeApiCache = new NodeCache({ stdTTL: 60 * 10 }) // 10 minutes
+const yahooApiCache = new NodeCache({ stdTTL: 60 * 60 }) // 1 hour
 
 export async function getQuotes(_: FastifyRequest, reply: FastifyReply) {
   try {
-    const cachedData = cache.get('quotes')
+    const cachedAwesomeData = awesomeApiCache.get('awesomeApi')
+    const cachedYahooData = yahooApiCache.get('yahooApi')
 
-    if (cachedData) {
-      return reply.status(200).send(returnData(cachedData))
+    if (cachedAwesomeData && cachedYahooData) {
+      const data = { ...cachedAwesomeData, ...cachedYahooData }
+      return reply.status(200).send(returnData(data))
     }
 
-    const promiseDollar = brapiInstance.get('/v2/currency?currency=USD-BRL')
-    const promiseEuro = brapiInstance.get('/v2/currency?currency=EUR-BRL')
-    const promiseBitcoin = brapiInstance.get('/v2/crypto?coin=BTC')
-    const promiseIbovespa = brapiInstance.get('/quote/^BVSP')
+    const {
+      data: { USDBRL, EURBRL, BTCBRL },
+    } = await awesomeApi.get('/last/USD-BRL,EUR-BRL,BTC-BRL')
 
-    const [
-      {
-        data: { currency: dollarCurrency },
-      },
-      {
-        data: { currency: euroCurrency },
-      },
-      {
-        data: { coins: bitcoinCurrency },
-      },
-      {
-        data: { results: ibovespaCurrency },
-      },
-    ] = await Promise.all([
-      promiseDollar,
-      promiseEuro,
-      promiseBitcoin,
-      promiseIbovespa,
-    ])
-
-    const data = {
+    const awesomeData = {
       dollar: {
-        price: dollarCurrency?.[0]?.bidPrice,
-        variation: dollarCurrency?.[0]?.bidVariation,
+        price: Number(USDBRL?.bid),
+        variation: Number(USDBRL?.pctChange),
       },
       euro: {
-        price: euroCurrency?.[0]?.bidPrice,
-        variation: euroCurrency?.[0]?.bidVariation,
+        price: Number(EURBRL?.bid),
+        variation: Number(EURBRL?.pctChange),
       },
       bitcoin: {
-        price: bitcoinCurrency?.[0]?.regularMarketPrice,
-        variation: bitcoinCurrency?.[0]?.regularMarketChangePercent,
-      },
-      ibovespa: {
-        price: ibovespaCurrency?.[0]?.regularMarketPrice,
-        variation: ibovespaCurrency?.[0]?.regularMarketChangePercent,
+        price: Number(BTCBRL?.bid),
+        variation: Number(BTCBRL?.pctChange),
       },
     }
 
-    cache.set('quotes', data)
+    awesomeApiCache.set('awesomeApi', awesomeData)
 
+    if (cachedYahooData) {
+      const data = { ...awesomeData, ...cachedYahooData }
+      return reply.status(200).send(returnData(data))
+    }
+
+    const {
+      data: { quoteResponse },
+    } = await yahooApi.get('/get-quotes', {
+      params: { region: 'BR', symbols: '^BVSP' },
+    })
+
+    const yahooData = {
+      ibovespa: {
+        price: quoteResponse?.result?.[0]?.regularMarketPrice || 0,
+        variation: quoteResponse?.result?.[0]?.regularMarketChangePercent || 0,
+      },
+    }
+
+    yahooApiCache.set('yahooApi', yahooData)
+
+    const data = { ...awesomeData, ...yahooData }
     return reply.status(200).send(returnData(data))
   } catch (err) {
     throw err
