@@ -1,14 +1,62 @@
 import { Account, Prisma, RecurringTransaction } from '@prisma/client'
-import { RecurringTransactionRepository } from '../recurring-transaction-repository'
+import {
+  FindManyByUserIdOptions,
+  RecurringTransactionRepository,
+} from '../recurring-transaction-repository'
 import { InstitutionEnum } from '@/use-cases/accounts/create-account'
 import { TransactionEnum } from '@/use-cases/transactions/create-transaction'
 import { FrequencyEnum } from '@/use-cases/recurring-transactions/create-recurring-transaction'
+import { ColorEnum } from '@/use-cases/categories/create-category'
 
 export class InMemoryRecurringTransactionRepository
   implements RecurringTransactionRepository
 {
   public recurringTransactions: RecurringTransaction[] = []
   public accounts: Account[] = []
+
+  async findById(id: string) {
+    const recurringTransaction = this.recurringTransactions.find(
+      (t) => t.id === id,
+    )
+
+    if (!recurringTransaction) {
+      return null
+    }
+
+    if (recurringTransaction.deleted_at) {
+      return null
+    }
+
+    return recurringTransaction
+  }
+
+  async findManyByUserId(userId: string, options?: FindManyByUserIdOptions) {
+    const { page = 1 } = options || {}
+
+    const recurringTransactions = this.recurringTransactions.filter((t) => {
+      if (t.deleted_at) return false
+      if (t.user_id === userId) return true
+    })
+
+    const transactionsPerPage = 15
+
+    const start = (page - 1) * transactionsPerPage
+    const end = start + transactionsPerPage
+
+    return recurringTransactions.slice(start, end).map((t) => ({
+      ...t,
+      account: {
+        id: t.account_id,
+        name: 'Account Name',
+        institution: InstitutionEnum.OTHER,
+      },
+      category: {
+        id: t.category_id,
+        name: 'Category Name',
+        color: ColorEnum.BLUE,
+      },
+    }))
+  }
 
   async create(
     recurringTransaction: Prisma.RecurringTransactionUncheckedCreateInput,
@@ -54,5 +102,18 @@ export class InMemoryRecurringTransactionRepository
     this.recurringTransactions.push(newRecurringTransaction)
 
     return newRecurringTransaction
+  }
+
+  async delete(id: string) {
+    const recurringTransactionIndex = this.recurringTransactions.findIndex(
+      (t) => t.id === id,
+    )
+    const recurringTransaction =
+      this.recurringTransactions[recurringTransactionIndex]
+
+    this.recurringTransactions[recurringTransactionIndex] = {
+      ...recurringTransaction,
+      deleted_at: new Date(),
+    }
   }
 }
