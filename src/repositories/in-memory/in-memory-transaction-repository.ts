@@ -143,6 +143,7 @@ export class InMemoryTransactionRepository implements TransactionRepository {
       created_at: new Date(),
       updated_at: new Date(),
       deleted_at: null,
+      recurring_transaction_id: transaction.recurring_transaction_id || null,
     }
 
     this.transactions.push(newTransaction)
