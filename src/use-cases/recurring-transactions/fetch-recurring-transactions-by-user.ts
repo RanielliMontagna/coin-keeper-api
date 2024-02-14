@@ -7,7 +7,7 @@ import { Options } from '../options/options'
 
 interface FetchRecurringTransactionsByUserUseCaseRequest {
   userId: string
-  options?: Pick<Options, 'page'>
+  options?: Pick<Options, 'page' | 'all'>
 }
 
 interface FetchRecurringTransactionsByUserUseCaseResponse {

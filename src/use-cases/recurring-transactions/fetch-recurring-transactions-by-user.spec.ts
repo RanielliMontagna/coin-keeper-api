@@ -65,6 +65,31 @@ describe('Fetch Recurring Transactions By User Use Case', () => {
     )
   })
 
+  it('should be able to fetch all recurring transactions by user', async () => {
+    for (let i = 0; i < 20; i++) {
+      await recurringTransactionRepository.create({
+        title: `Recurring Transaction Name ${i}`,
+        amount: 100,
+        type: TransactionEnum.EXPENSE,
+        frequency: FrequencyEnum.MONTHLY,
+        start_date: new Date(),
+        end_date: new Date(),
+        account_id: 'account-id',
+        category_id: 'category-id',
+        user_id: userId,
+      })
+    }
+
+    const response = await sut.execute({
+      userId,
+      options: {
+        all: true,
+      },
+    })
+
+    expect(response.recurringTransactions.length).toBe(20)
+  })
+
   it('should be able to fetch recurring transactions by user with infinite scroll', async () => {
     for (let i = 0; i < 20; i++) {
       await recurringTransactionRepository.create({

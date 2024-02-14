@@ -1,7 +1,8 @@
 import { Account, Category, Prisma, RecurringTransaction } from '@prisma/client'
 import { Options } from '@/use-cases/options/options'
 
-export interface FindManyByUserIdOptions extends Pick<Options, 'page'> {}
+export interface FindManyByUserIdOptions
+  extends Pick<Options, 'page' | 'all'> {}
 
 interface RecurringTransactionWithAccount {
   id: RecurringTransaction['id']

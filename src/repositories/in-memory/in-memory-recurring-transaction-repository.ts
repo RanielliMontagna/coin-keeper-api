@@ -31,7 +31,7 @@ export class InMemoryRecurringTransactionRepository
   }
 
   async findManyByUserId(userId: string, options?: FindManyByUserIdOptions) {
-    const { page = 1 } = options || {}
+    const { page = 1, all } = options || {}
 
     const recurringTransactions = this.recurringTransactions.filter((t) => {
       if (t.deleted_at) return false
@@ -43,7 +43,11 @@ export class InMemoryRecurringTransactionRepository
     const start = (page - 1) * transactionsPerPage
     const end = start + transactionsPerPage
 
-    return recurringTransactions.slice(start, end).map((t) => ({
+    const recurringTransactionsToReturn = all
+      ? recurringTransactions
+      : recurringTransactions.slice(start, end)
+
+    return recurringTransactionsToReturn.map((t) => ({
       ...t,
       account: {
         id: t.account_id,
