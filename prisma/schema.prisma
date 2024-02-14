@@ -82,22 +82,24 @@ model Category {
 }
 
 model Transaction {
-    id          String    @id @default(uuid())
-    title       String
-    description String?
-    amount      Int // save in cents
-    type        Int       @default(0) // 0 = income, 1 = expense
-    date        DateTime
-    created_at  DateTime  @default(now())
-    updated_at  DateTime  @updatedAt
-    deleted_at  DateTime?
-    account_id  String
-    category_id String
-    user_id     String
+    id                       String    @id @default(uuid())
+    title                    String
+    description              String?
+    amount                   Int // save in cents
+    type                     Int       @default(0) // 0 = income, 1 = expense
+    date                     DateTime
+    created_at               DateTime  @default(now())
+    updated_at               DateTime  @updatedAt
+    deleted_at               DateTime?
+    account_id               String
+    category_id              String
+    user_id                  String
+    recurring_transaction_id String?
 
-    account  Account  @relation(fields: [account_id], references: [id])
-    category Category @relation(fields: [category_id], references: [id])
-    user     User     @relation(fields: [user_id], references: [id])
+    account               Account               @relation(fields: [account_id], references: [id])
+    category              Category              @relation(fields: [category_id], references: [id])
+    user                  User                  @relation(fields: [user_id], references: [id])
+    recurring_transaction RecurringTransaction? @relation(fields: [recurring_transaction_id], references: [id])
 
     @@map("transactions")
 }
@@ -119,9 +121,10 @@ model RecurringTransaction {
     category_id String
     user_id     String
 
-    account  Account  @relation(fields: [account_id], references: [id])
-    category Category @relation(fields: [category_id], references: [id])
-    user     User     @relation(fields: [user_id], references: [id])
+    account     Account       @relation(fields: [account_id], references: [id])
+    category    Category      @relation(fields: [category_id], references: [id])
+    user        User          @relation(fields: [user_id], references: [id])
+    Transaction Transaction[]
 
     @@map("recurring_transactions")
 }
