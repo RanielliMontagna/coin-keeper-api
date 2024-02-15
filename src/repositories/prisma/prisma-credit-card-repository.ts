@@ -1,6 +1,7 @@
-import { prisma } from '@/lib/prisma'
-import { CreditCardRepository } from '../credit-card-repository'
 import { Prisma } from '@prisma/client'
+import { prisma } from '@/lib/prisma'
+
+import { CreditCardRepository } from '../credit-card-repository'
 
 export class PrismaCreditCardRepository implements CreditCardRepository {
   async findById(id: string) {
