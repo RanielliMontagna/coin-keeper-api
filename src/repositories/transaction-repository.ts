@@ -1,7 +1,8 @@
 import type { Account, Category, Prisma, Transaction } from '@prisma/client'
 import { Options } from '@/use-cases/options/options'
 
-export interface FindManyByUserIdOptions extends Pick<Options, 'page'> {}
+export interface FindManyByUserIdOptions
+  extends Pick<Options, 'page' | 'date'> {}
 interface TransactionWithAccount {
   id: Transaction['id']
   title: Transaction['title']

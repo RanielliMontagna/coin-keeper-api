@@ -51,19 +51,27 @@ export class InMemoryTransactionRepository implements TransactionRepository {
   }
 
   async findManyByUserId(userId: string, options?: FindManyByUserIdOptions) {
-    const { page = 1 } = options || {}
+    const { page = 1, date } = options || {}
 
     const transactions = this.transactions.filter((t) => {
       if (t.deleted_at) return false
       if (t.user_id === userId) return true
     })
 
+    const filteredTransactions = date
+      ? transactions.filter(
+          (t) =>
+            new Date(t.date).getMonth() === new Date(date).getMonth() &&
+            new Date(t.date).getFullYear() === new Date(date).getFullYear(),
+        )
+      : transactions
+
     const transactionsPerPage = 15
 
     const start = (page - 1) * transactionsPerPage
     const end = start + transactionsPerPage
 
-    return transactions.slice(start, end).map((t) => ({
+    return filteredTransactions.slice(start, end).map((t) => ({
       ...t,
       account: {
         id: t.account_id,

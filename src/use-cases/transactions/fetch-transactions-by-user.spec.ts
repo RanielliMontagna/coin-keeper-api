@@ -63,6 +63,46 @@ describe('Fetch Transactions By User Use Case', () => {
     )
   })
 
+  it('should be able to fetch transactions with date filter', async () => {
+    const transactionBase = {
+      title: 'Transaction Name',
+      amount: 100,
+      type: TransactionEnum.EXPENSE,
+      account_id: 'account-id',
+      category_id: 'category-id',
+      user_id: userId,
+    }
+
+    await transactionRepository.create({
+      ...transactionBase,
+      date: new Date('2021-01-01'),
+    })
+
+    await transactionRepository.create({
+      ...transactionBase,
+      date: new Date('2023-01-02'),
+    })
+
+    const response = await sut.execute({
+      userId,
+      options: { date: new Date('2021-01-01') },
+    })
+
+    expect(response.transactions).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: expect.any(String),
+          title: 'Transaction Name',
+          amount: 100,
+          type: TransactionEnum.EXPENSE,
+          date: expect.any(Date),
+          account: expect.objectContaining({ id: 'account-id' }),
+          category: expect.objectContaining({ id: 'category-id' }),
+        }),
+      ]),
+    )
+  })
+
   it('should be able to fetch transactions by user with infinite scroll', async () => {
     for (let i = 0; i < 30; i++) {
       await transactionRepository.create({

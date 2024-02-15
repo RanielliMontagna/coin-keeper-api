@@ -7,7 +7,7 @@ import { Options } from '../options/options'
 
 interface FetchTransactionsByUserUseCaseRequest {
   userId: string
-  options?: Pick<Options, 'page'>
+  options?: Pick<Options, 'page' | 'date'>
 }
 
 interface FetchTransactionsByUserUseCaseResponse {

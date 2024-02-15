@@ -39,10 +39,19 @@ export class PrismaTransactionRepository implements TransactionRepository {
   }
 
   async findManyByUserId(userId: string, options?: FindManyByUserIdOptions) {
-    const { page = 1 } = options || {}
+    const { page = 1, date } = options || {}
 
     const transactions = await prisma.transaction.findMany({
-      where: { user_id: userId, deleted_at: null },
+      where: {
+        user_id: userId,
+        deleted_at: null,
+        date: {
+          gte: date ? new Date(date) : new Date(new Date().setDate(1)),
+          lte: date
+            ? new Date(new Date(date).setDate(31))
+            : new Date(new Date().setDate(31)),
+        },
+      },
       take: 15,
       skip: (page - 1) * 15,
       orderBy: { date: 'desc' },
