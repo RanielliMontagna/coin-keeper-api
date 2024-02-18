@@ -92,9 +92,7 @@ export class InMemoryRecurringTransactionRepository
       type: recurringTransaction.type as TransactionEnum,
       frequency: recurringTransaction.frequency as FrequencyEnum,
       start_date: new Date(recurringTransaction.start_date),
-      end_date: recurringTransaction.end_date
-        ? new Date(recurringTransaction.end_date)
-        : null,
+      repeat_amount: recurringTransaction.repeat_amount,
       account_id: recurringTransaction.account_id,
       category_id: recurringTransaction.category_id,
       user_id: recurringTransaction.user_id,

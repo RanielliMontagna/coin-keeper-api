@@ -2,8 +2,10 @@ import { RecurringTransaction } from '@prisma/client'
 
 import { AccountRepository } from '@/repositories/account-repository'
 import { RecurringTransactionRepository } from '@/repositories/recurring-transaction-repository'
+import { TransactionRepository } from '@/repositories/transaction-repository'
+import { AccountNotFoundError } from '@/use-cases/errors/account-not-found-error'
+
 import { TransactionEnum } from '../transactions/create-transaction'
-import { AccountNotFoundError } from '../errors/account-not-found-error'
 import { GenerateTransactions } from './generate-transactions'
 
 export enum FrequencyEnum {
@@ -22,7 +24,7 @@ interface CreateRecurringTransactionUseCaseRequest {
   userId: string
   frequency: FrequencyEnum
   startDate: Date
-  endDate?: Date
+  repeatAmount: number
 }
 
 interface CreateRecurringTransactionUseCaseResponse {
@@ -32,6 +34,7 @@ interface CreateRecurringTransactionUseCaseResponse {
 export class CreateRecurringTransactionUseCase {
   constructor(
     private recurringTransactionRepository: RecurringTransactionRepository,
+    private transactionRepository: TransactionRepository,
     private accountRepository: AccountRepository,
   ) {}
 
@@ -45,7 +48,7 @@ export class CreateRecurringTransactionUseCase {
     userId,
     frequency,
     startDate,
-    endDate,
+    repeatAmount,
   }: CreateRecurringTransactionUseCaseRequest): Promise<CreateRecurringTransactionUseCaseResponse> {
     const account = await this.accountRepository.findById(accountId)
 
@@ -61,7 +64,7 @@ export class CreateRecurringTransactionUseCase {
         type,
         frequency,
         start_date: startDate,
-        end_date: endDate,
+        repeat_amount: repeatAmount,
         account_id: accountId,
         category_id: categoryId,
         user_id: userId,
@@ -70,6 +73,7 @@ export class CreateRecurringTransactionUseCase {
     //Generate transactions
     const generateTransactions = new GenerateTransactions(
       this.recurringTransactionRepository,
+      this.transactionRepository,
     )
 
     await generateTransactions.execute({

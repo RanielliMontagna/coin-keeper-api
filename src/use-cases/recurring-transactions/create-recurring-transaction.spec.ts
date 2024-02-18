@@ -6,11 +6,14 @@ import {
   FrequencyEnum,
 } from './create-recurring-transaction'
 import { TransactionEnum } from '../transactions/create-transaction'
-import { WeeklyRecurringTransactionsError } from '../errors/weekly-recurring-transactions-error'
-import { MonthlyRecurringTransactionsError } from '../errors/monthly-recurring-transactions-error'
-import { YearlyRecurringTransactionsError } from '../errors/yearly-recurring-transactions-error'
+
+import { WeeklyRecurringTransactionsError } from '@/use-cases/errors/weekly-recurring-transactions-error'
+import { MonthlyRecurringTransactionsError } from '@/use-cases/errors/monthly-recurring-transactions-error'
+import { YearlyRecurringTransactionsError } from '@/use-cases/errors/yearly-recurring-transactions-error'
+import { InMemoryTransactionRepository } from '@/repositories/in-memory/in-memory-transaction-repository'
 
 let recurringTransactionRepository: InMemoryRecurringTransactionRepository
+let transactionRepository: InMemoryTransactionRepository
 let accountRepository: InMemoryAccountRepository
 let sut: CreateRecurringTransactionUseCase
 
@@ -20,9 +23,11 @@ describe('Create Recurring Transaction Use Case', () => {
   beforeEach(async () => {
     recurringTransactionRepository =
       new InMemoryRecurringTransactionRepository()
+    transactionRepository = new InMemoryTransactionRepository()
     accountRepository = new InMemoryAccountRepository()
     sut = new CreateRecurringTransactionUseCase(
       recurringTransactionRepository,
+      transactionRepository,
       accountRepository,
     )
 
@@ -45,6 +50,7 @@ describe('Create Recurring Transaction Use Case', () => {
       userId,
       frequency: FrequencyEnum.MONTHLY,
       startDate: new Date(),
+      repeatAmount: 12,
     })
 
     expect(response.recurringTransaction).toEqual(
@@ -60,7 +66,7 @@ describe('Create Recurring Transaction Use Case', () => {
     )
   })
 
-  it('should be able to create a new recurring transaction with end date and without description', async () => {
+  it('should be able to create a new recurring transaction without description', async () => {
     const response = await sut.execute({
       title: 'Recurring Transaction Title',
       amount: 100,
@@ -70,7 +76,7 @@ describe('Create Recurring Transaction Use Case', () => {
       userId,
       frequency: FrequencyEnum.MONTHLY,
       startDate: new Date('2022-01-01'), // '2022-01-01'
-      endDate: new Date('2022-12-31'), // '2022-12-31'
+      repeatAmount: 12,
     })
 
     expect(response.recurringTransaction).toEqual(
@@ -81,7 +87,6 @@ describe('Create Recurring Transaction Use Case', () => {
         type: TransactionEnum.EXPENSE,
         frequency: FrequencyEnum.MONTHLY,
         start_date: expect.any(Date),
-        end_date: expect.any(Date),
       }),
     )
   })
@@ -98,6 +103,7 @@ describe('Create Recurring Transaction Use Case', () => {
         userId,
         frequency: FrequencyEnum.MONTHLY,
         startDate: new Date(),
+        repeatAmount: 12,
       }),
     ).rejects.toThrow('Account not found')
   })
@@ -114,7 +120,7 @@ describe('Create Recurring Transaction Use Case', () => {
         userId,
         frequency: FrequencyEnum.WEEKLY,
         startDate: new Date('2022-01-01'), // '2022-01-01
-        endDate: new Date('2022-01-07'), // '2022-01-07'
+        repeatAmount: 1,
       }),
     ).rejects.toThrowError(WeeklyRecurringTransactionsError)
   })
@@ -131,7 +137,7 @@ describe('Create Recurring Transaction Use Case', () => {
         userId,
         frequency: FrequencyEnum.MONTHLY,
         startDate: new Date('2022-01-01'), // '2022-01-01
-        endDate: new Date('2022-01-15'), // '2022-01-15'
+        repeatAmount: 1,
       }),
     ).rejects.toThrowError(MonthlyRecurringTransactionsError)
   })
@@ -148,7 +154,7 @@ describe('Create Recurring Transaction Use Case', () => {
         userId,
         frequency: FrequencyEnum.YEARLY,
         startDate: new Date('2022-01-01'), // '2022-01-01
-        endDate: new Date('2022-12-31'), // '2022-12-31'
+        repeatAmount: 1,
       }),
     ).rejects.toThrowError(YearlyRecurringTransactionsError)
   })

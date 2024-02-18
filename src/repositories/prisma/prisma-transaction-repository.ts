@@ -1,3 +1,7 @@
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+dayjs.extend(utc)
+
 import { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 
@@ -46,10 +50,8 @@ export class PrismaTransactionRepository implements TransactionRepository {
         user_id: userId,
         deleted_at: null,
         date: {
-          gte: date ? new Date(date) : new Date(new Date().setDate(1)),
-          lte: date
-            ? new Date(new Date(date).setDate(31))
-            : new Date(new Date().setDate(31)),
+          gte: date ? dayjs(date).startOf('month').toDate() : undefined,
+          lte: date ? dayjs(date).endOf('month').toDate() : undefined,
         },
       },
       take: 15,
@@ -143,6 +145,36 @@ export class PrismaTransactionRepository implements TransactionRepository {
     })
 
     return createdTransaction
+  }
+
+  async createMany(transactions: Prisma.TransactionUncheckedCreateInput[]) {
+    const createdTransactions = await prisma.transaction.createMany({
+      data: transactions,
+    })
+
+    for (const transaction of transactions) {
+      const income =
+        transaction.type === TransactionEnum.INCOME ? transaction.amount : 0
+      const expense =
+        transaction.type === TransactionEnum.EXPENSE ? transaction.amount : 0
+      const balance =
+        transaction.type === TransactionEnum.INCOME
+          ? transaction.amount
+          : -transaction.amount
+
+      await prisma.account.update({
+        where: { id: transaction.account_id },
+        data: {
+          income: { increment: income },
+          expense: { increment: expense },
+          balance: { increment: balance },
+        },
+      })
+    }
+
+    return {
+      createdCount: createdTransactions.count,
+    }
   }
 
   async delete(id: string) {

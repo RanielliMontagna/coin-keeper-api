@@ -30,7 +30,7 @@ export class PrismaRecurringTransactionRepository
       type: true,
       frequency: true,
       start_date: true,
-      end_date: true,
+      repeat_amount: true,
       account: { select: { id: true, name: true, institution: true } },
       category: { select: { id: true, name: true, color: true } },
     }

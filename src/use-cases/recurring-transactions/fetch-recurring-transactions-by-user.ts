@@ -19,7 +19,7 @@ interface FetchRecurringTransactionsByUserUseCaseResponse {
     type: RecurringTransaction['type']
     frequency: RecurringTransaction['frequency']
     startDate: RecurringTransaction['start_date']
-    endDate: RecurringTransaction['end_date']
+    repeatAmount: RecurringTransaction['repeat_amount']
   }[]
 }
 
@@ -55,7 +55,7 @@ export class FetchRecurringTransactionsByUserUseCase {
           type: recurringTransaction.type,
           frequency: recurringTransaction.frequency,
           startDate: recurringTransaction.start_date,
-          endDate: recurringTransaction.end_date,
+          repeatAmount: recurringTransaction.repeat_amount,
         }),
       ),
     }

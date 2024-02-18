@@ -105,17 +105,17 @@ model Transaction {
 }
 
 model RecurringTransaction {
-    id          String    @id @default(uuid())
-    title       String
-    description String?
-    amount      Int // save in cents
-    type        Int       @default(0) // 0 = income, 1 = expense
-    start_date  DateTime
-    end_date    DateTime?
-    frequency   Int       @default(0) // 0 = weekly, 1 = monthly, 2 = yearly
-    created_at  DateTime  @default(now())
-    updated_at  DateTime  @updatedAt
-    deleted_at  DateTime?
+    id            String    @id @default(uuid())
+    title         String
+    description   String?
+    amount        Int // save in cents
+    type          Int       @default(0) // 0 = income, 1 = expense
+    start_date    DateTime
+    frequency     Int       @default(0) // 0 = weekly, 1 = monthly, 2 = yearly
+    repeat_amount Int
+    created_at    DateTime  @default(now())
+    updated_at    DateTime  @updatedAt
+    deleted_at    DateTime?
 
     account_id  String
     category_id String

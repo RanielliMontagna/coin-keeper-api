@@ -12,7 +12,7 @@ interface RecurringTransactionWithAccount {
   type: RecurringTransaction['type']
   frequency: RecurringTransaction['frequency']
   start_date: RecurringTransaction['start_date']
-  end_date: RecurringTransaction['end_date']
+  repeat_amount: RecurringTransaction['repeat_amount']
   account: {
     id: Account['id']
     name: Account['name']

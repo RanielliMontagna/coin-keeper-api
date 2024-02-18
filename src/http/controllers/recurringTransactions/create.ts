@@ -18,8 +18,8 @@ export async function createRecurringTransaction(
     amount: z.number(),
     type: z.nativeEnum(TransactionEnum),
     frequency: z.nativeEnum(FrequencyEnum),
+    repeatAmount: z.number().int().min(2),
     startDate: z.string(),
-    endDate: z.string().optional(),
     accountId: z.string(),
     categoryId: z.string(),
   })
@@ -31,7 +31,7 @@ export async function createRecurringTransaction(
     type,
     frequency,
     startDate,
-    endDate,
+    repeatAmount,
     accountId,
     categoryId,
   } = createRecurringTransactionBodySchema.parse(request.body)
@@ -48,7 +48,7 @@ export async function createRecurringTransaction(
         type,
         frequency,
         startDate: new Date(startDate),
-        endDate: endDate ? new Date(endDate) : undefined,
+        repeatAmount,
         accountId,
         categoryId,
         userId: request.user.sub,

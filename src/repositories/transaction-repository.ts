@@ -40,6 +40,9 @@ export interface TransactionRepository {
   create(
     transaction: Prisma.TransactionUncheckedCreateInput,
   ): Promise<Transaction>
+  createMany(
+    transactions: Prisma.TransactionUncheckedCreateInput[],
+  ): Promise<{ createdCount: number }>
   delete(id: string): Promise<void>
   getGraphicsWeek(userId: string): Promise<Balance[]>
   getGraphicsMonth(userId: string): Promise<Balance[]>

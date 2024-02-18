@@ -39,15 +39,15 @@ describe('Fetch Recurring Transactions By User Use Case', () => {
       type: TransactionEnum.EXPENSE,
       frequency: FrequencyEnum.MONTHLY,
       start_date: new Date(),
-      end_date: new Date(),
+      repeat_amount: 12,
       account_id: 'account-id',
       category_id: 'category-id',
       user_id: userId,
     })
 
-    const response = await sut.execute({
-      userId,
-    })
+    const response = await sut.execute({ userId })
+
+    console.log(response.recurringTransactions)
 
     expect(response.recurringTransactions).toEqual(
       expect.arrayContaining([
@@ -58,7 +58,7 @@ describe('Fetch Recurring Transactions By User Use Case', () => {
           type: TransactionEnum.EXPENSE,
           frequency: FrequencyEnum.MONTHLY,
           startDate: expect.any(Date),
-          endDate: expect.any(Date),
+          repeatAmount: 12,
         }),
       ]),
     )
@@ -72,10 +72,10 @@ describe('Fetch Recurring Transactions By User Use Case', () => {
         type: TransactionEnum.EXPENSE,
         frequency: FrequencyEnum.MONTHLY,
         start_date: new Date(),
-        end_date: new Date(),
         account_id: 'account-id',
         category_id: 'category-id',
         user_id: userId,
+        repeat_amount: 12,
       })
     }
 
@@ -97,7 +97,7 @@ describe('Fetch Recurring Transactions By User Use Case', () => {
         type: TransactionEnum.EXPENSE,
         frequency: FrequencyEnum.MONTHLY,
         start_date: new Date(),
-        end_date: new Date(),
+        repeat_amount: 12,
         account_id: 'account-id',
         category_id: 'category-id',
         user_id: userId,
@@ -125,7 +125,7 @@ describe('Fetch Recurring Transactions By User Use Case', () => {
       type: TransactionEnum.EXPENSE,
       frequency: FrequencyEnum.MONTHLY,
       start_date: new Date(),
-      end_date: new Date(),
+      repeat_amount: 12,
       account_id: 'account-id',
       category_id: 'category-id',
       user_id: userId,

@@ -171,6 +171,67 @@ export class InMemoryTransactionRepository implements TransactionRepository {
     return newTransaction
   }
 
+  async createMany(
+    transactions: Prisma.TransactionUncheckedCreateInput[],
+  ): Promise<{ createdCount: number }> {
+    const newTransactions = transactions.map((transaction) => {
+      const account = this.accounts.find((a) => a.id === transaction.account_id)
+
+      if (!account) {
+        this.accounts.push({
+          id: transaction.account_id,
+          name: 'Account Name',
+          user_id: transaction.user_id,
+          institution: InstitutionEnum.OTHER,
+          balance: 0,
+          income: 0,
+          expense: 0,
+          created_at: new Date(),
+          updated_at: new Date(),
+          deleted_at: null,
+        })
+      }
+
+      const newTransaction: Transaction = {
+        id: transaction.id || randomUUID(),
+        title: transaction.title,
+        description: transaction.description || null,
+        amount: transaction.amount,
+        type: transaction.type as TransactionEnum,
+        date: new Date(transaction.date),
+        account_id: transaction.account_id,
+        category_id: transaction.category_id,
+        user_id: transaction.user_id,
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+        recurring_transaction_id: transaction.recurring_transaction_id || null,
+      }
+
+      return newTransaction
+    })
+
+    this.transactions.push(...newTransactions)
+
+    newTransactions.forEach((transaction) => {
+      const accountIndex = this.accounts.findIndex(
+        (a) => a.id === transaction.account_id,
+      )
+
+      if (transaction.type === TransactionEnum.INCOME) {
+        this.accounts[accountIndex].income += transaction.amount
+        this.accounts[accountIndex].balance += transaction.amount
+      } else {
+        this.accounts[accountIndex].expense += transaction.amount
+        this.accounts[accountIndex].balance -= transaction.amount
+      }
+    })
+
+    return {
+      createdCount: transactions.length,
+    }
+  }
+
   async delete(id: string) {
     const transactionIndex = this.transactions.findIndex((t) => t.id === id)
     const transaction = this.transactions[transactionIndex]

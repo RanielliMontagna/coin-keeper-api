@@ -7,8 +7,10 @@ import { InMemoryTransactionRepository } from '@/repositories/in-memory/in-memor
 import { hash } from 'bcryptjs'
 import { TransactionEnum } from '../transactions/create-transaction'
 import { FrequencyEnum } from './create-recurring-transaction'
+import { RecurringTransactionNotFoundError } from '../errors/recurring-transaction-not-found-error'
 
 let recurringTransactionRepository: InMemoryRecurringTransactionRepository
+let transactionRepository: InMemoryTransactionRepository
 let userRepository: InMemoryUserRepository
 let sut: GenerateTransactions
 
@@ -18,8 +20,12 @@ describe('Generate Transactions Use Case', () => {
   beforeEach(async () => {
     recurringTransactionRepository =
       new InMemoryRecurringTransactionRepository()
+    transactionRepository = new InMemoryTransactionRepository()
     userRepository = new InMemoryUserRepository()
-    sut = new GenerateTransactions(recurringTransactionRepository)
+    sut = new GenerateTransactions(
+      recurringTransactionRepository,
+      transactionRepository,
+    )
 
     await userRepository.create({
       id: userId,
@@ -31,27 +37,73 @@ describe('Generate Transactions Use Case', () => {
     })
   })
 
-  it('should be able to generate transactions', async () => {
-    const fetchRecurringTransactionsByUserUseCase =
-      new FetchRecurringTransactionsByUserUseCase(
-        recurringTransactionRepository,
-        userRepository,
-      )
+  it('should not be able to generate transactions for a non-existing recurring transaction', async () => {
+    const response = sut.execute({
+      recurringTransactionId: 'non-existing-id',
+    })
 
+    await expect(response).rejects.toThrowError(
+      RecurringTransactionNotFoundError,
+    )
+  })
+
+  it('should be able to generate weekly transactions', async () => {
+    const recurringTransaction = await recurringTransactionRepository.create({
+      title: 'Recurring Transaction Name',
+      amount: 100,
+      type: TransactionEnum.EXPENSE,
+      frequency: FrequencyEnum.WEEKLY,
+      start_date: new Date(),
+      repeat_amount: 12,
+      account_id: 'account-id',
+      category_id: 'category-id',
+      user_id: userId,
+    })
+
+    const response = await sut.execute({
+      recurringTransactionId: recurringTransaction.id,
+    })
+
+    expect(response.createdCount).toBe(12)
+  })
+
+  it('should be able to generate monthly transactions', async () => {
     const recurringTransaction = await recurringTransactionRepository.create({
       title: 'Recurring Transaction Name',
       amount: 100,
       type: TransactionEnum.EXPENSE,
       frequency: FrequencyEnum.MONTHLY,
       start_date: new Date(),
-      end_date: new Date(),
+      repeat_amount: 12,
       account_id: 'account-id',
       category_id: 'category-id',
       user_id: userId,
     })
 
-    const response = await fetchRecurringTransactionsByUserUseCase.execute({
-      userId,
+    const response = await sut.execute({
+      recurringTransactionId: recurringTransaction.id,
     })
+
+    expect(response.createdCount).toBe(12)
+  })
+
+  it('should be able to generate yearly transactions', async () => {
+    const recurringTransaction = await recurringTransactionRepository.create({
+      title: 'Recurring Transaction Name',
+      amount: 100,
+      type: TransactionEnum.EXPENSE,
+      frequency: FrequencyEnum.YEARLY,
+      start_date: new Date(),
+      repeat_amount: 12,
+      account_id: 'account-id',
+      category_id: 'category-id',
+      user_id: userId,
+    })
+
+    const response = await sut.execute({
+      recurringTransactionId: recurringTransaction.id,
+    })
+
+    expect(response.createdCount).toBe(12)
   })
 })
