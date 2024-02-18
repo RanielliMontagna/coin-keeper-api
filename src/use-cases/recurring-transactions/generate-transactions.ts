@@ -48,11 +48,10 @@ export class GenerateTransactions {
 
     const repeatAmount = recurringTransaction.repeat_amount
     const startDate = dayjs(recurringTransaction.start_date).utc()
+    let amountToBeDistributed = recurringTransaction.amount
 
     switch (recurringTransaction.frequency) {
       case FrequencyEnum.WEEKLY:
-        let amountToBeDistributed = recurringTransaction.amount
-
         // If the difference between the start and end date is less than 1 weeks, throw an error
         if (repeatAmount <= 1) throw new WeeklyRecurringTransactionsError()
 
@@ -80,10 +79,15 @@ export class GenerateTransactions {
         if (repeatAmount <= 1) throw new MonthlyRecurringTransactionsError()
 
         for (let i = 0; i < repeatAmount; i++) {
+          const amount = +(amountToBeDistributed / (repeatAmount - i)).toFixed(
+            2,
+          )
+          amountToBeDistributed -= amount
+
           transactions.push({
             title: `${recurringTransaction.title} - ${i + 1} / ${repeatAmount}`,
             description: recurringTransaction.description,
-            amount: recurringTransaction.amount,
+            amount: amount,
             type: recurringTransaction.type,
             account_id: recurringTransaction.account_id,
             category_id: recurringTransaction.category_id,
@@ -98,10 +102,15 @@ export class GenerateTransactions {
         if (repeatAmount <= 1) throw new YearlyRecurringTransactionsError()
 
         for (let i = 0; i < repeatAmount; i++) {
+          const amount = +(amountToBeDistributed / (repeatAmount - i)).toFixed(
+            2,
+          )
+          amountToBeDistributed -= amount
+
           transactions.push({
             title: `${recurringTransaction.title} - ${i + 1} / ${repeatAmount}`,
             description: recurringTransaction.description,
-            amount: recurringTransaction.amount,
+            amount: amount,
             type: recurringTransaction.type,
             account_id: recurringTransaction.account_id,
             category_id: recurringTransaction.category_id,
