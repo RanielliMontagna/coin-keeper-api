@@ -1,7 +1,6 @@
 import { InMemoryRecurringTransactionRepository } from '@/repositories/in-memory/in-memory-recurring-transaction-repository'
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
 
-import { FetchTransactionsByUserUseCase } from '../transactions/fetch-transactions-by-user'
 import { FetchRecurringTransactionsByUserUseCase } from './fetch-recurring-transactions-by-user'
 import { hash } from 'bcryptjs'
 import { TransactionEnum } from '../transactions/create-transaction'

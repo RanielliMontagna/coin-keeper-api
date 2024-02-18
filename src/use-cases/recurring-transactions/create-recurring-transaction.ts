@@ -4,6 +4,7 @@ import { AccountRepository } from '@/repositories/account-repository'
 import { RecurringTransactionRepository } from '@/repositories/recurring-transaction-repository'
 import { TransactionEnum } from '../transactions/create-transaction'
 import { AccountNotFoundError } from '../errors/account-not-found-error'
+import { GenerateTransactions } from './generate-transactions'
 
 export enum FrequencyEnum {
   WEEKLY = 0,
@@ -65,6 +66,15 @@ export class CreateRecurringTransactionUseCase {
         category_id: categoryId,
         user_id: userId,
       })
+
+    //Generate transactions
+    const generateTransactions = new GenerateTransactions(
+      this.recurringTransactionRepository,
+    )
+
+    await generateTransactions.execute({
+      recurringTransactionId: recurringTransaction.id,
+    })
 
     return {
       recurringTransaction,
