@@ -47,8 +47,6 @@ describe('Fetch Recurring Transactions By User Use Case', () => {
 
     const response = await sut.execute({ userId })
 
-    console.log(response.recurringTransactions)
-
     expect(response.recurringTransactions).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
