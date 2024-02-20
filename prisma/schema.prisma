@@ -82,15 +82,17 @@ model Category {
 }
 
 model Transaction {
-    id                       String    @id @default(uuid())
-    title                    String
-    description              String?
-    amount                   Int // save in cents
-    type                     Int       @default(0) // 0 = income, 1 = expense
-    date                     DateTime
-    created_at               DateTime  @default(now())
-    updated_at               DateTime  @updatedAt
-    deleted_at               DateTime?
+    id          String    @id @default(uuid())
+    title       String
+    description String?
+    amount      Int // save in cents
+    type        Int       @default(0) // 0 = income, 1 = expense
+    date        DateTime
+    is_paid     Boolean   @default(true)
+    created_at  DateTime  @default(now())
+    updated_at  DateTime  @updatedAt
+    deleted_at  DateTime?
+
     account_id               String
     category_id              String
     user_id                  String
