@@ -32,6 +32,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
         title: true,
         description: true,
         amount: true,
+        is_paid: true,
         type: true,
         date: true,
         account: { select: { id: true, name: true, institution: true } },
@@ -62,6 +63,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
         title: true,
         description: true,
         amount: true,
+        is_paid: true,
         type: true,
         date: true,
         account: { select: { id: true, name: true, institution: true } },
@@ -82,21 +84,14 @@ export class PrismaTransactionRepository implements TransactionRepository {
         title: true,
         description: true,
         amount: true,
+        is_paid: true,
         type: true,
         date: true,
         account: {
-          select: {
-            id: true,
-            name: true,
-            institution: true,
-          },
+          select: { id: true, name: true, institution: true },
         },
         category: {
-          select: {
-            id: true,
-            name: true,
-            color: true,
-          },
+          select: { id: true, name: true, color: true },
         },
       },
     })
@@ -107,11 +102,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
   async findBalanceByUserId(userId: string) {
     const accounts = await prisma.account.findMany({
       where: { user_id: userId, deleted_at: null },
-      select: {
-        balance: true,
-        income: true,
-        expense: true,
-      },
+      select: { balance: true, income: true, expense: true },
     })
 
     const balance = accounts.reduce((acc, account) => acc + account.balance, 0)
@@ -126,24 +117,6 @@ export class PrismaTransactionRepository implements TransactionRepository {
       data: transaction,
     })
 
-    const income =
-      transaction.type === TransactionEnum.INCOME ? transaction.amount : 0
-    const expense =
-      transaction.type === TransactionEnum.EXPENSE ? transaction.amount : 0
-    const balance =
-      transaction.type === TransactionEnum.INCOME
-        ? transaction.amount
-        : -transaction.amount
-
-    await prisma.account.update({
-      where: { id: transaction.account_id },
-      data: {
-        income: { increment: income },
-        expense: { increment: expense },
-        balance: { increment: balance },
-      },
-    })
-
     return createdTransaction
   }
 
@@ -152,57 +125,15 @@ export class PrismaTransactionRepository implements TransactionRepository {
       data: transactions,
     })
 
-    for (const transaction of transactions) {
-      const income =
-        transaction.type === TransactionEnum.INCOME ? transaction.amount : 0
-      const expense =
-        transaction.type === TransactionEnum.EXPENSE ? transaction.amount : 0
-      const balance =
-        transaction.type === TransactionEnum.INCOME
-          ? transaction.amount
-          : -transaction.amount
-
-      await prisma.account.update({
-        where: { id: transaction.account_id },
-        data: {
-          income: { increment: income },
-          expense: { increment: expense },
-          balance: { increment: balance },
-        },
-      })
-    }
-
     return {
       createdCount: createdTransactions.count,
     }
   }
 
   async delete(id: string) {
-    const deletedTransaction = await prisma.transaction.update({
+    await prisma.transaction.update({
       where: { id },
       data: { deleted_at: new Date() },
-    })
-
-    const income =
-      deletedTransaction.type === TransactionEnum.INCOME
-        ? -deletedTransaction.amount
-        : 0
-    const expense =
-      deletedTransaction.type === TransactionEnum.EXPENSE
-        ? -deletedTransaction.amount
-        : 0
-    const balance =
-      deletedTransaction.type === TransactionEnum.INCOME
-        ? -deletedTransaction.amount
-        : deletedTransaction.amount
-
-    await prisma.account.update({
-      where: { id: deletedTransaction.account_id },
-      data: {
-        income: { increment: income },
-        expense: { increment: expense },
-        balance: { increment: balance },
-      },
     })
   }
 
@@ -270,11 +201,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
           gte: new Date(new Date().setDate(1)),
         },
       },
-      select: {
-        amount: true,
-        type: true,
-        date: true,
-      },
+      select: { amount: true, type: true, date: true },
     })
 
     const balance: Balance[] = new Array(daysInMonth).fill({
@@ -318,11 +245,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
           ),
         },
       },
-      select: {
-        amount: true,
-        type: true,
-        date: true,
-      },
+      select: { amount: true, type: true, date: true },
     })
 
     const balance: Balance[] = new Array(12).fill({

@@ -145,6 +145,7 @@ export class InMemoryTransactionRepository implements TransactionRepository {
       amount: transaction.amount,
       type: transaction.type as TransactionEnum,
       date: new Date(transaction.date),
+      is_paid: transaction.is_paid || false,
       account_id: transaction.account_id,
       category_id: transaction.category_id,
       user_id: transaction.user_id,
@@ -155,18 +156,6 @@ export class InMemoryTransactionRepository implements TransactionRepository {
     }
 
     this.transactions.push(newTransaction)
-
-    const accountIndex = this.accounts.findIndex(
-      (a) => a.id === transaction.account_id,
-    )
-
-    if (transaction.type === TransactionEnum.INCOME) {
-      this.accounts[accountIndex].income += transaction.amount
-      this.accounts[accountIndex].balance += transaction.amount
-    } else {
-      this.accounts[accountIndex].expense += transaction.amount
-      this.accounts[accountIndex].balance -= transaction.amount
-    }
 
     return newTransaction
   }
@@ -199,6 +188,7 @@ export class InMemoryTransactionRepository implements TransactionRepository {
         amount: transaction.amount,
         type: transaction.type as TransactionEnum,
         date: new Date(transaction.date),
+        is_paid: transaction.is_paid || false,
         account_id: transaction.account_id,
         category_id: transaction.category_id,
         user_id: transaction.user_id,
@@ -213,20 +203,6 @@ export class InMemoryTransactionRepository implements TransactionRepository {
 
     this.transactions.push(...newTransactions)
 
-    newTransactions.forEach((transaction) => {
-      const accountIndex = this.accounts.findIndex(
-        (a) => a.id === transaction.account_id,
-      )
-
-      if (transaction.type === TransactionEnum.INCOME) {
-        this.accounts[accountIndex].income += transaction.amount
-        this.accounts[accountIndex].balance += transaction.amount
-      } else {
-        this.accounts[accountIndex].expense += transaction.amount
-        this.accounts[accountIndex].balance -= transaction.amount
-      }
-    })
-
     return {
       createdCount: transactions.length,
     }
@@ -239,18 +215,6 @@ export class InMemoryTransactionRepository implements TransactionRepository {
     this.transactions[transactionIndex] = {
       ...transaction,
       deleted_at: new Date(),
-    }
-
-    const accountIndex = this.accounts.findIndex(
-      (a) => a.id === transaction.account_id,
-    )
-
-    if (transaction?.type === TransactionEnum.INCOME) {
-      this.accounts[accountIndex].income -= transaction.amount
-      this.accounts[accountIndex].balance -= transaction.amount
-    } else {
-      this.accounts[accountIndex].expense -= transaction.amount
-      this.accounts[accountIndex].balance += transaction.amount
     }
   }
 
