@@ -10,6 +10,7 @@ interface TransactionWithAccount {
   amount: Transaction['amount']
   type: Transaction['type']
   date: Transaction['date']
+  isPaid: Transaction['is_paid']
   account: {
     id: Account['id']
     name: Account['name']

@@ -35,8 +35,9 @@ export class InMemoryTransactionRepository implements TransactionRepository {
       if (t.account_id === accountId) return true
     })
 
-    return transactions.map((t) => ({
+    return transactions.map(({ is_paid, ...t }) => ({
       ...t,
+      isPaid: is_paid,
       account: {
         id: t.account_id,
         name: 'Account Name',
@@ -71,8 +72,9 @@ export class InMemoryTransactionRepository implements TransactionRepository {
     const start = (page - 1) * transactionsPerPage
     const end = start + transactionsPerPage
 
-    return filteredTransactions.slice(start, end).map((t) => ({
+    return filteredTransactions.slice(start, end).map(({ is_paid, ...t }) => ({
       ...t,
+      isPaid: is_paid,
       account: {
         id: t.account_id,
         name: 'Account Name',
@@ -93,8 +95,9 @@ export class InMemoryTransactionRepository implements TransactionRepository {
     })
     const latestTransactions = transactions.slice(-5)
 
-    return latestTransactions.map((t) => ({
+    return latestTransactions.map(({ is_paid, ...t }) => ({
       ...t,
+      isPaid: is_paid,
       account: {
         id: t.account_id,
         name: 'Account Name',

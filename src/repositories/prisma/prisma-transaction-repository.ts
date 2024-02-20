@@ -40,7 +40,10 @@ export class PrismaTransactionRepository implements TransactionRepository {
       },
     })
 
-    return transactions
+    return transactions.map(({ is_paid, ...transaction }) => ({
+      ...transaction,
+      isPaid: is_paid,
+    }))
   }
 
   async findManyByUserId(userId: string, options?: FindManyByUserIdOptions) {
@@ -71,7 +74,10 @@ export class PrismaTransactionRepository implements TransactionRepository {
       },
     })
 
-    return transactions
+    return transactions.map(({ is_paid, ...transaction }) => ({
+      ...transaction,
+      isPaid: is_paid,
+    }))
   }
 
   async findFiveLatestByUserId(userId: string) {
@@ -96,7 +102,10 @@ export class PrismaTransactionRepository implements TransactionRepository {
       },
     })
 
-    return transactions
+    return transactions.map(({ is_paid, ...transaction }) => ({
+      ...transaction,
+      isPaid: is_paid,
+    }))
   }
 
   async findBalanceByUserId(userId: string) {
