@@ -70,3 +70,11 @@ export const categories: Prisma.CategoryCreateWithoutUserInput[] = [
     description: 'Miscellaneous expenses not fitting in other categories.',
   },
 ]
+
+export const configs: Prisma.ConfigCreateWithoutUserInput[] = [
+  {
+    // Config to mark future transactions as paid automatically on the day it was set
+    key: 'auto_mark_as_paid',
+    value: 'false',
+  },
+]

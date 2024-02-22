@@ -6,9 +6,7 @@ import { OrganizationRepository } from '@/repositories/organization-repository'
 import { OrganizationNotFoundError } from '@/use-cases/errors/organization-not-found-error'
 import { UserAlreadyExistsError } from '@/use-cases/errors/user-already-exists-error'
 
-import { InstitutionEnum } from '../accounts/create-account'
-import { ColorEnum } from '../categories/create-category'
-import { account, categories } from '@/constants/seeds'
+import { account, categories, configs } from '@/constants/seeds'
 
 export enum UserTypeEnum {
   ADMIN = 'ADMIN',
@@ -52,6 +50,7 @@ export class RegisterUserUseCase {
         password_hash: hashedPassword,
         Account: { create: account },
         Category: { createMany: { data: categories } },
+        Config: { createMany: { data: configs } },
       })
 
       return user
