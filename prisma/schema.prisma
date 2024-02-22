@@ -40,6 +40,7 @@ model User {
     Transaction          Transaction[]
     CreditCard           CreditCard[]
     RecurringTransaction RecurringTransaction[]
+    Config               Config[]
 
     @@map("users")
 }
@@ -148,4 +149,17 @@ model CreditCard {
     account Account @relation(fields: [account_id], references: [id])
 
     @@map("credit_cards")
+}
+
+model Config {
+    id         String   @id @default(uuid())
+    key        String
+    value      String
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+    user_id    String
+
+    user User @relation(fields: [user_id], references: [id])
+
+    @@map("configs")
 }
