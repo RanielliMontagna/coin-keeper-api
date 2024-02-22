@@ -56,20 +56,18 @@ export class GenerateTransactions {
         if (repeatAmount <= 1) throw new WeeklyRecurringTransactionsError()
 
         for (let i = 0; i < repeatAmount; i++) {
-          const amount = +(amountToBeDistributed / (repeatAmount - i)).toFixed(
-            2,
-          )
-          amountToBeDistributed -= amount
+          const firstTransactionIsPaid = i === 0 && dayjs().isAfter(startDate)
 
           transactions.push({
             title: `${recurringTransaction.title} - ${i + 1} / ${repeatAmount}`,
             description: recurringTransaction.description,
-            amount: amount,
+            amount: recurringTransaction.amount,
             type: recurringTransaction.type,
             account_id: recurringTransaction.account_id,
             category_id: recurringTransaction.category_id,
             user_id: recurringTransaction.user_id,
             date: dayjs(startDate).add(i, 'week').utc().toDate(),
+            is_paid: firstTransactionIsPaid,
           })
         }
 
@@ -79,20 +77,18 @@ export class GenerateTransactions {
         if (repeatAmount <= 1) throw new MonthlyRecurringTransactionsError()
 
         for (let i = 0; i < repeatAmount; i++) {
-          const amount = +(amountToBeDistributed / (repeatAmount - i)).toFixed(
-            2,
-          )
-          amountToBeDistributed -= amount
+          const firstTransactionIsPaid = i === 0 && dayjs().isAfter(startDate)
 
           transactions.push({
             title: `${recurringTransaction.title} - ${i + 1} / ${repeatAmount}`,
             description: recurringTransaction.description,
-            amount: amount,
+            amount: recurringTransaction.amount,
             type: recurringTransaction.type,
             account_id: recurringTransaction.account_id,
             category_id: recurringTransaction.category_id,
             user_id: recurringTransaction.user_id,
             date: dayjs(startDate).add(i, 'month').utc().toDate(),
+            is_paid: firstTransactionIsPaid,
           })
         }
 
@@ -102,20 +98,16 @@ export class GenerateTransactions {
         if (repeatAmount <= 1) throw new YearlyRecurringTransactionsError()
 
         for (let i = 0; i < repeatAmount; i++) {
-          const amount = +(amountToBeDistributed / (repeatAmount - i)).toFixed(
-            2,
-          )
-          amountToBeDistributed -= amount
-
           transactions.push({
             title: `${recurringTransaction.title} - ${i + 1} / ${repeatAmount}`,
             description: recurringTransaction.description,
-            amount: amount,
+            amount: recurringTransaction.amount,
             type: recurringTransaction.type,
             account_id: recurringTransaction.account_id,
             category_id: recurringTransaction.category_id,
             user_id: recurringTransaction.user_id,
             date: dayjs(startDate).add(i, 'year').utc().toDate(),
+            is_paid: i === 0 && dayjs().isAfter(startDate),
           })
         }
 
