@@ -32,9 +32,7 @@ export class FetchConfigsUseCase {
       throw new UserNotFoundError()
     }
 
-    const configs = await this.configRepository.findConfigurationsByUserId(
-      userId,
-    )
+    const configs = await this.configRepository.findConfigsByUserId(userId)
 
     return {
       configs: configs.map((config) => ({

@@ -1,5 +1,10 @@
 import { Config } from '@prisma/client'
 
+export interface ConfigUpdateRequest {
+  userId: string
+  key: string
+  value: string
+}
 export interface ConfigReturn {
   id: Config['id']
   key: Config['key']
@@ -7,5 +12,7 @@ export interface ConfigReturn {
 }
 
 export interface ConfigRepository {
-  findConfigurationsByUserId(userId: string): Promise<ConfigReturn[]>
+  findConfigByKey(key: string, userId: string): Promise<Config | null>
+  findConfigsByUserId(userId: string): Promise<ConfigReturn[]>
+  updateConfig(config: ConfigUpdateRequest): Promise<Config>
 }

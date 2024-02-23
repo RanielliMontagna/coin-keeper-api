@@ -1,7 +1,10 @@
-import { Config } from '@prisma/client'
+import { Config, Prisma } from '@prisma/client'
 
-import type { ConfigRepository, ConfigReturn } from '../config-repository'
-import { configs } from '@/constants/seeds'
+import type {
+  ConfigRepository,
+  ConfigReturn,
+  ConfigUpdateRequest,
+} from '../config-repository'
 
 export class InMemoryConfigRepository implements ConfigRepository {
   private configs: Config[] = [
@@ -15,35 +18,27 @@ export class InMemoryConfigRepository implements ConfigRepository {
     },
   ]
 
-  async findConfigurationsByUserId(userId: string): Promise<ConfigReturn[]> {
+  async findConfigByKey(key: string, userId: string): Promise<Config | null> {
+    return (
+      this.configs.find(
+        (config) => config.key === key && config.user_id === userId,
+      ) || null
+    )
+  }
+
+  async findConfigsByUserId(userId: string): Promise<ConfigReturn[]> {
     return this.configs
       .filter((config) => config.user_id === userId)
       .map((c) => ({ id: c.id, key: c.key, value: c.value }))
   }
 
-  async updateConfigurationsByUserId(
-    userId: string,
-    configs: ConfigReturn[],
-  ): Promise<ConfigReturn[]> {
-    const updatedConfigs: ConfigReturn[] = []
+  async updateConfig({ userId, key, value }: ConfigUpdateRequest) {
+    const config = this.configs.find(
+      (c) => c.key === key && c.user_id === userId,
+    )
 
-    for (const c of configs) {
-      const configIndex = this.configs.findIndex(
-        (config) => config.id === c.id && config.user_id === userId,
-      )
+    config!.value = value
 
-      if (configIndex === -1) {
-        continue
-      }
-
-      this.configs[configIndex] = {
-        ...this.configs[configIndex],
-        value: c.value,
-      }
-
-      updatedConfigs.push(this.configs[configIndex])
-    }
-
-    return updatedConfigs
+    return config as Config
   }
 }
