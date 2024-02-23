@@ -1,5 +1,9 @@
 import { prisma } from '@/lib/prisma'
-import { ConfigRepository, ConfigUpdateRequest } from '../config-repository'
+import {
+  ConfigRepository,
+  ConfigUpdateRequest,
+  UpdateAllConfigsRequest,
+} from '../config-repository'
 
 export class PrismaConfigRepository implements ConfigRepository {
   async findConfigByKey(key: string, userId: string) {
@@ -25,5 +29,14 @@ export class PrismaConfigRepository implements ConfigRepository {
     })
 
     return updatedConfig
+  }
+
+  async updateAllConfigs({ userId, configs }: UpdateAllConfigsRequest) {
+    const updatedConfigs = await prisma.config.updateMany({
+      where: { user_id: userId, key: { in: configs.map((c) => c.key) } },
+      data: configs.map((c) => ({ key: c.key, value: c.value })),
+    })
+
+    return { updatedCount: updatedConfigs.count }
   }
 }

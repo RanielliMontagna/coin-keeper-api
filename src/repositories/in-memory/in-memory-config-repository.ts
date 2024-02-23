@@ -1,9 +1,10 @@
-import { Config, Prisma } from '@prisma/client'
+import { Config } from '@prisma/client'
 
 import type {
   ConfigRepository,
   ConfigReturn,
   ConfigUpdateRequest,
+  UpdateAllConfigsRequest,
 } from '../config-repository'
 
 export class InMemoryConfigRepository implements ConfigRepository {
@@ -40,5 +41,19 @@ export class InMemoryConfigRepository implements ConfigRepository {
     config!.value = value
 
     return config as Config
+  }
+
+  async updateAllConfigs({ userId, configs }: UpdateAllConfigsRequest) {
+    const updatedConfigs = configs.map((c) => {
+      const config = this.configs.find(
+        (config) => config.key === c.key && config.user_id === userId,
+      )
+
+      config!.value = c.value
+
+      return config as Config
+    })
+
+    return { updatedCount: updatedConfigs.length }
   }
 }
