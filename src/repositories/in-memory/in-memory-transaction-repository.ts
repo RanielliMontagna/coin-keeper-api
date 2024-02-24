@@ -35,8 +35,9 @@ export class InMemoryTransactionRepository implements TransactionRepository {
       if (t.account_id === accountId) return true
     })
 
-    return transactions.map((t) => ({
+    return transactions.map(({ is_paid, ...t }) => ({
       ...t,
+      isPaid: is_paid,
       account: {
         id: t.account_id,
         name: 'Account Name',
@@ -51,20 +52,29 @@ export class InMemoryTransactionRepository implements TransactionRepository {
   }
 
   async findManyByUserId(userId: string, options?: FindManyByUserIdOptions) {
-    const { page = 1 } = options || {}
+    const { page = 1, date } = options || {}
 
     const transactions = this.transactions.filter((t) => {
       if (t.deleted_at) return false
       if (t.user_id === userId) return true
     })
 
+    const filteredTransactions = date
+      ? transactions.filter(
+          (t) =>
+            new Date(t.date).getMonth() === new Date(date).getMonth() &&
+            new Date(t.date).getFullYear() === new Date(date).getFullYear(),
+        )
+      : transactions
+
     const transactionsPerPage = 15
 
     const start = (page - 1) * transactionsPerPage
     const end = start + transactionsPerPage
 
-    return transactions.slice(start, end).map((t) => ({
+    return filteredTransactions.slice(start, end).map(({ is_paid, ...t }) => ({
       ...t,
+      isPaid: is_paid,
       account: {
         id: t.account_id,
         name: 'Account Name',
@@ -85,8 +95,9 @@ export class InMemoryTransactionRepository implements TransactionRepository {
     })
     const latestTransactions = transactions.slice(-5)
 
-    return latestTransactions.map((t) => ({
+    return latestTransactions.map(({ is_paid, ...t }) => ({
       ...t,
+      isPaid: is_paid,
       account: {
         id: t.account_id,
         name: 'Account Name',
@@ -137,29 +148,67 @@ export class InMemoryTransactionRepository implements TransactionRepository {
       amount: transaction.amount,
       type: transaction.type as TransactionEnum,
       date: new Date(transaction.date),
+      is_paid: transaction.is_paid || false,
       account_id: transaction.account_id,
       category_id: transaction.category_id,
       user_id: transaction.user_id,
       created_at: new Date(),
       updated_at: new Date(),
       deleted_at: null,
+      recurring_transaction_id: transaction.recurring_transaction_id || null,
     }
 
     this.transactions.push(newTransaction)
 
-    const accountIndex = this.accounts.findIndex(
-      (a) => a.id === transaction.account_id,
-    )
-
-    if (transaction.type === TransactionEnum.INCOME) {
-      this.accounts[accountIndex].income += transaction.amount
-      this.accounts[accountIndex].balance += transaction.amount
-    } else {
-      this.accounts[accountIndex].expense += transaction.amount
-      this.accounts[accountIndex].balance -= transaction.amount
-    }
-
     return newTransaction
+  }
+
+  async createMany(
+    transactions: Prisma.TransactionUncheckedCreateInput[],
+  ): Promise<{ createdCount: number }> {
+    const newTransactions = transactions.map((transaction) => {
+      const account = this.accounts.find((a) => a.id === transaction.account_id)
+
+      if (!account) {
+        this.accounts.push({
+          id: transaction.account_id,
+          name: 'Account Name',
+          user_id: transaction.user_id,
+          institution: InstitutionEnum.OTHER,
+          balance: 0,
+          income: 0,
+          expense: 0,
+          created_at: new Date(),
+          updated_at: new Date(),
+          deleted_at: null,
+        })
+      }
+
+      const newTransaction: Transaction = {
+        id: transaction.id || randomUUID(),
+        title: transaction.title,
+        description: transaction.description || null,
+        amount: transaction.amount,
+        type: transaction.type as TransactionEnum,
+        date: new Date(transaction.date),
+        is_paid: transaction.is_paid || false,
+        account_id: transaction.account_id,
+        category_id: transaction.category_id,
+        user_id: transaction.user_id,
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+        recurring_transaction_id: transaction.recurring_transaction_id || null,
+      }
+
+      return newTransaction
+    })
+
+    this.transactions.push(...newTransactions)
+
+    return {
+      createdCount: transactions.length,
+    }
   }
 
   async delete(id: string) {
@@ -169,18 +218,6 @@ export class InMemoryTransactionRepository implements TransactionRepository {
     this.transactions[transactionIndex] = {
       ...transaction,
       deleted_at: new Date(),
-    }
-
-    const accountIndex = this.accounts.findIndex(
-      (a) => a.id === transaction.account_id,
-    )
-
-    if (transaction?.type === TransactionEnum.INCOME) {
-      this.accounts[accountIndex].income -= transaction.amount
-      this.accounts[accountIndex].balance -= transaction.amount
-    } else {
-      this.accounts[accountIndex].expense -= transaction.amount
-      this.accounts[accountIndex].balance += transaction.amount
     }
   }
 

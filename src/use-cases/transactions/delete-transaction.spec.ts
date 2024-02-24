@@ -11,7 +11,7 @@ let transactionRepository: InMemoryTransactionRepository
 let userRepository: InMemoryUserRepository
 let sut: DeleteTransactionUseCase
 
-describe('Update Transaction Use Case', () => {
+describe('Delete Transaction Use Case', () => {
   const userId = 'user-id'
 
   beforeEach(async () => {

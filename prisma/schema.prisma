@@ -35,10 +35,12 @@ model User {
     organization    Organization @relation(fields: [organization_id], references: [id])
     organization_id String
 
-    Account     Account[]
-    Category    Category[]
-    Transaction Transaction[]
-    CreditCard  CreditCard[]
+    Account              Account[]
+    Category             Category[]
+    Transaction          Transaction[]
+    CreditCard           CreditCard[]
+    RecurringTransaction RecurringTransaction[]
+    Config               Config[]
 
     @@map("users")
 }
@@ -55,9 +57,10 @@ model Account {
     deleted_at  DateTime?
     user_id     String
 
-    user        User          @relation(fields: [user_id], references: [id])
-    Transaction Transaction[]
-    CreditCard  CreditCard[]
+    user                 User                   @relation(fields: [user_id], references: [id])
+    Transaction          Transaction[]
+    CreditCard           CreditCard[]
+    RecurringTransaction RecurringTransaction[]
 
     @@map("accounts")
 }
@@ -72,8 +75,9 @@ model Category {
     deleted_at  DateTime?
     user_id     String
 
-    user        User          @relation(fields: [user_id], references: [id])
-    Transaction Transaction[]
+    user                 User                   @relation(fields: [user_id], references: [id])
+    Transaction          Transaction[]
+    RecurringTransaction RecurringTransaction[]
 
     @@map("categories")
 }
@@ -85,18 +89,47 @@ model Transaction {
     amount      Int // save in cents
     type        Int       @default(0) // 0 = income, 1 = expense
     date        DateTime
+    is_paid     Boolean   @default(true)
     created_at  DateTime  @default(now())
     updated_at  DateTime  @updatedAt
     deleted_at  DateTime?
+
+    account_id               String
+    category_id              String
+    user_id                  String
+    recurring_transaction_id String?
+
+    account               Account               @relation(fields: [account_id], references: [id])
+    category              Category              @relation(fields: [category_id], references: [id])
+    user                  User                  @relation(fields: [user_id], references: [id])
+    recurring_transaction RecurringTransaction? @relation(fields: [recurring_transaction_id], references: [id])
+
+    @@map("transactions")
+}
+
+model RecurringTransaction {
+    id            String    @id @default(uuid())
+    title         String
+    description   String?
+    amount        Int // save in cents
+    type          Int       @default(0) // 0 = income, 1 = expense
+    start_date    DateTime
+    frequency     Int       @default(0) // 0 = weekly, 1 = monthly, 2 = yearly
+    repeat_amount Int
+    created_at    DateTime  @default(now())
+    updated_at    DateTime  @updatedAt
+    deleted_at    DateTime?
+
     account_id  String
     category_id String
     user_id     String
 
-    account  Account  @relation(fields: [account_id], references: [id])
-    category Category @relation(fields: [category_id], references: [id])
-    user     User     @relation(fields: [user_id], references: [id])
+    account     Account       @relation(fields: [account_id], references: [id])
+    category    Category      @relation(fields: [category_id], references: [id])
+    user        User          @relation(fields: [user_id], references: [id])
+    Transaction Transaction[]
 
-    @@map("transactions")
+    @@map("recurring_transactions")
 }
 
 model CreditCard {
@@ -116,4 +149,17 @@ model CreditCard {
     account Account @relation(fields: [account_id], references: [id])
 
     @@map("credit_cards")
+}
+
+model Config {
+    id         String   @id @default(uuid())
+    key        String
+    value      String
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+    user_id    String
+
+    user User @relation(fields: [user_id], references: [id])
+
+    @@map("configs")
 }

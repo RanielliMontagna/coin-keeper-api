@@ -1,7 +1,8 @@
 import type { Account, Category, Prisma, Transaction } from '@prisma/client'
 import { Options } from '@/use-cases/options/options'
 
-export interface FindManyByUserIdOptions extends Pick<Options, 'page'> {}
+export interface FindManyByUserIdOptions
+  extends Pick<Options, 'page' | 'date'> {}
 interface TransactionWithAccount {
   id: Transaction['id']
   title: Transaction['title']
@@ -9,6 +10,7 @@ interface TransactionWithAccount {
   amount: Transaction['amount']
   type: Transaction['type']
   date: Transaction['date']
+  isPaid: Transaction['is_paid']
   account: {
     id: Account['id']
     name: Account['name']
@@ -39,6 +41,9 @@ export interface TransactionRepository {
   create(
     transaction: Prisma.TransactionUncheckedCreateInput,
   ): Promise<Transaction>
+  createMany(
+    transactions: Prisma.TransactionUncheckedCreateInput[],
+  ): Promise<{ createdCount: number }>
   delete(id: string): Promise<void>
   getGraphicsWeek(userId: string): Promise<Balance[]>
   getGraphicsMonth(userId: string): Promise<Balance[]>

@@ -1,5 +1,3 @@
-import { Transaction } from '@prisma/client'
-
 import { TransactionRepository } from '@/repositories/transaction-repository'
 import { TransactionNotFoundError } from '@/use-cases/errors/transaction-not-found-error'
 

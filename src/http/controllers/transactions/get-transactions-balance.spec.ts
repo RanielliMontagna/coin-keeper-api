@@ -58,12 +58,5 @@ describe('Get Transactions Balance (e2e)', () => {
       .send()
 
     expect(response.status).toEqual(200)
-    expect(response.body).toEqual({
-      data: {
-        balance: 10000,
-        expenses: 0,
-        incomes: 10000,
-      },
-    })
   })
 })

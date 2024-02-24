@@ -1,3 +1,7 @@
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+dayjs.extend(utc)
+
 import { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 
@@ -28,6 +32,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
         title: true,
         description: true,
         amount: true,
+        is_paid: true,
         type: true,
         date: true,
         account: { select: { id: true, name: true, institution: true } },
@@ -35,14 +40,24 @@ export class PrismaTransactionRepository implements TransactionRepository {
       },
     })
 
-    return transactions
+    return transactions.map(({ is_paid, ...transaction }) => ({
+      ...transaction,
+      isPaid: is_paid,
+    }))
   }
 
   async findManyByUserId(userId: string, options?: FindManyByUserIdOptions) {
-    const { page = 1 } = options || {}
+    const { page = 1, date } = options || {}
 
     const transactions = await prisma.transaction.findMany({
-      where: { user_id: userId, deleted_at: null },
+      where: {
+        user_id: userId,
+        deleted_at: null,
+        date: {
+          gte: date ? dayjs(date).startOf('month').toDate() : undefined,
+          lte: date ? dayjs(date).endOf('month').toDate() : undefined,
+        },
+      },
       take: 15,
       skip: (page - 1) * 15,
       orderBy: { date: 'desc' },
@@ -51,6 +66,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
         title: true,
         description: true,
         amount: true,
+        is_paid: true,
         type: true,
         date: true,
         account: { select: { id: true, name: true, institution: true } },
@@ -58,7 +74,10 @@ export class PrismaTransactionRepository implements TransactionRepository {
       },
     })
 
-    return transactions
+    return transactions.map(({ is_paid, ...transaction }) => ({
+      ...transaction,
+      isPaid: is_paid,
+    }))
   }
 
   async findFiveLatestByUserId(userId: string) {
@@ -71,36 +90,28 @@ export class PrismaTransactionRepository implements TransactionRepository {
         title: true,
         description: true,
         amount: true,
+        is_paid: true,
         type: true,
         date: true,
         account: {
-          select: {
-            id: true,
-            name: true,
-            institution: true,
-          },
+          select: { id: true, name: true, institution: true },
         },
         category: {
-          select: {
-            id: true,
-            name: true,
-            color: true,
-          },
+          select: { id: true, name: true, color: true },
         },
       },
     })
 
-    return transactions
+    return transactions.map(({ is_paid, ...transaction }) => ({
+      ...transaction,
+      isPaid: is_paid,
+    }))
   }
 
   async findBalanceByUserId(userId: string) {
     const accounts = await prisma.account.findMany({
       where: { user_id: userId, deleted_at: null },
-      select: {
-        balance: true,
-        income: true,
-        expense: true,
-      },
+      select: { balance: true, income: true, expense: true },
     })
 
     const balance = accounts.reduce((acc, account) => acc + account.balance, 0)
@@ -115,53 +126,23 @@ export class PrismaTransactionRepository implements TransactionRepository {
       data: transaction,
     })
 
-    const income =
-      transaction.type === TransactionEnum.INCOME ? transaction.amount : 0
-    const expense =
-      transaction.type === TransactionEnum.EXPENSE ? transaction.amount : 0
-    const balance =
-      transaction.type === TransactionEnum.INCOME
-        ? transaction.amount
-        : -transaction.amount
-
-    await prisma.account.update({
-      where: { id: transaction.account_id },
-      data: {
-        income: { increment: income },
-        expense: { increment: expense },
-        balance: { increment: balance },
-      },
-    })
-
     return createdTransaction
   }
 
-  async delete(id: string) {
-    const deletedTransaction = await prisma.transaction.update({
-      where: { id },
-      data: { deleted_at: new Date() },
+  async createMany(transactions: Prisma.TransactionUncheckedCreateInput[]) {
+    const createdTransactions = await prisma.transaction.createMany({
+      data: transactions,
     })
 
-    const income =
-      deletedTransaction.type === TransactionEnum.INCOME
-        ? -deletedTransaction.amount
-        : 0
-    const expense =
-      deletedTransaction.type === TransactionEnum.EXPENSE
-        ? -deletedTransaction.amount
-        : 0
-    const balance =
-      deletedTransaction.type === TransactionEnum.INCOME
-        ? -deletedTransaction.amount
-        : deletedTransaction.amount
+    return {
+      createdCount: createdTransactions.count,
+    }
+  }
 
-    await prisma.account.update({
-      where: { id: deletedTransaction.account_id },
-      data: {
-        income: { increment: income },
-        expense: { increment: expense },
-        balance: { increment: balance },
-      },
+  async delete(id: string) {
+    await prisma.transaction.update({
+      where: { id },
+      data: { deleted_at: new Date() },
     })
   }
 
@@ -229,11 +210,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
           gte: new Date(new Date().setDate(1)),
         },
       },
-      select: {
-        amount: true,
-        type: true,
-        date: true,
-      },
+      select: { amount: true, type: true, date: true },
     })
 
     const balance: Balance[] = new Array(daysInMonth).fill({
@@ -277,11 +254,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
           ),
         },
       },
-      select: {
-        amount: true,
-        type: true,
-        date: true,
-      },
+      select: { amount: true, type: true, date: true },
     })
 
     const balance: Balance[] = new Array(12).fill({

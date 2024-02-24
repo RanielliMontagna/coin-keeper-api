@@ -6,8 +6,7 @@ import { OrganizationRepository } from '@/repositories/organization-repository'
 import { OrganizationNotFoundError } from '@/use-cases/errors/organization-not-found-error'
 import { UserAlreadyExistsError } from '@/use-cases/errors/user-already-exists-error'
 
-import { InstitutionEnum } from '../accounts/create-account'
-import { ColorEnum } from '../categories/create-category'
+import { account, categories, configs } from '@/constants/seeds'
 
 export enum UserTypeEnum {
   ADMIN = 'ADMIN',
@@ -49,80 +48,9 @@ export class RegisterUserUseCase {
       const user = await this.userRepository.create({
         ...values,
         password_hash: hashedPassword,
-        Account: {
-          create: {
-            name: 'Wallet',
-            balance: 0,
-            institution: InstitutionEnum.OTHER,
-          },
-        },
-        Category: {
-          createMany: {
-            data: [
-              {
-                name: 'Housing',
-                color: ColorEnum.RED,
-                description: 'Expenses for your living arrangements.',
-              },
-              {
-                name: 'Transportation',
-                color: ColorEnum.ORANGE,
-                description: 'Costs related to getting around.',
-              },
-              {
-                name: 'Education',
-                color: ColorEnum.LIGHT_BLUE,
-                description: 'Expenses for schooling and personal development.',
-              },
-              {
-                name: 'Clothing',
-                color: ColorEnum.BLUE,
-                description: 'Costs for clothing and accessories.',
-              },
-              {
-                name: 'Eletronics',
-                color: ColorEnum.PURPLE,
-                description: 'Expenses for electronic devices and gadgets.',
-              },
-              {
-                name: 'Entertainment',
-                color: ColorEnum.PINK,
-                description: 'Spending on leisure activities and recreation.',
-              },
-              {
-                name: 'Streaming',
-                color: ColorEnum.PINK,
-                description: 'Costs for streaming services.',
-              },
-              {
-                name: 'Food',
-                color: ColorEnum.BROWN,
-                description: 'Expenses for groceries and dining.',
-              },
-              {
-                name: 'Medical & Healthcare',
-                color: ColorEnum.LIGHT_GREEN,
-                description: 'Costs for medical care and health insurance.',
-              },
-              {
-                name: 'Saving & Investing',
-                color: ColorEnum.GREEN,
-                description: 'Contributions towards savings and investments.',
-              },
-              {
-                name: 'Recreation & Entertainment',
-                color: ColorEnum.TEAL,
-                description: 'Expenses for recreational activities.',
-              },
-              {
-                name: 'Others',
-                color: ColorEnum.GREY,
-                description:
-                  'Miscellaneous expenses not fitting in other categories.',
-              },
-            ],
-          },
-        },
+        Account: { create: account },
+        Category: { createMany: { data: categories } },
+        Config: { createMany: { data: configs } },
       })
 
       return user

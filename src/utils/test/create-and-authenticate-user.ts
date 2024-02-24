@@ -15,15 +15,15 @@ export async function createAndAuthenticateUser(
     },
   })
 
-  await prisma.user.create({
-    data: {
+  await request(app.server)
+    .post('/users')
+    .send({
       name: 'Name Example',
       email: 'name@example.com',
-      password_hash: await hash('A1s2d3', 8),
+      password: 'A1s2d3',
       type: isAdmin ? UserTypeEnum.ADMIN : UserTypeEnum.GUEST,
-      organization_id: id,
-    },
-  })
+      organizationId: id,
+    })
 
   const authResponse = await request(app.server).post('/sessions').send({
     email: 'name@example.com',
@@ -32,7 +32,5 @@ export async function createAndAuthenticateUser(
 
   const { token } = authResponse.body
 
-  return {
-    token,
-  }
+  return { token }
 }

@@ -12,20 +12,23 @@ export async function fetchByUserTransactions(
   try {
     const fetchTransactionsByUserQuerySchema = z.object({
       page: z.coerce.number().optional(),
+      date: z.coerce.string().optional(),
     })
 
-    const { page } = fetchTransactionsByUserQuerySchema.parse(request.query)
+    const { page, date } = fetchTransactionsByUserQuerySchema.parse(
+      request.query,
+    )
 
     const fetchTransactionsUseCase = makeFetchTransactionsByUserUseCase()
 
     const { transactions } = await fetchTransactionsUseCase.execute({
       userId: request.user.sub,
-      options: { page: page || 1 },
+      options: { page: page || 1, date },
     })
 
     return reply.status(200).send({
       ...returnData({ transactions }),
-      meta: { page: page || 1 },
+      meta: { page: page || 1, date },
     })
   } catch (err) {
     if (err instanceof UserNotFoundError) {
