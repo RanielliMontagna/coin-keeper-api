@@ -2,6 +2,7 @@ import { Config } from '@prisma/client'
 
 export interface ConfigUpdateRequest {
   userId: string
+  id: string
   key: string
   value: string
 }

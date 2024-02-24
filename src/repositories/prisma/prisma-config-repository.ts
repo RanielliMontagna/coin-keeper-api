@@ -32,11 +32,15 @@ export class PrismaConfigRepository implements ConfigRepository {
   }
 
   async updateAllConfigs({ userId, configs }: UpdateAllConfigsRequest) {
-    const updatedConfigs = await prisma.config.updateMany({
-      where: { user_id: userId, key: { in: configs.map((c) => c.key) } },
-      data: configs.map((c) => ({ key: c.key, value: c.value })),
-    })
+    const updatedConfigs = await Promise.all(
+      configs.map((config) =>
+        prisma.config.update({
+          data: { value: config.value },
+          where: { id: config.id, key: config.key, user_id: userId },
+        }),
+      ),
+    )
 
-    return { updatedCount: updatedConfigs.count }
+    return { updatedCount: updatedConfigs.length }
   }
 }
