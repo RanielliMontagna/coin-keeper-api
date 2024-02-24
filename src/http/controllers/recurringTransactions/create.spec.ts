@@ -48,6 +48,7 @@ describe('Create Recurring Transaction (e2e)', () => {
         type: TransactionEnum.INCOME,
         frequency: FrequencyEnum.MONTHLY,
         startDate: new Date(),
+        repeatAmount: 12,
         accountId: responseAccount.body.data.id,
         categoryId: responseCategory.body.data.id,
       })
