@@ -14,6 +14,8 @@ import { categoryRoutes } from './http/controllers/categories/routes'
 import { transactionRoutes } from './http/controllers/transactions/routes'
 import { servicesRoutes } from './http/services/routes'
 import { creditCardRoutes } from './http/controllers/credit-card/routes'
+import { recurringTransactionRoutes } from './http/controllers/recurringTransactions/routes'
+import { configRoutes } from './http/controllers/configs/routes'
 
 export const app = fastify({})
 
@@ -35,8 +37,14 @@ app.register(userRoutes)
 app.register(accountRoutes)
 app.register(categoryRoutes)
 app.register(transactionRoutes)
+app.register(recurringTransactionRoutes)
 app.register(servicesRoutes)
 app.register(creditCardRoutes)
+app.register(configRoutes)
+
+app.ready(() => {
+  import('@/jobs/generateTransactions')
+})
 
 app.setErrorHandler((error, _, reply) => {
   if (error instanceof ZodError) {

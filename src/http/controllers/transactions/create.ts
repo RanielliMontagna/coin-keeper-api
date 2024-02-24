@@ -17,12 +17,21 @@ export async function createTransaction(
     amount: z.number(),
     type: z.nativeEnum(TransactionEnum),
     date: z.string(),
+    isPaid: z.boolean().optional().default(true),
     accountId: z.string(),
     categoryId: z.string(),
   })
 
-  const { title, description, amount, type, date, accountId, categoryId } =
-    createTransactionBodySchema.parse(request.body)
+  const {
+    title,
+    description,
+    amount,
+    type,
+    date,
+    isPaid,
+    accountId,
+    categoryId,
+  } = createTransactionBodySchema.parse(request.body)
 
   try {
     const createTransactionUseCase = makeCreateTransactionUseCase()
@@ -32,6 +41,7 @@ export async function createTransaction(
       description,
       amount,
       type,
+      isPaid,
       date: new Date(date),
       accountId,
       categoryId,

@@ -15,6 +15,7 @@ interface CreateTransactionUseCaseRequest {
   amount: number
   type: TransactionEnum
   date: Date
+  isPaid?: boolean
   accountId: string
   categoryId: string
   userId: string
@@ -36,6 +37,7 @@ export class CreateTransactionUseCase {
     amount,
     type,
     date,
+    isPaid = true,
     accountId,
     categoryId,
     userId,
@@ -52,13 +54,12 @@ export class CreateTransactionUseCase {
       amount,
       type,
       date,
+      is_paid: isPaid,
       account_id: accountId,
       category_id: categoryId,
       user_id: userId,
     })
 
-    return {
-      transaction,
-    }
+    return { transaction }
   }
 }
