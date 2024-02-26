@@ -43,7 +43,7 @@ app.register(creditCardRoutes)
 app.register(configRoutes)
 
 app.ready(() => {
-  import('@/jobs/generateTransactions')
+  import('@/jobs/autoPay')
 })
 
 app.setErrorHandler((error, _, reply) => {
