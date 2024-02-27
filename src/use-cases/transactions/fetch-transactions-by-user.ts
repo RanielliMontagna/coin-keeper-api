@@ -50,11 +50,17 @@ export class FetchTransactionsByUserUseCase {
     )
 
     const expenseAmount = transactions
-      .filter((transaction) => transaction.type === TransactionEnum.EXPENSE)
+      .filter(
+        (transaction) =>
+          transaction.type === TransactionEnum.EXPENSE && transaction.isPaid,
+      )
       .reduce((acc, transaction) => acc + transaction.amount, 0)
 
     const incomeAmount = transactions
-      .filter((transaction) => transaction.type === TransactionEnum.INCOME)
+      .filter(
+        (transaction) =>
+          transaction.type === TransactionEnum.INCOME && transaction.isPaid,
+      )
       .reduce((acc, transaction) => acc + transaction.amount, 0)
 
     const monthlyBalance = {

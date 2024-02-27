@@ -73,11 +73,12 @@ describe('Fetch Transactions By User Use Case', () => {
       account_id: 'account-id',
       category_id: 'category-id',
       user_id: userId,
+      is_paid: true,
     }
 
     await transactionRepository.create({
       ...transactionBase,
-      date: new Date('2021-01-01'),
+      date: new Date('2021-01-03'),
     })
 
     await transactionRepository.create({
@@ -85,9 +86,29 @@ describe('Fetch Transactions By User Use Case', () => {
       date: new Date('2023-01-02'),
     })
 
+    await transactionRepository.create({
+      ...transactionBase,
+      date: new Date('2021-01-03'),
+      is_paid: false,
+    })
+
+    await transactionRepository.create({
+      ...transactionBase,
+      amount: 50,
+      type: TransactionEnum.INCOME,
+      date: new Date('2021-01-03'),
+      is_paid: false,
+    })
+
+    await transactionRepository.create({
+      ...transactionBase,
+      date: new Date('2023-01-03'),
+      is_paid: false,
+    })
+
     const response = await sut.execute({
       userId,
-      options: { date: new Date('2021-01-01') },
+      options: { date: new Date('2021-01-03') },
     })
 
     expect(response.transactions).toEqual(
