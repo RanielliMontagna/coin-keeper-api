@@ -103,6 +103,14 @@ describe('Fetch Transactions By User Use Case', () => {
         }),
       ]),
     )
+
+    expect(response.monthlyBalance).toEqual(
+      expect.objectContaining({
+        balance: -100,
+        incomes: 0,
+        expenses: 100,
+      }),
+    )
   })
 
   it('should be able to fetch transactions by user with infinite scroll', async () => {

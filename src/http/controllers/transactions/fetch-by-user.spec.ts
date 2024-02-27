@@ -37,7 +37,7 @@ describe('Fetch Transactions By User (e2e)', () => {
         color: ColorEnum.BLUE,
       })
 
-    const createTransactionResponse = await request(app.server)
+    await request(app.server)
       .post('/transactions')
       .set('Authorization', `Bearer ${token}`)
       .send({
@@ -52,29 +52,32 @@ describe('Fetch Transactions By User (e2e)', () => {
 
     const response = await request(app.server)
       .get(`/transactions`)
+      .query({ date: new Date().toISOString() })
       .set('Authorization', `Bearer ${token}`)
       .send()
 
     expect(response.status).toEqual(200)
-    expect(response.body).toEqual({
-      data: {
-        transactions: expect.arrayContaining([
-          expect.objectContaining({
-            id: createTransactionResponse.body.data.id,
-            title: 'Transaction Example',
-            description: 'Transaction Example Description',
-            amount: 1000,
-            type: TransactionEnum.INCOME,
-            date: expect.any(String),
-            category: {
-              id: responseCategory.body.data.id,
-              name: 'Category Example',
-              color: ColorEnum.BLUE,
-            },
-          }),
-        ]),
-      },
-      meta: { page: 1 },
-    })
+    expect(response.body.meta).toEqual(
+      expect.objectContaining({
+        balance: 1000,
+        incomes: 1000,
+        expenses: 0,
+        date: expect.any(String),
+      }),
+    )
+    expect(response.body.data.transactions[0]).toEqual(
+      expect.objectContaining({
+        id: expect.any(String),
+        title: 'Transaction Example',
+        description: 'Transaction Example Description',
+        amount: 1000,
+        type: TransactionEnum.INCOME,
+        date: expect.any(String),
+        account: expect.objectContaining({ id: responseAccount.body.data.id }),
+        category: expect.objectContaining({
+          id: responseCategory.body.data.id,
+        }),
+      }),
+    )
   })
 })
