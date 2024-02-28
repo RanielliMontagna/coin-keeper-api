@@ -2,7 +2,6 @@ import { InMemoryTransactionRepository } from '@/repositories/in-memory/in-memor
 import { InMemoryAccountRepository } from '@/repositories/in-memory/in-memory-account-repository'
 
 import { CreateTransactionUseCase, TransactionEnum } from './create-transaction'
-import { UserTypeEnum } from '../users/register-user'
 import { AccountNotFoundError } from '../errors/account-not-found-error'
 
 let transactionRepository: InMemoryTransactionRepository

@@ -288,4 +288,11 @@ export class PrismaTransactionRepository implements TransactionRepository {
 
     return balance
   }
+
+  async markAsPaid(id: string) {
+    await prisma.transaction.update({
+      where: { id },
+      data: { is_paid: true },
+    })
+  }
 }
