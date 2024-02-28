@@ -1,8 +1,10 @@
 import { TransactionRepository } from '@/repositories/transaction-repository'
+import { UserRepository } from '@/repositories/user-repository'
 import { TransactionNotFoundError } from '@/use-cases/errors/transaction-not-found-error'
 
 interface MarkTransactionAsPaidUseCaseRequest {
   transactionId: string
+  userId: string
 }
 
 interface MarkTransactionAsPaidUseCaseResponse {
@@ -15,10 +17,15 @@ export class MarkTransactionAsPaidUseCase {
 
   async execute({
     transactionId,
+    userId,
   }: MarkTransactionAsPaidUseCaseRequest): Promise<MarkTransactionAsPaidUseCaseResponse> {
     const transaction = await this.transactionRepository.findById(transactionId)
 
     if (!transaction) {
+      throw new TransactionNotFoundError()
+    }
+
+    if (transaction.user_id !== userId) {
       throw new TransactionNotFoundError()
     }
 

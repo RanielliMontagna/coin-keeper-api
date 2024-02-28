@@ -27,14 +27,35 @@ describe('Make Transaction As Paid Use Case', () => {
       user_id: userId,
     })
 
-    const response = await sut.execute({ transactionId: transaction.id })
+    const response = await sut.execute({
+      transactionId: transaction.id,
+      userId,
+    })
 
     expect(response).toEqual({ id: transaction.id, isPaid: true })
   })
 
   it('should not be able to mark a transaction as paid if it does not exist', async () => {
     await expect(
-      sut.execute({ transactionId: 'invalid-id' }),
+      sut.execute({ transactionId: 'invalid-id', userId }),
+    ).rejects.toThrowError(TransactionNotFoundError)
+  })
+
+  it('should not be able to mark a transaction as paid if it does not belong to the user', async () => {
+    const transaction = await transactionRepository.create({
+      title: 'Transaction Title',
+      description: 'Transaction Description',
+      amount: 100,
+      type: TransactionEnum.EXPENSE,
+      date: new Date(),
+      is_paid: false,
+      account_id: 'account-id',
+      category_id: 'category-id',
+      user_id: 'another-user-id',
+    })
+
+    await expect(
+      sut.execute({ transactionId: transaction.id, userId }),
     ).rejects.toThrowError(TransactionNotFoundError)
   })
 })
