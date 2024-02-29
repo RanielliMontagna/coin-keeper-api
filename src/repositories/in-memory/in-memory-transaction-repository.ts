@@ -363,4 +363,13 @@ export class InMemoryTransactionRepository implements TransactionRepository {
 
     return balance
   }
+
+  async markAsPaid(id: string) {
+    const transactionIndex = this.transactions.findIndex((t) => t.id === id)
+
+    this.transactions[transactionIndex] = {
+      ...this.transactions[transactionIndex],
+      is_paid: true,
+    }
+  }
 }
