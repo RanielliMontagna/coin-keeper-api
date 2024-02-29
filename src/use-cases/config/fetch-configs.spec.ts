@@ -33,8 +33,6 @@ describe('Fetch Configs Use Case', () => {
   it('should be able to fetch configs', async () => {
     const response = await sut.execute({ userId })
 
-    console.log('response:', response)
-
     expect(response.configs).toEqual(
       expect.arrayContaining([
         expect.objectContaining({

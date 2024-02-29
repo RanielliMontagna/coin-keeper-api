@@ -48,4 +48,5 @@ export interface TransactionRepository {
   getGraphicsWeek(userId: string): Promise<Balance[]>
   getGraphicsMonth(userId: string): Promise<Balance[]>
   getGraphicsYear(userId: string): Promise<Balance[]>
+  markAsPaid(id: string): Promise<void>
 }

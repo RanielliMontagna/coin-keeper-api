@@ -16,13 +16,7 @@ export async function getTransactionsBalance(
         userId: request.user.sub,
       })
 
-    return reply.status(200).send(
-      returnData({
-        balance,
-        expenses,
-        incomes,
-      }),
-    )
+    return reply.status(200).send(returnData({ balance, expenses, incomes }))
   } catch (err) {
     if (err instanceof UserNotFoundError) {
       reply.status(400).send({ message: err.message })

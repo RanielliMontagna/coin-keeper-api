@@ -3,11 +3,12 @@ import request from 'supertest'
 import { app } from '@/app'
 
 import { createAndAuthenticateUser } from '@/utils/test/create-and-authenticate-user'
-import { TransactionEnum } from '@/use-cases/transactions/create-transaction'
 import { InstitutionEnum } from '@/use-cases/accounts/create-account'
 import { ColorEnum } from '@/use-cases/categories/create-category'
+import { TransactionEnum } from '@/use-cases/transactions/create-transaction'
+import { TransactionNotFoundError } from '@/use-cases/errors/transaction-not-found-error'
 
-describe('Fetch Transactions By User (e2e)', () => {
+describe('Mark Transaction As Paid (e2e)', () => {
   beforeAll(async () => {
     await app.ready()
   })
@@ -16,7 +17,7 @@ describe('Fetch Transactions By User (e2e)', () => {
     await app.close()
   })
 
-  it('should be able to fetch transactions', async () => {
+  it('should be able to mark a transaction as paid', async () => {
     const { token } = await createAndAuthenticateUser(app)
 
     const responseAccount = await request(app.server)
@@ -37,7 +38,7 @@ describe('Fetch Transactions By User (e2e)', () => {
         color: ColorEnum.BLUE,
       })
 
-    await request(app.server)
+    const response = await request(app.server)
       .post('/transactions')
       .set('Authorization', `Bearer ${token}`)
       .send({
@@ -45,39 +46,32 @@ describe('Fetch Transactions By User (e2e)', () => {
         description: 'Transaction Example Description',
         amount: 1000,
         type: TransactionEnum.INCOME,
-        date: new Date(),
+        date: '2021-01-01',
         accountId: responseAccount.body.data.id,
         categoryId: responseCategory.body.data.id,
+        isPaid: false,
       })
 
-    const response = await request(app.server)
-      .get(`/transactions`)
-      .query({ date: new Date().toISOString() })
+    const responseMarkAsPaid = await request(app.server)
+      .patch(`/transactions/${response.body.data.id}/paid`)
       .set('Authorization', `Bearer ${token}`)
       .send()
 
-    expect(response.status).toEqual(200)
-    expect(response.body.meta).toEqual(
-      expect.objectContaining({
-        balance: 1000,
-        incomes: 1000,
-        expenses: 0,
-        date: expect.any(String),
-      }),
-    )
-    expect(response.body.data.transactions[0]).toEqual(
-      expect.objectContaining({
-        id: expect.any(String),
-        title: 'Transaction Example',
-        description: 'Transaction Example Description',
-        amount: 1000,
-        type: TransactionEnum.INCOME,
-        date: expect.any(String),
-        account: expect.objectContaining({ id: responseAccount.body.data.id }),
-        category: expect.objectContaining({
-          id: responseCategory.body.data.id,
-        }),
-      }),
-    )
+    expect(responseMarkAsPaid.status).toEqual(200)
+    expect(responseMarkAsPaid.body).toEqual({
+      id: response.body.data.id,
+      isPaid: true,
+    })
+  })
+
+  it('should not be able to mark a transaction as paid if it does not exist', async () => {
+    const { token } = await createAndAuthenticateUser(app)
+
+    const response = await request(app.server)
+      .patch('/transactions/invalid-id/paid')
+      .set('Authorization', `Bearer ${token}`)
+      .send()
+
+    expect(response.status).toEqual(400)
   })
 })

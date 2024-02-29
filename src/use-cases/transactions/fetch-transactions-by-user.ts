@@ -4,6 +4,7 @@ import { TransactionRepository } from '@/repositories/transaction-repository'
 import { UserRepository } from '@/repositories/user-repository'
 import { UserNotFoundError } from '../errors/user-not-found-error'
 import { Options } from '../options/options'
+import { TransactionEnum } from './create-transaction'
 
 interface FetchTransactionsByUserUseCaseRequest {
   userId: string
@@ -20,6 +21,11 @@ interface FetchTransactionsByUserUseCaseResponse {
     type: Transaction['type']
     date: Transaction['date']
   }[]
+  monthlyBalance: {
+    balance: number
+    incomes: number
+    expenses: number
+  }
 }
 
 export class FetchTransactionsByUserUseCase {
@@ -43,6 +49,26 @@ export class FetchTransactionsByUserUseCase {
       options,
     )
 
-    return { transactions }
+    const expenseAmount = transactions
+      .filter(
+        (transaction) =>
+          transaction.type === TransactionEnum.EXPENSE && transaction.isPaid,
+      )
+      .reduce((acc, transaction) => acc + transaction.amount, 0)
+
+    const incomeAmount = transactions
+      .filter(
+        (transaction) =>
+          transaction.type === TransactionEnum.INCOME && transaction.isPaid,
+      )
+      .reduce((acc, transaction) => acc + transaction.amount, 0)
+
+    const monthlyBalance = {
+      balance: incomeAmount - expenseAmount,
+      incomes: incomeAmount,
+      expenses: expenseAmount,
+    }
+
+    return { transactions, monthlyBalance }
   }
 }

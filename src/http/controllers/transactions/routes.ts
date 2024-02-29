@@ -11,6 +11,7 @@ import { getTransactionsBalance } from './get-transactions-balance'
 import { getTransactionsGraphicsWeek } from './get-transactions-graphics-week'
 import { getTransactionsGraphicsMonth } from './get-transactions-graphics-month'
 import { getTransactionsGraphicsYear } from './get-transactions-graphics-year'
+import { markTransactionAsPaid } from './mark-transaction-as-paid'
 
 export async function transactionRoutes(app: FastifyInstance) {
   app.addHook('onRequest', verifyJWT)
@@ -19,6 +20,8 @@ export async function transactionRoutes(app: FastifyInstance) {
   app.get('/transactions', fetchByUserTransactions)
   app.get('/transactions/latest', getLatestTransactions)
   app.get('/transactions/balance', getTransactionsBalance)
+
+  app.patch('/transactions/:transactionId/paid', markTransactionAsPaid)
 
   app.get('/transactions/graphics/week', getTransactionsGraphicsWeek)
   app.get('/transactions/graphics/month', getTransactionsGraphicsMonth)
