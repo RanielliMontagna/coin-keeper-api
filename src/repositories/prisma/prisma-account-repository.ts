@@ -1,9 +1,10 @@
-import { Prisma } from '@prisma/client'
+import { Account, Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 
 import {
   AccountRepository,
   FindManyByUserIdOptions,
+  UpdateBalance,
 } from '../account-repository'
 
 export class PrismaAccountRepository implements AccountRepository {
@@ -49,10 +50,36 @@ export class PrismaAccountRepository implements AccountRepository {
 
     return updatedAccount
   }
+
   async delete(id: string) {
     await prisma.account.update({
       where: { id },
       data: { deleted_at: new Date() },
     })
+  }
+
+  async updateBalance({
+    accountId,
+    userId,
+    amount,
+  }: UpdateBalance): Promise<Account> {
+    const account = await prisma.account.findUnique({
+      where: { id: accountId, user_id: userId },
+    })
+
+    if (!account) {
+      return Promise.reject(null)
+    }
+
+    const updatedAccount = await prisma.account.update({
+      where: { id: accountId },
+      data: {
+        balance: account.balance + amount,
+        income: account.income + (amount > 0 ? amount : 0),
+        expense: account.expense + (amount < 0 ? amount : 0),
+      },
+    })
+
+    return updatedAccount
   }
 }
