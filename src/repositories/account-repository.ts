@@ -6,7 +6,8 @@ export interface FindManyByUserIdOptions extends Pick<Options, 'search'> {}
 export interface UpdateBalance {
   accountId: string
   userId: string
-  amount: number
+  expense?: number
+  income?: number
 }
 
 export interface AccountRepository {

@@ -61,7 +61,8 @@ export class PrismaAccountRepository implements AccountRepository {
   async updateBalance({
     accountId,
     userId,
-    amount,
+    expense = 0,
+    income = 0,
   }: UpdateBalance): Promise<Account> {
     const account = await prisma.account.findUnique({
       where: { id: accountId, user_id: userId },
@@ -74,9 +75,9 @@ export class PrismaAccountRepository implements AccountRepository {
     const updatedAccount = await prisma.account.update({
       where: { id: accountId },
       data: {
-        balance: account.balance + amount,
-        income: account.income + (amount > 0 ? amount : 0),
-        expense: account.expense + (amount < 0 ? amount : 0),
+        balance: account.balance + income - expense,
+        expense: account.expense + expense,
+        income: account.income + income,
       },
     })
 

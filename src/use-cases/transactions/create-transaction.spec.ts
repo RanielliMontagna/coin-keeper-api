@@ -50,6 +50,12 @@ describe('Create Transaction Use Case', () => {
         category_id: 'category-id',
       }),
     )
+
+    const account = await accountRepository.findById('account-id')
+
+    expect(account?.balance).toBe(-100)
+    expect(account?.expense).toBe(100)
+    expect(account?.income).toBe(0)
   })
 
   it('should be able to create a new income', async () => {
@@ -58,7 +64,7 @@ describe('Create Transaction Use Case', () => {
       description: 'Transaction Description',
       amount: 100,
       type: TransactionEnum.INCOME,
-      isPaid: false,
+      isPaid: true,
       date: new Date(),
       accountId: 'account-id',
       categoryId: 'category-id',
@@ -73,11 +79,17 @@ describe('Create Transaction Use Case', () => {
         amount: 100,
         type: TransactionEnum.INCOME,
         date: expect.any(Date),
-        is_paid: false,
+        is_paid: true,
         account_id: 'account-id',
         category_id: 'category-id',
       }),
     )
+
+    const account = await accountRepository.findById('account-id')
+
+    expect(account?.balance).toBe(100)
+    expect(account?.income).toBe(100)
+    expect(account?.expense).toBe(0)
   })
 
   it('should not be able to create a new transaction with an inexistent account', async () => {

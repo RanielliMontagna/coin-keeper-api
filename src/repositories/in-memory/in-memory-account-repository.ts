@@ -102,30 +102,22 @@ export class InMemoryAccountRepository implements AccountRepository {
   async updateBalance({
     accountId,
     userId,
-    amount,
+    expense = 0,
+    income = 0,
   }: UpdateBalance): Promise<Account> {
     const account = this.accounts.find(
       (a) => a.id === accountId && a.user_id === userId,
-    )
-
-    if (!account) {
-      return Promise.reject(null)
-    }
+    ) as Account
 
     const updatedAccount = {
       ...account,
-      balance: account.balance + amount,
-      income: account.income + (amount > 0 ? amount : 0),
-      expense: account.expense + (amount < 0 ? -amount : 0),
+      balance: account.balance + income - expense,
+      expense: account.expense + expense,
+      income: account.income + income,
     }
 
-    this.accounts = this.accounts.map((a) => {
-      if (a.id === accountId) {
-        return updatedAccount
-      }
-
-      return a
-    })
+    const accountIndex = this.accounts.findIndex((a) => a.id === accountId)
+    this.accounts[accountIndex] = updatedAccount
 
     return updatedAccount
   }
