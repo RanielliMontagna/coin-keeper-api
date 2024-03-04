@@ -36,7 +36,7 @@
     "cron": "^3.1.6",
     "dayjs": "1.11.9",
     "dotenv": "16.4.2",
-    "fastify": "4.26.0",
+    "fastify": "4.26.1",
     "node-cache": "^5.1.2",
     "vitest-environment-prisma": "file:prisma/vitest-environment-prisma",
     "zod": "3.22.4"
