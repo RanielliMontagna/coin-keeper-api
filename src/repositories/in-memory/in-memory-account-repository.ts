@@ -4,6 +4,7 @@ import type { Account, Prisma } from '@prisma/client'
 import type {
   AccountRepository,
   FindManyByUserIdOptions,
+  UpdateBalance,
 } from '../account-repository'
 import { InstitutionEnum } from '@/use-cases/accounts/create-account'
 
@@ -96,5 +97,28 @@ export class InMemoryAccountRepository implements AccountRepository {
       ...account,
       deleted_at: new Date(),
     }
+  }
+
+  async updateBalance({
+    accountId,
+    userId,
+    expense = 0,
+    income = 0,
+  }: UpdateBalance): Promise<Account> {
+    const account = this.accounts.find(
+      (a) => a.id === accountId && a.user_id === userId,
+    ) as Account
+
+    const updatedAccount = {
+      ...account,
+      balance: account.balance + income - expense,
+      expense: account.expense + expense,
+      income: account.income + income,
+    }
+
+    const accountIndex = this.accounts.findIndex((a) => a.id === accountId)
+    this.accounts[accountIndex] = updatedAccount
+
+    return updatedAccount
   }
 }

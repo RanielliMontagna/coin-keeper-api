@@ -9,7 +9,7 @@ export enum TransactionEnum {
   EXPENSE = 1,
 }
 
-interface CreateTransactionUseCaseRequest {
+export interface CreateTransactionUseCaseRequest {
   title: string
   description?: string
   amount: number
@@ -59,6 +59,15 @@ export class CreateTransactionUseCase {
       category_id: categoryId,
       user_id: userId,
     })
+
+    if (isPaid) {
+      await this.accountRepository.updateBalance({
+        accountId,
+        userId,
+        expense: type === TransactionEnum.EXPENSE ? amount : 0,
+        income: type === TransactionEnum.INCOME ? amount : 0,
+      })
+    }
 
     return { transaction }
   }
