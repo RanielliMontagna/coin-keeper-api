@@ -70,10 +70,10 @@ export class CreateRecurringTransactionUseCase {
         user_id: userId,
       })
 
-    //Generate transactions
     const generateTransactions = new GenerateTransactions(
       this.recurringTransactionRepository,
       this.transactionRepository,
+      this.accountRepository,
     )
 
     await generateTransactions.execute({

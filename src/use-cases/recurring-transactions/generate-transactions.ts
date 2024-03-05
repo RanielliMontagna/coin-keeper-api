@@ -4,15 +4,19 @@ import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
 dayjs.utc().format()
 
-import { RecurringTransaction, Transaction, Prisma } from '@prisma/client'
+import { RecurringTransaction, Prisma } from '@prisma/client'
 
 import { RecurringTransactionRepository } from '@/repositories/recurring-transaction-repository'
-import { RecurringTransactionNotFoundError } from '../errors/recurring-transaction-not-found-error'
-import { FrequencyEnum } from './create-recurring-transaction'
-import { WeeklyRecurringTransactionsError } from '../errors/weekly-recurring-transactions-error'
-import { MonthlyRecurringTransactionsError } from '../errors/monthly-recurring-transactions-error'
-import { YearlyRecurringTransactionsError } from '../errors/yearly-recurring-transactions-error'
 import { TransactionRepository } from '@/repositories/transaction-repository'
+import { AccountRepository } from '@/repositories/account-repository'
+
+import { FrequencyEnum } from './create-recurring-transaction'
+import { CreateManyTransactionUseCase } from '../transactions/create-many-transaction'
+
+import { WeeklyRecurringTransactionsError } from '@/use-cases/errors/weekly-recurring-transactions-error'
+import { RecurringTransactionNotFoundError } from '@/use-cases/errors/recurring-transaction-not-found-error'
+import { MonthlyRecurringTransactionsError } from '@/use-cases/errors/monthly-recurring-transactions-error'
+import { YearlyRecurringTransactionsError } from '@/use-cases/errors/yearly-recurring-transactions-error'
 
 interface GenerateTransactionsUseCaseRequest {
   recurringTransactionId: string
@@ -26,6 +30,7 @@ export class GenerateTransactions {
   constructor(
     private recurringTransactionRepository: RecurringTransactionRepository,
     private transactionRepository: TransactionRepository,
+    private accountRepository: AccountRepository,
   ) {}
 
   async execute({
@@ -48,7 +53,6 @@ export class GenerateTransactions {
 
     const repeatAmount = recurringTransaction.repeat_amount
     const startDate = dayjs(recurringTransaction.start_date).utc()
-    let amountToBeDistributed = recurringTransaction.amount
 
     switch (recurringTransaction.frequency) {
       case FrequencyEnum.WEEKLY:
@@ -98,6 +102,8 @@ export class GenerateTransactions {
         if (repeatAmount <= 1) throw new YearlyRecurringTransactionsError()
 
         for (let i = 0; i < repeatAmount; i++) {
+          const firstTransactionIsPaid = i === 0 && dayjs().isAfter(startDate)
+
           transactions.push({
             title: `${recurringTransaction.title} - ${i + 1} / ${repeatAmount}`,
             description: recurringTransaction.description,
@@ -107,17 +113,22 @@ export class GenerateTransactions {
             category_id: recurringTransaction.category_id,
             user_id: recurringTransaction.user_id,
             date: dayjs(startDate).add(i, 'year').utc().toDate(),
-            is_paid: i === 0 && dayjs().isAfter(startDate),
+            is_paid: firstTransactionIsPaid,
           })
         }
 
         break
     }
 
-    const createdTransactions = await this.transactionRepository.createMany(
-      transactions,
+    const createManyTransactionUseCase = new CreateManyTransactionUseCase(
+      this.transactionRepository,
+      this.accountRepository,
     )
 
-    return { createdCount: createdTransactions.createdCount }
+    const { createdCount } = await createManyTransactionUseCase.execute({
+      transactions,
+    })
+
+    return { createdCount }
   }
 }

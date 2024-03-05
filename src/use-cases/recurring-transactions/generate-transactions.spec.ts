@@ -8,23 +8,30 @@ import { hash } from 'bcryptjs'
 import { TransactionEnum } from '../transactions/create-transaction'
 import { FrequencyEnum } from './create-recurring-transaction'
 import { RecurringTransactionNotFoundError } from '../errors/recurring-transaction-not-found-error'
+import { InMemoryAccountRepository } from '@/repositories/in-memory/in-memory-account-repository'
 
 let recurringTransactionRepository: InMemoryRecurringTransactionRepository
 let transactionRepository: InMemoryTransactionRepository
 let userRepository: InMemoryUserRepository
+let accountRepository: InMemoryAccountRepository
 let sut: GenerateTransactions
 
 describe('Generate Transactions Use Case', () => {
   const userId = 'user-id'
+  const accountId = 'account-id'
+
+  const startDate = new Date()
 
   beforeEach(async () => {
     recurringTransactionRepository =
       new InMemoryRecurringTransactionRepository()
     transactionRepository = new InMemoryTransactionRepository()
+    accountRepository = new InMemoryAccountRepository()
     userRepository = new InMemoryUserRepository()
     sut = new GenerateTransactions(
       recurringTransactionRepository,
       transactionRepository,
+      accountRepository,
     )
 
     await userRepository.create({
@@ -34,6 +41,13 @@ describe('Generate Transactions Use Case', () => {
       password_hash: await hash('password', 8),
       type: 'ADMIN',
       organization_id: 'organization-id',
+    })
+
+    await accountRepository.create({
+      id: accountId,
+      name: 'Account Name',
+      balance: 0,
+      user_id: userId,
     })
   })
 
@@ -53,9 +67,9 @@ describe('Generate Transactions Use Case', () => {
       amount: 100,
       type: TransactionEnum.EXPENSE,
       frequency: FrequencyEnum.WEEKLY,
-      start_date: new Date(),
+      start_date: startDate,
       repeat_amount: 12,
-      account_id: 'account-id',
+      account_id: accountId,
       category_id: 'category-id',
       user_id: userId,
     })
@@ -65,6 +79,12 @@ describe('Generate Transactions Use Case', () => {
     })
 
     expect(response.createdCount).toBe(12)
+
+    const account = await accountRepository.findById(accountId)
+
+    expect(account?.balance).toBe(-100)
+    expect(account?.expense).toBe(100)
+    expect(account?.income).toBe(0)
   })
 
   it('should be able to generate monthly transactions', async () => {
@@ -73,9 +93,9 @@ describe('Generate Transactions Use Case', () => {
       amount: 100,
       type: TransactionEnum.EXPENSE,
       frequency: FrequencyEnum.MONTHLY,
-      start_date: new Date(),
+      start_date: startDate,
       repeat_amount: 12,
-      account_id: 'account-id',
+      account_id: accountId,
       category_id: 'category-id',
       user_id: userId,
     })
@@ -85,6 +105,12 @@ describe('Generate Transactions Use Case', () => {
     })
 
     expect(response.createdCount).toBe(12)
+
+    const account = await accountRepository.findById(accountId)
+
+    expect(account?.balance).toBe(-100)
+    expect(account?.expense).toBe(100)
+    expect(account?.income).toBe(0)
   })
 
   it('should be able to generate yearly transactions', async () => {
@@ -93,9 +119,9 @@ describe('Generate Transactions Use Case', () => {
       amount: 100,
       type: TransactionEnum.EXPENSE,
       frequency: FrequencyEnum.YEARLY,
-      start_date: new Date(),
+      start_date: startDate,
       repeat_amount: 12,
-      account_id: 'account-id',
+      account_id: accountId,
       category_id: 'category-id',
       user_id: userId,
     })
@@ -105,5 +131,11 @@ describe('Generate Transactions Use Case', () => {
     })
 
     expect(response.createdCount).toBe(12)
+
+    const account = await accountRepository.findById(accountId)
+
+    expect(account?.balance).toBe(-100)
+    expect(account?.expense).toBe(100)
+    expect(account?.income).toBe(0)
   })
 })
