@@ -129,11 +129,11 @@ model RecurringTransaction {
     category_id String
     user_id     String
 
-    account            Account              @relation(fields: [account_id], references: [id])
-    category           Category             @relation(fields: [category_id], references: [id])
-    user               User                 @relation(fields: [user_id], references: [id])
-    Transaction        Transaction[]
-    InvoiceTransaction InvoiceTransaction[]
+    account         Account           @relation(fields: [account_id], references: [id])
+    category        Category          @relation(fields: [category_id], references: [id])
+    user            User              @relation(fields: [user_id], references: [id])
+    Transaction     Transaction[]
+    InvoiceExpenses InvoiceExpenses[]
 
     @@map("recurring_transactions")
 }
@@ -172,20 +172,20 @@ model Invoice {
     created_at DateTime @default(now())
     updated_at DateTime @updatedAt
 
-    creditCard         CreditCard           @relation(fields: [creditCard_id], references: [id])
-    Transaction        Transaction[]
-    InvoiceTransaction InvoiceTransaction[]
+    creditCard      CreditCard        @relation(fields: [creditCard_id], references: [id])
+    Transaction     Transaction[]
+    InvoiceExpenses InvoiceExpenses[]
 
     @@map("invoices")
 }
 
-model InvoiceTransaction {
+model InvoiceExpenses {
     id          String   @id @default(uuid())
     title       String
     description String?
     amount      Int // save in cents
-    type        Int      @default(0) // 0 = income, 1 = expense
     date        DateTime
+    status      Int      @default(0) // 0 = paid, 1 = canceled
 
     created_at DateTime  @default(now())
     updated_at DateTime  @updatedAt
@@ -197,7 +197,7 @@ model InvoiceTransaction {
     Invoice              Invoice               @relation(fields: [invoice_id], references: [id])
     RecurringTransaction RecurringTransaction? @relation(fields: [recurring_transaction_id], references: [id])
 
-    @@map("invoice_transactions")
+    @@map("invoice_expenses")
 }
 
 model Config {
