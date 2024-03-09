@@ -167,7 +167,7 @@ model Invoice {
     id            String   @id @default(uuid())
     partialAmount Int      @default(0) // save in cents
     paidAmount    Int      @default(0) // save in cents
-    status        Int      @default(0) // 0 = open, 1 = closed, 2 = paid
+    status        Int      @default(0) // 0 = open, 1 = closed, 2 = overdue
     closingDate   DateTime
     dueDate       DateTime
 
