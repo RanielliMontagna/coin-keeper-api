@@ -101,7 +101,7 @@ model Transaction {
     user_id     String
 
     recurring_transaction_id String?
-    creditCard_id            String?
+    credit_card_id           String?
     invoice_id               String?
 
     account  Account  @relation(fields: [account_id], references: [id])
@@ -109,6 +109,7 @@ model Transaction {
     user     User     @relation(fields: [user_id], references: [id])
 
     recurring_transaction RecurringTransaction? @relation(fields: [recurring_transaction_id], references: [id])
+    credit_card           CreditCard?           @relation(fields: [credit_card_id], references: [id])
     invoice               Invoice?              @relation(fields: [invoice_id], references: [id])
 
     @@map("transactions")
@@ -156,7 +157,8 @@ model CreditCard {
     user    User    @relation(fields: [user_id], references: [id])
     account Account @relation(fields: [account_id], references: [id])
 
-    Invoice Invoice[]
+    Invoice     Invoice[]
+    Transaction Transaction[]
 
     @@map("credit_cards")
 }
@@ -169,13 +171,13 @@ model Invoice {
     closingDate   DateTime
     dueDate       DateTime
 
-    creditCard_id String
-    user_id       String
+    credit_card_id String
+    user_id        String
 
     created_at DateTime @default(now())
     updated_at DateTime @updatedAt
 
-    creditCard CreditCard @relation(fields: [creditCard_id], references: [id])
+    creditCard CreditCard @relation(fields: [credit_card_id], references: [id])
     user       User       @relation(fields: [user_id], references: [id])
 
     Transaction     Transaction[]
