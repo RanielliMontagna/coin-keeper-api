@@ -65,8 +65,6 @@ export class CreateInvoiceUseCase {
       user_id: userId,
     })
 
-    console.log(invoice)
-
     return {
       invoice: {
         id: invoice.id,
