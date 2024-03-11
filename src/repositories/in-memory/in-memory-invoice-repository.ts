@@ -16,6 +16,19 @@ export class InMemoryInvoiceRepository implements InvoiceRepository {
     return invoice
   }
 
+  async fetchInvoicesByDate(date: {
+    month: number
+    year: number
+  }): Promise<Invoice[]> {
+    const invoices = this.invoices.filter(
+      (invoice) =>
+        invoice.dueDate.getMonth() === date.month - 1 &&
+        invoice.dueDate.getFullYear() === date.year,
+    )
+
+    return invoices
+  }
+
   async create(invoice: Prisma.InvoiceUncheckedCreateInput): Promise<Invoice> {
     const newInvoice = {
       id: invoice.id || randomUUID(),

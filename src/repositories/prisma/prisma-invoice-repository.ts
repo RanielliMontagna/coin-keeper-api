@@ -12,6 +12,22 @@ export class PrismaInvoiceRepository implements InvoiceRepository {
     return invoice
   }
 
+  async fetchInvoicesByDate(date: {
+    month: number
+    year: number
+  }): Promise<Invoice[]> {
+    const invoices = await prisma.invoice.findMany({
+      where: {
+        dueDate: {
+          gte: new Date(date.year, date.month, 1),
+          lte: new Date(date.year, date.month + 1, 0),
+        },
+      },
+    })
+
+    return invoices
+  }
+
   async create(invoice: Prisma.InvoiceUncheckedCreateInput): Promise<Invoice> {
     const createdInvoice = await prisma.invoice.create({
       data: invoice,
