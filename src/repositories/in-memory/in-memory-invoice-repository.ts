@@ -8,7 +8,7 @@ export class InMemoryInvoiceRepository implements InvoiceRepository {
   public invoices: Invoice[] = []
   public invoiceExpenses: InvoiceExpenses[] = []
 
-  async getInvoiceById(id: string): Promise<Invoice | null> {
+  async findById(id: string): Promise<Invoice | null> {
     const invoice = this.invoices.find((invoice) => invoice.id === id)
 
     if (!invoice) return null

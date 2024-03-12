@@ -4,7 +4,7 @@ import { InvoiceRepository } from '../invoice-repository'
 import { prisma } from '@/lib/prisma'
 
 export class PrismaInvoiceRepository implements InvoiceRepository {
-  async getInvoiceById(id: string): Promise<Invoice | null> {
+  async findById(id: string): Promise<Invoice | null> {
     const invoice = await prisma.invoice.findUnique({ where: { id } })
 
     if (!invoice) return null

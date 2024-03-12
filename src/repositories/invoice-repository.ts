@@ -5,7 +5,7 @@ interface InvoiceByDate {
   year: number
 }
 export interface InvoiceRepository {
-  getInvoiceById(id: string): Promise<Invoice | null>
+  findById(id: string): Promise<Invoice | null>
   fetchInvoicesByDate(date: InvoiceByDate): Promise<Invoice[]>
 
   create(invoice: Prisma.InvoiceUncheckedCreateInput): Promise<Invoice>

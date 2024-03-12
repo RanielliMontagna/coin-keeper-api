@@ -53,7 +53,7 @@ export class CreateInvoiceExpenseUseCase {
       throw new UserNotFoundError()
     }
 
-    const invoice = await this.invoiceRepository.getInvoiceById(invoiceId)
+    const invoice = await this.invoiceRepository.findById(invoiceId)
 
     if (!invoice) {
       throw new InvoiceNotFoundError()

@@ -15,9 +15,9 @@ export interface CreateInvoiceUseCaseRequest {
 }
 
 export enum StatusInvoiceEnum {
-  OPEN = 'OPEN',
-  CLOSED = 'CLOSED',
-  OVERDUE = 'OVERDUE',
+  OPEN = 0,
+  CLOSED = 1,
+  OVERDUE = 2,
 }
 
 interface InvoiceCreateInput {
