@@ -8,7 +8,7 @@ import { InvoiceNotFoundError } from '@/use-cases/errors/invoice-not-found-error
 
 export interface CreateInvoiceExpenseUseCaseRequest {
   title: string
-  description: string
+  description?: string
   amount: number
 
   date: Date

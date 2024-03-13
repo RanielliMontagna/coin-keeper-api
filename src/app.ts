@@ -16,6 +16,7 @@ import { servicesRoutes } from './http/services/routes'
 import { creditCardRoutes } from './http/controllers/credit-card/routes'
 import { recurringTransactionRoutes } from './http/controllers/recurringTransactions/routes'
 import { configRoutes } from './http/controllers/configs/routes'
+import { invoicesRoutes } from './http/controllers/invoices/routes'
 
 export const app = fastify({})
 
@@ -40,6 +41,7 @@ app.register(transactionRoutes)
 app.register(recurringTransactionRoutes)
 app.register(servicesRoutes)
 app.register(creditCardRoutes)
+app.register(invoicesRoutes)
 app.register(configRoutes)
 
 app.ready(() => {
