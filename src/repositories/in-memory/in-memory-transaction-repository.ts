@@ -156,6 +156,8 @@ export class InMemoryTransactionRepository implements TransactionRepository {
       updated_at: new Date(),
       deleted_at: null,
       recurring_transaction_id: transaction.recurring_transaction_id || null,
+      credit_card_id: transaction.credit_card_id || null,
+      invoice_id: transaction.invoice_id || null,
     }
 
     this.transactions.push(newTransaction)
@@ -199,6 +201,8 @@ export class InMemoryTransactionRepository implements TransactionRepository {
         updated_at: new Date(),
         deleted_at: null,
         recurring_transaction_id: transaction.recurring_transaction_id || null,
+        credit_card_id: transaction.credit_card_id || null,
+        invoice_id: transaction.invoice_id || null,
       }
 
       return newTransaction

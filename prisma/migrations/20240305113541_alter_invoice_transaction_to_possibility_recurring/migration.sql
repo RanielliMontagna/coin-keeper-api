@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "invoice_transactions" ADD COLUMN     "recurring_transaction_id" TEXT;
+
+-- AddForeignKey
+ALTER TABLE "invoice_transactions" ADD CONSTRAINT "invoice_transactions_recurring_transaction_id_fkey" FOREIGN KEY ("recurring_transaction_id") REFERENCES "recurring_transactions"("id") ON DELETE SET NULL ON UPDATE CASCADE;
