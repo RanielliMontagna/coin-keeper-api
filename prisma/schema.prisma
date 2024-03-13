@@ -41,6 +41,8 @@ model User {
     CreditCard           CreditCard[]
     RecurringTransaction RecurringTransaction[]
     Config               Config[]
+    Invoice              Invoice[]
+    InvoiceExpenses      InvoiceExpenses[]
 
     @@map("users")
 }
@@ -94,15 +96,21 @@ model Transaction {
     updated_at  DateTime  @updatedAt
     deleted_at  DateTime?
 
-    account_id               String
-    category_id              String
-    user_id                  String
-    recurring_transaction_id String?
+    account_id  String
+    category_id String
+    user_id     String
 
-    account               Account               @relation(fields: [account_id], references: [id])
-    category              Category              @relation(fields: [category_id], references: [id])
-    user                  User                  @relation(fields: [user_id], references: [id])
+    recurring_transaction_id String?
+    credit_card_id           String?
+    invoice_id               String?
+
+    account  Account  @relation(fields: [account_id], references: [id])
+    category Category @relation(fields: [category_id], references: [id])
+    user     User     @relation(fields: [user_id], references: [id])
+
     recurring_transaction RecurringTransaction? @relation(fields: [recurring_transaction_id], references: [id])
+    credit_card           CreditCard?           @relation(fields: [credit_card_id], references: [id])
+    invoice               Invoice?              @relation(fields: [invoice_id], references: [id])
 
     @@map("transactions")
 }
@@ -124,10 +132,11 @@ model RecurringTransaction {
     category_id String
     user_id     String
 
-    account     Account       @relation(fields: [account_id], references: [id])
-    category    Category      @relation(fields: [category_id], references: [id])
-    user        User          @relation(fields: [user_id], references: [id])
-    Transaction Transaction[]
+    account         Account           @relation(fields: [account_id], references: [id])
+    category        Category          @relation(fields: [category_id], references: [id])
+    user            User              @relation(fields: [user_id], references: [id])
+    Transaction     Transaction[]
+    InvoiceExpenses InvoiceExpenses[]
 
     @@map("recurring_transactions")
 }
@@ -148,7 +157,55 @@ model CreditCard {
     user    User    @relation(fields: [user_id], references: [id])
     account Account @relation(fields: [account_id], references: [id])
 
+    Invoice     Invoice[]
+    Transaction Transaction[]
+
     @@map("credit_cards")
+}
+
+model Invoice {
+    id            String   @id @default(uuid())
+    partialAmount Int      @default(0) // save in cents
+    paidAmount    Int      @default(0) // save in cents
+    status        Int      @default(0) // 0 = open, 1 = closed, 2 = overdue
+    closingDate   DateTime
+    dueDate       DateTime
+
+    credit_card_id String
+    user_id        String
+
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+
+    creditCard CreditCard @relation(fields: [credit_card_id], references: [id])
+    user       User       @relation(fields: [user_id], references: [id])
+
+    Transaction     Transaction[]
+    InvoiceExpenses InvoiceExpenses[]
+
+    @@map("invoices")
+}
+
+model InvoiceExpenses {
+    id          String   @id @default(uuid())
+    title       String
+    description String?
+    amount      Int // save in cents
+    date        DateTime
+
+    created_at  DateTime  @default(now())
+    updated_at  DateTime  @updatedAt
+    canceled_at DateTime?
+
+    invoice_id               String
+    user_id                  String
+    recurring_transaction_id String?
+
+    User                 User                  @relation(fields: [user_id], references: [id])
+    Invoice              Invoice               @relation(fields: [invoice_id], references: [id])
+    RecurringTransaction RecurringTransaction? @relation(fields: [recurring_transaction_id], references: [id])
+
+    @@map("invoice_expenses")
 }
 
 model Config {
