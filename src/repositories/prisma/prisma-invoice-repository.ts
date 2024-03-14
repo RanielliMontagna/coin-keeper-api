@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { Invoice, InvoiceExpenses, Prisma } from '@prisma/client'
 
 import { InvoiceRepository } from '../invoice-repository'
@@ -16,12 +17,14 @@ export class PrismaInvoiceRepository implements InvoiceRepository {
     month: number
     year: number
   }): Promise<Invoice[]> {
+    const firstDayOfMonth = dayjs(
+      new Date(date.year, date.month - 1, 1),
+    ).toDate()
+    const lastDayOfMonth = dayjs(new Date(date.year, date.month, 0)).toDate()
+
     const invoices = await prisma.invoice.findMany({
       where: {
-        dueDate: {
-          gte: new Date(date.year, date.month, 1),
-          lte: new Date(date.year, date.month + 1, 0),
-        },
+        dueDate: { gte: firstDayOfMonth, lte: lastDayOfMonth },
       },
     })
 
