@@ -1,7 +1,8 @@
 import dayjs from 'dayjs'
+
 import { Invoice, InvoiceExpenses, Prisma } from '@prisma/client'
 
-import { InvoiceRepository } from '../invoice-repository'
+import { InvoiceRepository, InvoiceReturn } from '../invoice-repository'
 import { prisma } from '@/lib/prisma'
 
 export class PrismaInvoiceRepository implements InvoiceRepository {
@@ -16,7 +17,7 @@ export class PrismaInvoiceRepository implements InvoiceRepository {
   async fetchInvoicesByDate(date: {
     month: number
     year: number
-  }): Promise<Invoice[]> {
+  }): Promise<InvoiceReturn[]> {
     const firstDayOfMonth = dayjs(
       new Date(date.year, date.month - 1, 1),
     ).toDate()
@@ -26,9 +27,25 @@ export class PrismaInvoiceRepository implements InvoiceRepository {
       where: {
         dueDate: { gte: firstDayOfMonth, lte: lastDayOfMonth },
       },
+      include: { creditCard: true },
     })
 
-    return invoices
+    const invoicesReturn = invoices.map((invoice) => ({
+      id: invoice.id,
+      status: invoice.status,
+      paidAmount: invoice.paidAmount,
+      partialAmount: invoice.partialAmount,
+      dueDate: invoice.dueDate,
+      closingDate: invoice.closingDate,
+      creditCard: {
+        id: invoice.creditCard.id,
+        name: invoice.creditCard.name,
+        flag: invoice.creditCard.flag,
+        limit: invoice.creditCard.limit,
+      },
+    }))
+
+    return invoicesReturn
   }
 
   async create(invoice: Prisma.InvoiceUncheckedCreateInput): Promise<Invoice> {

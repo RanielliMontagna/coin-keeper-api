@@ -1,12 +1,14 @@
-import { Invoice, InvoiceExpenses, Prisma } from '@prisma/client'
-
-import { InvoiceRepository } from '../invoice-repository'
+import { CreditCard, Invoice, InvoiceExpenses, Prisma } from '@prisma/client'
 import { randomUUID } from 'crypto'
+
+import { InvoiceRepository, InvoiceReturn } from '../invoice-repository'
 import { StatusInvoiceEnum } from '@/use-cases/invoices/create-invoice'
+import { FlagEnum } from '@/use-cases/credit-card/create-credit-card'
 
 export class InMemoryInvoiceRepository implements InvoiceRepository {
   public invoices: Invoice[] = []
   public invoiceExpenses: InvoiceExpenses[] = []
+  public creditCards: CreditCard[] = []
 
   async findById(id: string): Promise<Invoice | null> {
     const invoice = this.invoices.find((invoice) => invoice.id === id)
@@ -19,14 +21,27 @@ export class InMemoryInvoiceRepository implements InvoiceRepository {
   async fetchInvoicesByDate(date: {
     month: number
     year: number
-  }): Promise<Invoice[]> {
+  }): Promise<InvoiceReturn[]> {
     const invoices = this.invoices.filter(
       (invoice) =>
         invoice.dueDate.getMonth() === date.month - 1 &&
         invoice.dueDate.getFullYear() === date.year,
     )
 
-    return invoices
+    return invoices.map((invoice) => ({
+      id: invoice.id,
+      status: invoice.status,
+      paidAmount: invoice.paidAmount,
+      partialAmount: invoice.partialAmount,
+      dueDate: invoice.dueDate,
+      closingDate: invoice.closingDate,
+      creditCard: {
+        id: 'credit_card_id',
+        name: 'credit_card_name',
+        flag: FlagEnum.VISA,
+        limit: 1000,
+      },
+    }))
   }
 
   async create(invoice: Prisma.InvoiceUncheckedCreateInput): Promise<Invoice> {

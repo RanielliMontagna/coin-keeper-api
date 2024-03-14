@@ -1,6 +1,7 @@
-import { Invoice } from '@prisma/client'
-
-import { InvoiceRepository } from '@/repositories/invoice-repository'
+import {
+  InvoiceRepository,
+  InvoiceReturn,
+} from '@/repositories/invoice-repository'
 import { UserRepository } from '@/repositories/user-repository'
 
 import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
@@ -10,16 +11,6 @@ interface FetchInvoicesByDateUseCaseRequest {
   year?: number
 
   userId: string
-}
-
-interface InvoiceReturn {
-  id: Invoice['id']
-  status: Invoice['status']
-  paidAmount: Invoice['paidAmount']
-  partialAmount: Invoice['partialAmount']
-  dueDate: Invoice['dueDate']
-  closingDate: Invoice['closingDate']
-  creditCardId: Invoice['credit_card_id']
 }
 
 interface FetchInvoicesByDateUseCaseResponse {
@@ -48,16 +39,6 @@ export class FetchInvoicesByDateUseCase {
       year: year || new Date().getFullYear(),
     })
 
-    return {
-      invoices: invoices.map((invoice) => ({
-        id: invoice.id,
-        status: invoice.status,
-        paidAmount: invoice.paidAmount,
-        partialAmount: invoice.partialAmount,
-        dueDate: invoice.dueDate,
-        closingDate: invoice.closingDate,
-        creditCardId: invoice.credit_card_id,
-      })),
-    }
+    return { invoices }
   }
 }
