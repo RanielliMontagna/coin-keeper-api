@@ -10,12 +10,25 @@ export class InMemoryInvoiceRepository implements InvoiceRepository {
   public invoiceExpenses: InvoiceExpenses[] = []
   public creditCards: CreditCard[] = []
 
-  async findById(id: string): Promise<Invoice | null> {
+  async findById(id: string): Promise<InvoiceReturn | null> {
     const invoice = this.invoices.find((invoice) => invoice.id === id)
 
     if (!invoice) return null
 
-    return invoice
+    return {
+      id: invoice.id,
+      status: invoice.status,
+      paidAmount: invoice.paidAmount,
+      partialAmount: invoice.partialAmount,
+      dueDate: invoice.dueDate,
+      closingDate: invoice.closingDate,
+      creditCard: {
+        id: 'credit_card_id',
+        name: 'credit_card_name',
+        flag: FlagEnum.VISA,
+        limit: 1000,
+      },
+    }
   }
 
   async fetchInvoicesByDate(date: {

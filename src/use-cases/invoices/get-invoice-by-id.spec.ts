@@ -70,7 +70,12 @@ describe('Get Invoice By Id Use Case', () => {
       partialAmount: invoice.partialAmount,
       dueDate: invoice.dueDate,
       closingDate: invoice.closingDate,
-      creditCardId: invoice.credit_card_id,
+      creditCard: {
+        id: expect.any(String),
+        name: expect.any(String),
+        flag: FlagEnum.VISA,
+        limit: 1000,
+      },
     })
   })
 

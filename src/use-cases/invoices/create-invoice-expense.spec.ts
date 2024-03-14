@@ -6,6 +6,9 @@ import { UserTypeEnum } from '../users/register-user'
 import { FlagEnum } from '../credit-card/create-credit-card'
 import { UserNotFoundError } from '../errors/user-not-found-error'
 import { InvoiceNotFoundError } from '../errors/invoice-not-found-error'
+import { StatusInvoiceEnum } from './create-invoice'
+import { InvoiceNotOpenError } from '../errors/invoice-not-open-error'
+import { AmountExceedsCreditCardLimitError } from '../errors/amount-exceeds-credit-card-limit-error'
 
 let invoiceRepository = new InMemoryInvoiceRepository()
 let creditCardRepository = new InMemoryCreditCardRepository()
@@ -96,5 +99,40 @@ describe('Create Invoice Use Case', () => {
         userId,
       }),
     ).rejects.toThrowError(InvoiceNotFoundError)
+  })
+
+  it('should not be able to create a new invoice expense if invoice is not open', async () => {
+    await invoiceRepository.create({
+      id: 'closed-invoice-id',
+      closingDate: new Date(),
+      dueDate: new Date(),
+      credit_card_id: creditCardId,
+      user_id: userId,
+      status: StatusInvoiceEnum.CLOSED,
+    })
+
+    await expect(
+      sut.execute({
+        title: 'Title',
+        description: 'Description',
+        amount: 100,
+        date: new Date(),
+        invoiceId: 'closed-invoice-id',
+        userId,
+      }),
+    ).rejects.toThrowError(InvoiceNotOpenError)
+  })
+
+  it('should not be able to create a new invoice if limit is exceeded', async () => {
+    await expect(
+      sut.execute({
+        title: 'Title',
+        description: 'Description',
+        amount: 10000,
+        date: new Date(),
+        invoiceId,
+        userId,
+      }),
+    ).rejects.toThrowError(AmountExceedsCreditCardLimitError)
   })
 })

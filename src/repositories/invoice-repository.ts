@@ -20,7 +20,7 @@ export interface InvoiceReturn {
   }
 }
 export interface InvoiceRepository {
-  findById(id: string): Promise<Invoice | null>
+  findById(id: string): Promise<InvoiceReturn | null>
   fetchInvoicesByDate(date: InvoiceByDate): Promise<InvoiceReturn[]>
 
   create(invoice: Prisma.InvoiceUncheckedCreateInput): Promise<Invoice>

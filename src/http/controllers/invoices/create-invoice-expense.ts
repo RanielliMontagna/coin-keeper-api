@@ -9,6 +9,8 @@ import { makeGetCreditCardUseCase } from '@/use-cases/factories/credit-cards/mak
 import { CreditCardNotFoundError } from '@/use-cases/errors/credit-card-not-found-error'
 import { makeCreateInvoiceUseCase } from '@/use-cases/factories/invoices/make-create-invoice-use-case'
 import dayjs from 'dayjs'
+import { AmountExceedsCreditCardLimitError } from '@/use-cases/errors/amount-exceeds-credit-card-limit-error'
+import { InvoiceNotOpenError } from '@/use-cases/errors/invoice-not-open-error'
 
 export async function createInvoiceExpense(
   request: FastifyRequest,
@@ -90,7 +92,9 @@ export async function createInvoiceExpense(
     if (
       err instanceof UserNotFoundError ||
       err instanceof InvoiceNotFoundError ||
-      err instanceof CreditCardNotFoundError
+      err instanceof CreditCardNotFoundError ||
+      err instanceof AmountExceedsCreditCardLimitError ||
+      err instanceof InvoiceNotOpenError
     ) {
       return reply.status(400).send({ message: err.message })
     }

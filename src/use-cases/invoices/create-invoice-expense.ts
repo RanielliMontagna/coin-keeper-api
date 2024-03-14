@@ -5,6 +5,9 @@ import { UserRepository } from '@/repositories/user-repository'
 
 import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
 import { InvoiceNotFoundError } from '@/use-cases/errors/invoice-not-found-error'
+import { InvoiceNotOpenError } from '../errors/invoice-not-open-error'
+import { StatusInvoiceEnum } from './create-invoice'
+import { AmountExceedsCreditCardLimitError } from '../errors/amount-exceeds-credit-card-limit-error'
 
 export interface CreateInvoiceExpenseUseCaseRequest {
   title: string
@@ -57,6 +60,17 @@ export class CreateInvoiceExpenseUseCase {
 
     if (!invoice) {
       throw new InvoiceNotFoundError()
+    }
+
+    if (invoice.status === StatusInvoiceEnum.OPEN) {
+      const totalInvoiceExpenses = invoice.partialAmount + amount
+      const limit = invoice.creditCard.limit
+
+      if (totalInvoiceExpenses > limit) {
+        throw new AmountExceedsCreditCardLimitError()
+      }
+    } else {
+      throw new InvoiceNotOpenError()
     }
 
     const invoiceExpense = await this.invoiceRepository.createExpense({

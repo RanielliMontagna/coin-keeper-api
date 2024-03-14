@@ -6,12 +6,30 @@ import { InvoiceRepository, InvoiceReturn } from '../invoice-repository'
 import { prisma } from '@/lib/prisma'
 
 export class PrismaInvoiceRepository implements InvoiceRepository {
-  async findById(id: string): Promise<Invoice | null> {
-    const invoice = await prisma.invoice.findUnique({ where: { id } })
+  async findById(id: string): Promise<InvoiceReturn | null> {
+    const invoice = await prisma.invoice.findUnique({
+      where: { id },
+      include: { creditCard: true },
+    })
 
     if (!invoice) return null
 
-    return invoice
+    const invoiceReturn: InvoiceReturn = {
+      id: invoice.id,
+      status: invoice.status,
+      paidAmount: invoice.paidAmount,
+      partialAmount: invoice.partialAmount,
+      dueDate: invoice.dueDate,
+      closingDate: invoice.closingDate,
+      creditCard: {
+        id: invoice.creditCard.id,
+        name: invoice.creditCard.name,
+        flag: invoice.creditCard.flag,
+        limit: invoice.creditCard.limit,
+      },
+    }
+
+    return invoiceReturn
   }
 
   async fetchInvoicesByDate(date: {
