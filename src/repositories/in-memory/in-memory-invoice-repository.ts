@@ -1,7 +1,12 @@
 import { CreditCard, Invoice, InvoiceExpenses, Prisma } from '@prisma/client'
 import { randomUUID } from 'crypto'
 
-import { InvoiceRepository, InvoiceReturn } from '../invoice-repository'
+import {
+  InvoiceRepository,
+  InvoiceReturn,
+  PartialAmountReturn,
+} from '../invoice-repository'
+
 import { StatusInvoiceEnum } from '@/use-cases/invoices/create-invoice'
 import { FlagEnum } from '@/use-cases/credit-card/create-credit-card'
 
@@ -9,6 +14,17 @@ export class InMemoryInvoiceRepository implements InvoiceRepository {
   public invoices: Invoice[] = []
   public invoiceExpenses: InvoiceExpenses[] = []
   public creditCards: CreditCard[] = []
+
+  async addPartialAmount(
+    invoiceId: string,
+    amount: number,
+  ): Promise<PartialAmountReturn> {
+    const invoice = this.invoices.find((invoice) => invoice.id === invoiceId)
+
+    invoice!.partialAmount += amount
+
+    return { newPartialAmount: invoice!.partialAmount }
+  }
 
   async findById(id: string): Promise<InvoiceReturn | null> {
     const invoice = this.invoices.find((invoice) => invoice.id === id)

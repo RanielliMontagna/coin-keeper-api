@@ -19,9 +19,18 @@ export interface InvoiceReturn {
     limit: CreditCard['limit']
   }
 }
+
+export interface PartialAmountReturn {
+  newPartialAmount: number
+}
+
 export interface InvoiceRepository {
   findById(id: string): Promise<InvoiceReturn | null>
   fetchInvoicesByDate(date: InvoiceByDate): Promise<InvoiceReturn[]>
+  addPartialAmount(
+    invoiceId: string,
+    amount: number,
+  ): Promise<PartialAmountReturn>
 
   create(invoice: Prisma.InvoiceUncheckedCreateInput): Promise<Invoice>
   createExpense(

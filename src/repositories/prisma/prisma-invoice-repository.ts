@@ -2,10 +2,31 @@ import dayjs from 'dayjs'
 
 import { Invoice, InvoiceExpenses, Prisma } from '@prisma/client'
 
-import { InvoiceRepository, InvoiceReturn } from '../invoice-repository'
+import {
+  InvoiceRepository,
+  InvoiceReturn,
+  PartialAmountReturn,
+} from '../invoice-repository'
 import { prisma } from '@/lib/prisma'
 
 export class PrismaInvoiceRepository implements InvoiceRepository {
+  async addPartialAmount(
+    invoiceId: string,
+    amount: number,
+  ): Promise<PartialAmountReturn> {
+    const invoice = await prisma.invoice.findUnique({
+      where: { id: invoiceId },
+      include: { creditCard: true },
+    })
+
+    const updatedInvoice = await prisma.invoice.update({
+      where: { id: invoiceId },
+      data: { partialAmount: invoice!.partialAmount + amount },
+    })
+
+    return { newPartialAmount: updatedInvoice.partialAmount }
+  }
+
   async findById(id: string): Promise<InvoiceReturn | null> {
     const invoice = await prisma.invoice.findUnique({
       where: { id },
