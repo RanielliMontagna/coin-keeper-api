@@ -1,16 +1,18 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
+import dayjs from 'dayjs'
 import { z } from 'zod'
 
-import { InvoiceNotFoundError } from '@/use-cases/errors/invoice-not-found-error'
-import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
-import { makeCreateInvoiceExpenseUseCase } from '@/use-cases/factories/invoices/make-create-invoice-expense-use-case'
-import { makeGetInvoiceById } from '@/use-cases/factories/invoices/make-get-invoice-by-id-use-case'
-import { makeGetCreditCardUseCase } from '@/use-cases/factories/credit-cards/make-get-credit-card-use-case'
-import { CreditCardNotFoundError } from '@/use-cases/errors/credit-card-not-found-error'
 import { makeCreateInvoiceUseCase } from '@/use-cases/factories/invoices/make-create-invoice-use-case'
-import dayjs from 'dayjs'
-import { AmountExceedsCreditCardLimitError } from '@/use-cases/errors/amount-exceeds-credit-card-limit-error'
+import { makeGetCreditCardUseCase } from '@/use-cases/factories/credit-cards/make-get-credit-card-use-case'
+import { makeCreateInvoiceExpenseUseCase } from '@/use-cases/factories/invoices/make-create-invoice-expense-use-case'
+
+import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
 import { InvoiceNotOpenError } from '@/use-cases/errors/invoice-not-open-error'
+import { InvoiceNotFoundError } from '@/use-cases/errors/invoice-not-found-error'
+import { CreditCardNotFoundError } from '@/use-cases/errors/credit-card-not-found-error'
+import { AmountExceedsCreditCardLimitError } from '@/use-cases/errors/amount-exceeds-credit-card-limit-error'
+import { makeAddInvoiceAmountUseCase } from '@/use-cases/factories/invoices/make-add-invoice-amount-use-case'
+import { makeGetInvoiceByDate } from '@/use-cases/factories/invoices/make-get-invoice-by-date-use-case'
 
 export async function createInvoiceExpense(
   request: FastifyRequest,
@@ -32,24 +34,33 @@ export async function createInvoiceExpense(
   const body = createInvoiceExpenseBodySchema.parse(request.body)
   const params = createInvoiceExpenseParamsSchema.parse(request.params)
 
-  const getInvoiceUseCase = makeGetInvoiceById()
   const getCreditCardUseCase = makeGetCreditCardUseCase()
 
   const createInvoiceExpenseUseCase = makeCreateInvoiceExpenseUseCase()
   const createInvoiceUseCase = makeCreateInvoiceUseCase()
+  const addInvoiceAmountUseCase = makeAddInvoiceAmountUseCase()
+  const getInvoiceByDateUseCase = makeGetInvoiceByDate()
 
   try {
-    if (body.invoiceId) {
-      const { invoice } = await getInvoiceUseCase.execute({
-        invoiceId: body.invoiceId || '',
-        userId: request.user.sub,
-      })
+    const { invoice } = await getInvoiceByDateUseCase.execute({
+      month: dayjs(body.date).month() + 1,
+      year: dayjs(body.date).year(),
+      userId: request.user.sub,
+      creditCardId: params.creditCardId,
+    })
 
+    if (invoice?.id) {
       const response = await createInvoiceExpenseUseCase.execute({
         title: body.title,
         amount: body.amount,
         date: new Date(body.date),
         description: body.description,
+        invoiceId: invoice.id,
+        userId: request.user.sub,
+      })
+
+      await addInvoiceAmountUseCase.execute({
+        amount: body.amount,
         invoiceId: invoice.id,
         userId: request.user.sub,
       })
@@ -82,6 +93,12 @@ export async function createInvoiceExpense(
         amount: body.amount,
         date: new Date(body.date),
         description: body.description,
+        invoiceId: invoice.id,
+        userId: request.user.sub,
+      })
+
+      await addInvoiceAmountUseCase.execute({
+        amount: body.amount,
         invoiceId: invoice.id,
         userId: request.user.sub,
       })

@@ -1,8 +1,9 @@
 import { CreditCard, Invoice, InvoiceExpenses, Prisma } from '@prisma/client'
 
-interface InvoiceByDate {
+export interface InvoiceByDate {
   month: number
   year: number
+  creditCardId?: string
 }
 
 export interface InvoiceReturn {
@@ -26,7 +27,7 @@ export interface PartialAmountReturn {
 
 export interface InvoiceRepository {
   findById(id: string): Promise<InvoiceReturn | null>
-  findInvoiceByDate(date: InvoiceByDate): Promise<InvoiceReturn>
+  findInvoiceByDate(date: InvoiceByDate): Promise<InvoiceReturn | null>
   fetchInvoicesByDate(date: InvoiceByDate): Promise<InvoiceReturn[]>
   addPartialAmount(
     invoiceId: string,

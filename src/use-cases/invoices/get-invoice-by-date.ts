@@ -5,16 +5,18 @@ import {
 import { UserRepository } from '@/repositories/user-repository'
 
 import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
+import { InvoiceNotFoundError } from '../errors/invoice-not-found-error'
 
 interface GetInvoiceByDateUseCaseRequest {
   month: number
   year?: number
 
   userId: string
+  creditCardId?: string
 }
 
 interface GetInvoiceByDateUseCaseResponse {
-  invoice: InvoiceReturn
+  invoice: InvoiceReturn | null
 }
 
 export class GetInvoiceByDateUseCase {
@@ -27,6 +29,7 @@ export class GetInvoiceByDateUseCase {
     month,
     year,
     userId,
+    creditCardId,
   }: GetInvoiceByDateUseCaseRequest): Promise<GetInvoiceByDateUseCaseResponse> {
     const user = await this.userRepository.findById(userId)
 
@@ -37,6 +40,7 @@ export class GetInvoiceByDateUseCase {
     const invoice = await this.invoiceRepository.findInvoiceByDate({
       month: month,
       year: year || new Date().getFullYear(),
+      creditCardId,
     })
 
     return { invoice }

@@ -2,6 +2,7 @@ import { CreditCard, Invoice, InvoiceExpenses, Prisma } from '@prisma/client'
 import { randomUUID } from 'crypto'
 
 import {
+  InvoiceByDate,
   InvoiceRepository,
   InvoiceReturn,
   PartialAmountReturn,
@@ -47,15 +48,23 @@ export class InMemoryInvoiceRepository implements InvoiceRepository {
     }
   }
 
-  async findInvoiceByDate(date: {
-    month: number
-    year: number
-  }): Promise<InvoiceReturn> {
-    const invoice = this.invoices.find(
-      (invoice) =>
-        invoice.dueDate.getMonth() === date.month - 1 &&
-        invoice.dueDate.getFullYear() === date.year,
-    )!
+  async findInvoiceByDate(props: InvoiceByDate): Promise<InvoiceReturn | null> {
+    const invoice = this.invoices.find((invoice) => {
+      if (props.creditCardId) {
+        return (
+          invoice.dueDate.getMonth() === props.month - 1 &&
+          invoice.dueDate.getFullYear() === props.year &&
+          invoice.credit_card_id === props.creditCardId
+        )
+      }
+
+      return (
+        invoice.dueDate.getMonth() === props.month - 1 &&
+        invoice.dueDate.getFullYear() === props.year
+      )
+    })
+
+    if (!invoice) return null
 
     return {
       id: invoice.id,

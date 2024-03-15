@@ -11,6 +11,7 @@ import { UserTypeEnum } from '../users/register-user'
 import { FlagEnum } from '../credit-card/create-credit-card'
 
 import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
+import { InvoiceNotFoundError } from '../errors/invoice-not-found-error'
 
 let invoiceRepository: InMemoryInvoiceRepository
 let creditCardRepository: InMemoryCreditCardRepository
@@ -85,6 +86,39 @@ describe('Get invoice By Date Use Case', () => {
     )
   })
 
+  it('should be able to get invoice by date with credit card', async () => {
+    await createInvoiceUseCase.execute({
+      closingDate: dayjs('2021-01-01').toDate(),
+      dueDate: dayjs('2021-01-10').toDate(),
+      userId,
+      creditCardId,
+    })
+
+    const response = await sut.execute({
+      month: 1,
+      year: 2021,
+      userId,
+      creditCardId,
+    })
+
+    expect(response.invoice).toEqual(
+      expect.objectContaining({
+        id: expect.any(String),
+        status: StatusInvoiceEnum.OPEN,
+        paidAmount: 0,
+        partialAmount: 0,
+        dueDate: dayjs('2021-01-10').toDate(),
+        closingDate: dayjs('2021-01-01').toDate(),
+        creditCard: {
+          id: expect.any(String),
+          name: expect.any(String),
+          flag: FlagEnum.VISA,
+          limit: 1000,
+        },
+      }),
+    )
+  })
+
   it('should be able to get invoice by date without year', async () => {
     const januaryThisYear = dayjs().month(0).year(new Date().getFullYear())
 
@@ -126,5 +160,15 @@ describe('Get invoice By Date Use Case', () => {
         userId: 'invalid-user-id',
       }),
     ).rejects.toThrowError(UserNotFoundError)
+  })
+
+  it('should not be able to get invoice by date if invoice does not exist', async () => {
+    await expect(
+      sut.execute({
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+        userId,
+      }),
+    ).rejects.toThrowError(InvoiceNotFoundError)
   })
 })

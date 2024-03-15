@@ -3,6 +3,7 @@ import dayjs from 'dayjs'
 import { Invoice, InvoiceExpenses, Prisma } from '@prisma/client'
 
 import {
+  InvoiceByDate,
   InvoiceRepository,
   InvoiceReturn,
   PartialAmountReturn,
@@ -53,10 +54,7 @@ export class PrismaInvoiceRepository implements InvoiceRepository {
     return invoiceReturn
   }
 
-  async findInvoiceByDate(date: {
-    month: number
-    year: number
-  }): Promise<InvoiceReturn> {
+  async findInvoiceByDate(date: InvoiceByDate): Promise<InvoiceReturn | null> {
     const firstDayOfMonth = dayjs(
       new Date(date.year, date.month - 1, 1),
     ).toDate()
@@ -65,22 +63,25 @@ export class PrismaInvoiceRepository implements InvoiceRepository {
     const invoice = await prisma.invoice.findFirst({
       where: {
         dueDate: { gte: firstDayOfMonth, lte: lastDayOfMonth },
+        credit_card_id: date.creditCardId,
       },
       include: { creditCard: true },
     })
 
+    if (!invoice) return null
+
     const invoiceReturn: InvoiceReturn = {
-      id: invoice!.id,
-      status: invoice!.status,
-      paidAmount: invoice!.paidAmount,
-      partialAmount: invoice!.partialAmount,
-      dueDate: invoice!.dueDate,
-      closingDate: invoice!.closingDate,
+      id: invoice.id,
+      status: invoice.status,
+      paidAmount: invoice.paidAmount,
+      partialAmount: invoice.partialAmount,
+      dueDate: invoice.dueDate,
+      closingDate: invoice.closingDate,
       creditCard: {
-        id: invoice!.creditCard.id,
-        name: invoice!.creditCard.name,
-        flag: invoice!.creditCard.flag,
-        limit: invoice!.creditCard.limit,
+        id: invoice.creditCard.id,
+        name: invoice.creditCard.name,
+        flag: invoice.creditCard.flag,
+        limit: invoice.creditCard.limit,
       },
     }
 
