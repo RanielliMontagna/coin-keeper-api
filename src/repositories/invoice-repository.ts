@@ -26,6 +26,7 @@ export interface PartialAmountReturn {
 
 export interface InvoiceRepository {
   findById(id: string): Promise<InvoiceReturn | null>
+  findInvoiceByDate(date: InvoiceByDate): Promise<InvoiceReturn>
   fetchInvoicesByDate(date: InvoiceByDate): Promise<InvoiceReturn[]>
   addPartialAmount(
     invoiceId: string,

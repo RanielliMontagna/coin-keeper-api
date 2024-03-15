@@ -47,6 +47,32 @@ export class InMemoryInvoiceRepository implements InvoiceRepository {
     }
   }
 
+  async findInvoiceByDate(date: {
+    month: number
+    year: number
+  }): Promise<InvoiceReturn> {
+    const invoice = this.invoices.find(
+      (invoice) =>
+        invoice.dueDate.getMonth() === date.month - 1 &&
+        invoice.dueDate.getFullYear() === date.year,
+    )!
+
+    return {
+      id: invoice.id,
+      status: invoice.status,
+      paidAmount: invoice.paidAmount,
+      partialAmount: invoice.partialAmount,
+      dueDate: invoice.dueDate,
+      closingDate: invoice.closingDate,
+      creditCard: {
+        id: 'credit_card_id',
+        name: 'credit_card_name',
+        flag: FlagEnum.VISA,
+        limit: 1000,
+      },
+    }
+  }
+
   async fetchInvoicesByDate(date: {
     month: number
     year: number
