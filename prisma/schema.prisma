@@ -80,6 +80,7 @@ model Category {
     user                 User                   @relation(fields: [user_id], references: [id])
     Transaction          Transaction[]
     RecurringTransaction RecurringTransaction[]
+    InvoiceExpenses      InvoiceExpenses[]
 
     @@map("categories")
 }
@@ -198,10 +199,12 @@ model InvoiceExpenses {
     canceled_at DateTime?
 
     invoice_id               String
+    category_id              String
     user_id                  String
     recurring_transaction_id String?
 
     User                 User                  @relation(fields: [user_id], references: [id])
+    Category             Category              @relation(fields: [category_id], references: [id])
     Invoice              Invoice               @relation(fields: [invoice_id], references: [id])
     RecurringTransaction RecurringTransaction? @relation(fields: [recurring_transaction_id], references: [id])
 
