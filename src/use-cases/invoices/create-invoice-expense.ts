@@ -16,8 +16,9 @@ export interface CreateInvoiceExpenseUseCaseRequest {
 
   date: Date
 
-  invoiceId: string
   userId: string
+  invoiceId: string
+  categoryId: string
 }
 
 interface InvoiceExpenseCreateInput {
@@ -28,6 +29,7 @@ interface InvoiceExpenseCreateInput {
   date: InvoiceExpenses['date']
   canceledAt?: InvoiceExpenses['canceled_at']
 
+  category_id: InvoiceExpenses['category_id']
   invoiceId: InvoiceExpenses['invoice_id']
   userId: InvoiceExpenses['user_id']
 }
@@ -49,6 +51,7 @@ export class CreateInvoiceExpenseUseCase {
     date,
     invoiceId,
     userId,
+    categoryId,
   }: CreateInvoiceExpenseUseCaseRequest): Promise<CreateInvoiceExpenseUseCaseResponse> {
     const user = await this.userRepository.findById(userId)
 
@@ -80,6 +83,7 @@ export class CreateInvoiceExpenseUseCase {
       date,
       invoice_id: invoiceId,
       user_id: userId,
+      category_id: categoryId,
     })
 
     return {
@@ -91,8 +95,9 @@ export class CreateInvoiceExpenseUseCase {
         date: invoiceExpense.date,
         canceledAt: invoiceExpense.canceled_at || undefined,
 
-        invoiceId: invoiceExpense.invoice_id,
         userId: invoiceExpense.user_id,
+        invoiceId: invoiceExpense.invoice_id,
+        category_id: invoiceExpense.category_id,
       },
     }
   }

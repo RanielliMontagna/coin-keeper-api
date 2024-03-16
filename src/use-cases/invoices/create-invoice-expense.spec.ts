@@ -1,17 +1,22 @@
-import { InMemoryCreditCardRepository } from '@/repositories/in-memory/in-memory-credit-card-repository'
-import { InMemoryInvoiceRepository } from '@/repositories/in-memory/in-memory-invoice-repository'
-import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
-import { CreateInvoiceExpenseUseCase } from './create-invoice-expense'
 import { UserTypeEnum } from '../users/register-user'
 import { FlagEnum } from '../credit-card/create-credit-card'
-import { UserNotFoundError } from '../errors/user-not-found-error'
-import { InvoiceNotFoundError } from '../errors/invoice-not-found-error'
 import { StatusInvoiceEnum } from './create-invoice'
-import { InvoiceNotOpenError } from '../errors/invoice-not-open-error'
-import { AmountExceedsCreditCardLimitError } from '../errors/amount-exceeds-credit-card-limit-error'
+
+import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
+import { InMemoryInvoiceRepository } from '@/repositories/in-memory/in-memory-invoice-repository'
+import { InMemoryCategoryRepository } from '@/repositories/in-memory/in-memory-category-repository'
+import { InMemoryCreditCardRepository } from '@/repositories/in-memory/in-memory-credit-card-repository'
+
+import { UserNotFoundError } from '@/use-cases/errors/user-not-found-error'
+import { InvoiceNotOpenError } from '@/use-cases/errors/invoice-not-open-error'
+import { InvoiceNotFoundError } from '@/use-cases/errors/invoice-not-found-error'
+import { AmountExceedsCreditCardLimitError } from '@/use-cases/errors/amount-exceeds-credit-card-limit-error'
+
+import { CreateInvoiceExpenseUseCase } from './create-invoice-expense'
 
 let invoiceRepository = new InMemoryInvoiceRepository()
 let creditCardRepository = new InMemoryCreditCardRepository()
+let categoryRepository = new InMemoryCategoryRepository()
 let userRepository = new InMemoryUserRepository()
 let sut: CreateInvoiceExpenseUseCase
 
@@ -19,6 +24,7 @@ describe('Create Invoice Use Case', () => {
   const userId = 'user-id'
   const creditCardId = 'credit-card-id'
   const invoiceId = 'invoice-id'
+  const categoryId = 'category-id'
 
   beforeEach(async () => {
     invoiceRepository = new InMemoryInvoiceRepository()
@@ -60,6 +66,7 @@ describe('Create Invoice Use Case', () => {
       description: 'Description',
       amount: 100,
       date: new Date(),
+      categoryId,
       invoiceId,
       userId,
     })
@@ -82,6 +89,7 @@ describe('Create Invoice Use Case', () => {
         description: 'Description',
         amount: 100,
         date: new Date(),
+        categoryId,
         invoiceId,
         userId: 'invalid-user-id',
       }),
@@ -96,6 +104,7 @@ describe('Create Invoice Use Case', () => {
         amount: 100,
         date: new Date(),
         invoiceId: 'invalid-invoice-id',
+        categoryId,
         userId,
       }),
     ).rejects.toThrowError(InvoiceNotFoundError)
@@ -117,6 +126,7 @@ describe('Create Invoice Use Case', () => {
         description: 'Description',
         amount: 100,
         date: new Date(),
+        categoryId,
         invoiceId: 'closed-invoice-id',
         userId,
       }),
@@ -130,6 +140,7 @@ describe('Create Invoice Use Case', () => {
         description: 'Description',
         amount: 10000,
         date: new Date(),
+        categoryId,
         invoiceId,
         userId,
       }),

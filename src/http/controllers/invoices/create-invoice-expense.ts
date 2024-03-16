@@ -22,6 +22,7 @@ export async function createInvoiceExpense(
     title: z.string(),
     description: z.string().optional(),
     amount: z.number(),
+    categoryId: z.string(),
     date: z.string(),
 
     invoiceId: z.string().optional(),
@@ -55,6 +56,7 @@ export async function createInvoiceExpense(
         amount: body.amount,
         date: new Date(body.date),
         description: body.description,
+        categoryId: body.categoryId,
         invoiceId: invoice.id,
         userId: request.user.sub,
       })
@@ -94,6 +96,7 @@ export async function createInvoiceExpense(
         date: new Date(body.date),
         description: body.description,
         invoiceId: invoice.id,
+        categoryId: body.categoryId,
         userId: request.user.sub,
       })
 

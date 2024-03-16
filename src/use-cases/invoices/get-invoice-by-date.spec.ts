@@ -162,13 +162,9 @@ describe('Get invoice By Date Use Case', () => {
     ).rejects.toThrowError(UserNotFoundError)
   })
 
-  it('should not be able to get invoice by date if invoice does not exist', async () => {
-    await expect(
-      sut.execute({
-        month: new Date().getMonth() + 1,
-        year: new Date().getFullYear(),
-        userId,
-      }),
-    ).rejects.toThrowError(InvoiceNotFoundError)
+  it('return null if invoice does not exist', async () => {
+    const response = await sut.execute({ month: 1, year: 2021, userId })
+
+    expect(response.invoice).toBeNull()
   })
 })
