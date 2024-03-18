@@ -62,11 +62,7 @@ describe('Fetch Invoices By Date Use Case', () => {
       creditCardId,
     })
 
-    const response = await sut.execute({
-      month: 1,
-      year: 2021,
-      userId,
-    })
+    const response = await sut.execute({ month: 1, year: 2021, userId })
 
     expect(response.invoices).toEqual(
       expect.arrayContaining([
@@ -77,7 +73,12 @@ describe('Fetch Invoices By Date Use Case', () => {
           partialAmount: 0,
           dueDate: dayjs('2021-01-10').toDate(),
           closingDate: dayjs('2021-01-01').toDate(),
-          creditCardId: creditCardId,
+          creditCard: {
+            id: expect.any(String),
+            name: expect.any(String),
+            flag: FlagEnum.VISA,
+            limit: 1000,
+          },
         }),
       ]),
     )
@@ -107,7 +108,12 @@ describe('Fetch Invoices By Date Use Case', () => {
           partialAmount: 0,
           dueDate: januaryThisYear.add(9, 'day').toDate(),
           closingDate: januaryThisYear.toDate(),
-          creditCardId: creditCardId,
+          creditCard: {
+            id: expect.any(String),
+            name: expect.any(String),
+            flag: FlagEnum.VISA,
+            limit: 1000,
+          },
         }),
       ]),
     )
