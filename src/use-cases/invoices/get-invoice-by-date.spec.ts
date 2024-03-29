@@ -60,13 +60,13 @@ describe('Get invoice By Date Use Case', () => {
 
   it('should be able to get invoice by date', async () => {
     await createInvoiceUseCase.execute({
-      closingDate: dayjs('2021-01-01').toDate(),
-      dueDate: dayjs('2021-01-10').toDate(),
+      closingDate: dayjs('2023-02-01').toDate(),
+      dueDate: dayjs('2023-02-10').toDate(),
       userId,
       creditCardId,
     })
 
-    const response = await sut.execute({ month: 1, year: 2021, userId })
+    const response = await sut.execute({ month: 1, year: 2023, userId })
 
     expect(response.invoice).toEqual(
       expect.objectContaining({
@@ -74,8 +74,8 @@ describe('Get invoice By Date Use Case', () => {
         status: StatusInvoiceEnum.OPEN,
         paidAmount: 0,
         partialAmount: 0,
-        dueDate: dayjs('2021-01-10').toDate(),
-        closingDate: dayjs('2021-01-01').toDate(),
+        dueDate: dayjs('2023-02-10').toDate(),
+        closingDate: dayjs('2023-02-01').toDate(),
         creditCard: {
           id: expect.any(String),
           name: expect.any(String),
@@ -88,15 +88,15 @@ describe('Get invoice By Date Use Case', () => {
 
   it('should be able to get invoice by date with credit card', async () => {
     await createInvoiceUseCase.execute({
-      closingDate: dayjs('2021-01-01').toDate(),
-      dueDate: dayjs('2021-01-10').toDate(),
+      closingDate: dayjs('2023-02-01').toDate(),
+      dueDate: dayjs('2023-02-10').toDate(),
       userId,
       creditCardId,
     })
 
     const response = await sut.execute({
       month: 1,
-      year: 2021,
+      year: 2023,
       userId,
       creditCardId,
     })
@@ -107,8 +107,8 @@ describe('Get invoice By Date Use Case', () => {
         status: StatusInvoiceEnum.OPEN,
         paidAmount: 0,
         partialAmount: 0,
-        dueDate: dayjs('2021-01-10').toDate(),
-        closingDate: dayjs('2021-01-01').toDate(),
+        dueDate: dayjs('2023-02-10').toDate(),
+        closingDate: dayjs('2023-02-01').toDate(),
         creditCard: {
           id: expect.any(String),
           name: expect.any(String),
@@ -130,7 +130,7 @@ describe('Get invoice By Date Use Case', () => {
     })
 
     const response = await sut.execute({
-      month: 2,
+      month: 1,
       userId,
     })
 

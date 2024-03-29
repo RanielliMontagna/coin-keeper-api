@@ -56,13 +56,13 @@ describe('Fetch Invoices By Date Use Case', () => {
 
   it('should be able to fetch invoices by date', async () => {
     await createInvoiceUseCase.execute({
-      closingDate: dayjs('2021-01-01').toDate(),
-      dueDate: dayjs('2021-01-10').toDate(),
+      closingDate: dayjs('2024-02-01').toDate(),
+      dueDate: dayjs('2024-02-10').toDate(),
       userId,
       creditCardId,
     })
 
-    const response = await sut.execute({ month: 1, year: 2021, userId })
+    const response = await sut.execute({ month: 1, year: 2024, userId })
 
     expect(response.invoices).toEqual(
       expect.arrayContaining([
@@ -71,8 +71,8 @@ describe('Fetch Invoices By Date Use Case', () => {
           status: StatusInvoiceEnum.OPEN,
           paidAmount: 0,
           partialAmount: 0,
-          dueDate: dayjs('2021-01-10').toDate(),
-          closingDate: dayjs('2021-01-01').toDate(),
+          dueDate: dayjs('2024-02-10').toDate(),
+          closingDate: dayjs('2024-02-01').toDate(),
           creditCard: {
             id: expect.any(String),
             name: expect.any(String),
@@ -95,7 +95,7 @@ describe('Fetch Invoices By Date Use Case', () => {
     })
 
     const response = await sut.execute({
-      month: 2,
+      month: 1,
       userId,
     })
 

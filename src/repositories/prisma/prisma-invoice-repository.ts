@@ -60,8 +60,8 @@ export class PrismaInvoiceRepository implements InvoiceRepository {
     userId,
     creditCardId,
   }: InvoiceByDate): Promise<InvoiceReturn | null> {
-    const firstDayOfMonth = dayjs(new Date(year, month - 1, 1)).toDate()
-    const lastDayOfMonth = dayjs(new Date(year, month, 0)).toDate()
+    const firstDayOfMonth = dayjs(new Date(year, month, 1)).toDate()
+    const lastDayOfMonth = dayjs(new Date(year, month + 1, 0)).toDate()
 
     const invoice = await prisma.invoice.findFirst({
       where: {
@@ -97,8 +97,10 @@ export class PrismaInvoiceRepository implements InvoiceRepository {
     userId,
     year,
   }: InvoiceByDate): Promise<InvoiceReturn[]> {
-    const firstDayOfMonth = dayjs(new Date(year, month - 1, 1)).toDate()
-    const lastDayOfMonth = dayjs(new Date(year, month, 0)).toDate()
+    const firstDayOfMonth = dayjs(new Date(year, month, 1)).toDate()
+    const lastDayOfMonth = dayjs(new Date(year, month + 1, 0)).toDate()
+
+    console.log(firstDayOfMonth)
 
     const invoices = await prisma.invoice.findMany({
       where: {
