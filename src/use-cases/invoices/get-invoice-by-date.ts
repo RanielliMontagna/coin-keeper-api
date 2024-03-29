@@ -41,6 +41,7 @@ export class GetInvoiceByDateUseCase {
       month: month,
       year: year || new Date().getFullYear(),
       creditCardId,
+      userId,
     })
 
     return { invoice }
