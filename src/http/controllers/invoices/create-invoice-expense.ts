@@ -84,8 +84,8 @@ export async function createInvoiceExpense(
         .toString()
 
       const { invoice } = await createInvoiceUseCase.execute({
-        closingDate: new Date(closingDate),
         dueDate: new Date(dueDate),
+        closingDate: new Date(closingDate),
         userId: request.user.sub,
         creditCardId: creditCard.id,
       })

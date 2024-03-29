@@ -54,16 +54,20 @@ export class PrismaInvoiceRepository implements InvoiceRepository {
     return invoiceReturn
   }
 
-  async findInvoiceByDate(date: InvoiceByDate): Promise<InvoiceReturn | null> {
-    const firstDayOfMonth = dayjs(
-      new Date(date.year, date.month - 1, 1),
-    ).toDate()
-    const lastDayOfMonth = dayjs(new Date(date.year, date.month, 0)).toDate()
+  async findInvoiceByDate({
+    month,
+    year,
+    userId,
+    creditCardId,
+  }: InvoiceByDate): Promise<InvoiceReturn | null> {
+    const firstDayOfMonth = dayjs(new Date(year, month, 1)).toDate()
+    const lastDayOfMonth = dayjs(new Date(year, month + 1, 0)).toDate()
 
     const invoice = await prisma.invoice.findFirst({
       where: {
         dueDate: { gte: firstDayOfMonth, lte: lastDayOfMonth },
-        credit_card_id: date.creditCardId,
+        credit_card_id: creditCardId,
+        user_id: userId,
       },
       include: { creditCard: true },
     })
@@ -88,18 +92,20 @@ export class PrismaInvoiceRepository implements InvoiceRepository {
     return invoiceReturn
   }
 
-  async fetchInvoicesByDate(date: {
-    month: number
-    year: number
-  }): Promise<InvoiceReturn[]> {
-    const firstDayOfMonth = dayjs(
-      new Date(date.year, date.month - 1, 1),
-    ).toDate()
-    const lastDayOfMonth = dayjs(new Date(date.year, date.month, 0)).toDate()
+  async fetchInvoicesByDate({
+    month,
+    userId,
+    year,
+  }: InvoiceByDate): Promise<InvoiceReturn[]> {
+    const firstDayOfMonth = dayjs(new Date(year, month, 1)).toDate()
+    const lastDayOfMonth = dayjs(new Date(year, month + 1, 0)).toDate()
+
+    console.log(firstDayOfMonth)
 
     const invoices = await prisma.invoice.findMany({
       where: {
         dueDate: { gte: firstDayOfMonth, lte: lastDayOfMonth },
+        user_id: userId,
       },
       include: { creditCard: true },
     })

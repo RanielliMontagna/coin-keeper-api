@@ -4,6 +4,7 @@ export interface InvoiceByDate {
   month: number
   year: number
   creditCardId?: string
+  userId: string
 }
 
 export interface InvoiceReturn {
@@ -27,8 +28,8 @@ export interface PartialAmountReturn {
 
 export interface InvoiceRepository {
   findById(id: string): Promise<InvoiceReturn | null>
-  findInvoiceByDate(date: InvoiceByDate): Promise<InvoiceReturn | null>
-  fetchInvoicesByDate(date: InvoiceByDate): Promise<InvoiceReturn[]>
+  findInvoiceByDate(payload: InvoiceByDate): Promise<InvoiceReturn | null>
+  fetchInvoicesByDate(payload: InvoiceByDate): Promise<InvoiceReturn[]>
   addPartialAmount(
     invoiceId: string,
     amount: number,
