@@ -46,6 +46,7 @@ app.register(configRoutes)
 
 app.ready(() => {
   import('@/jobs/autoPay')
+  import('@/jobs/invoicePaymentAutomation')
 })
 
 app.setErrorHandler((error, _, reply) => {
