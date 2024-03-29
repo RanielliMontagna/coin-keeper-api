@@ -54,7 +54,8 @@ export class InMemoryInvoiceRepository implements InvoiceRepository {
         return (
           invoice.dueDate.getMonth() === props.month - 1 &&
           invoice.dueDate.getFullYear() === props.year &&
-          invoice.credit_card_id === props.creditCardId
+          invoice.credit_card_id === props.creditCardId &&
+          invoice.user_id === props.userId
         )
       }
 
@@ -82,14 +83,12 @@ export class InMemoryInvoiceRepository implements InvoiceRepository {
     }
   }
 
-  async fetchInvoicesByDate(date: {
-    month: number
-    year: number
-  }): Promise<InvoiceReturn[]> {
+  async fetchInvoicesByDate(payload: InvoiceByDate): Promise<InvoiceReturn[]> {
     const invoices = this.invoices.filter(
       (invoice) =>
-        invoice.dueDate.getMonth() === date.month - 1 &&
-        invoice.dueDate.getFullYear() === date.year,
+        invoice.dueDate.getMonth() === payload.month - 1 &&
+        invoice.dueDate.getFullYear() === payload.year &&
+        invoice.user_id === payload.userId,
     )
 
     return invoices.map((invoice) => ({

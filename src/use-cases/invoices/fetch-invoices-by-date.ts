@@ -37,6 +37,7 @@ export class FetchInvoicesByDateUseCase {
     const invoices = await this.invoiceRepository.fetchInvoicesByDate({
       month: month,
       year: year || new Date().getFullYear(),
+      userId,
     })
 
     return { invoices }

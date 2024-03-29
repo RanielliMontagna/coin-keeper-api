@@ -95,7 +95,7 @@ describe('Fetch Invoices By Date Use Case', () => {
     })
 
     const response = await sut.execute({
-      month: 1,
+      month: 2,
       userId,
     })
 
